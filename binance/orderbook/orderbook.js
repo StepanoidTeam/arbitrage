@@ -88,3 +88,4 @@ function addTable(tableName ,orderType, color) {
 
   document.body.appendChild(t);
 }
+//
