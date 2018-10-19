@@ -1,0 +1,25 @@
+{
+  "name": "arbitrage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/index.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "node-fetch": "^2.2.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StepanoidTeam/arbitrage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StepanoidTeam/arbitrage/issues"
+  },
+  "homepage": "https://github.com/StepanoidTeam/arbitrage#readme"
+}
