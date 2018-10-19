@@ -1,8 +1,9 @@
 const express = require("express");
 const fetch = require("node-fetch");
 
-const { scheduler } = require("./scheduler");
 const { binance, bittrex, bitfinex } = require("./exchangeConfigs");
+const { scheduler } = require("./scheduler");
+const { appendDataToFile } = require("./file");
 
 function getPairData({ url, query, pairs, mappers }, pairIndex = 0) {
   let requestUrl = `${url}${query}${pairs[pairIndex]}`;
@@ -13,7 +14,8 @@ function getPairData({ url, query, pairs, mappers }, pairIndex = 0) {
     .then(({ bids, asks }) => {
       return {
         bids: bids.map(mappers.order),
-        asks: asks.map(mappers.order)
+        asks: asks.map(mappers.order),
+        timestamp: Date.now()
       };
     });
 }
@@ -55,14 +57,24 @@ function getAllExData() {
   ]);
 }
 
-const apiCooldown = 1000;
+const prep = data => {
+  let rawData = JSON.stringify(data);
+  return `let x${data.timestamp}=${rawData}\n`;
+};
+const apiCooldown = 2 * 1000;
 async function runUpdate() {
-  for await (let result of scheduler(getAllExData, apiCooldown)) {
-    console.log(result);
+  for await (let [binance, bittrex, bitfinex] of scheduler(
+    getAllExData,
+    apiCooldown
+  )) {
+    appendDataToFile("./logs/binance.js", prep(binance));
+    appendDataToFile("./logs/bittrex.js", prep(bittrex));
+    appendDataToFile("./logs/bitfinex.js", prep(bitfinex));
   }
 }
 
-//runUpdate();
+/* BEWARE!!!! grabber runs here! */
+//runUpdate(); //uncomment this and it will collect ALL THE DATA
 
 //todo: pairs to add
 // BTC-USDT

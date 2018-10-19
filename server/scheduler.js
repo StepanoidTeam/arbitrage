@@ -5,7 +5,7 @@ function delayer(delay = 1000) {
 async function* scheduler(asyncTask, delay = 1000) {
   while (true) {
     let result = await asyncTask();
-    console.log("shd", result);
+    console.log("shd", Date.now());
     yield result;
     await delayer(delay);
   }
