@@ -40,15 +40,15 @@ ourRequest.onload = function(){
 		document.body.appendChild(t);
 	}
 	
-	addTable("Asks" ,json4ik.asks, "pink");
-	addTable("Bids" ,json4ik.bids, "LightGreen");
+	addTable("Asks (Sale)" ,json4ik.asks, "pink");
+	addTable("Bids (Buy)" ,json4ik.bids, "LightGreen");
 	addDiv("Binance");
 }
 
 ourRequest.send();
 })()
 
-///////////////////////////////////////////
+//////////Bitfinex////////////////////////
 
 
 var burl = "https://api.bitfinex.com/v1";
@@ -65,8 +65,8 @@ ourRequest.onload = function(){
   console.log(json4ik.asks[0].amount);
 
 
-  addTable("Asks" ,json4ik.asks, "pink");
-  addTable("Bids" ,json4ik.bids, "LightGreen");
+  addTable("Asks (Sale)" ,json4ik.asks, "pink");
+  addTable("Bids (Buy)" ,json4ik.bids, "LightGreen");
 }
 ourRequest.send();
 
@@ -88,4 +88,6 @@ function addTable(tableName ,orderType, color) {
 
   document.body.appendChild(t);
 }
-//
+
+
+//////////Bittrex////////////////////////
