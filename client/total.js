@@ -21,8 +21,8 @@ fetch("/api/binance")
   .then(function(json4ik) {
     render(
       [
-        createTable("Binance", json4ik.bids.slice(0, 10), "bid"),
-        createTable("Binance", json4ik.asks.slice(0, 10), "ask")
+        createTable("Binance", json4ik.bids, "bid"),
+        createTable("Binance", json4ik.asks, "ask")
       ],
       document.querySelector(".binance")
     );
@@ -34,8 +34,8 @@ fetch("/api/bitfinex")
   .then(function(json4ik) {
     render(
       [
-        createTable("BitFinEx", json4ik.bids.slice(0, 10), "bid"),
-        createTable("BitFinEx", json4ik.asks.slice(0, 10), "ask")
+        createTable("BitFinEx", json4ik.bids, "bid"),
+        createTable("BitFinEx", json4ik.asks, "ask")
       ],
       document.querySelector(".bitfinex")
     );
@@ -47,8 +47,8 @@ fetch("/api/bittrex")
   .then(function(json4ik) {
     render(
       [
-        createTable("Bittrex", json4ik.bids.slice(0, 10), "bid"),
-        createTable("Bittrex", json4ik.asks.slice(0, 10), "ask")
+        createTable("Bittrex", json4ik.bids, "bid"),
+        createTable("Bittrex", json4ik.asks, "ask")
       ],
       document.querySelector(".bittrex")
     );
