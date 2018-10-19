@@ -19,22 +19,10 @@ function createTable(platform, data, type) {
 fetch("/api/binance")
   .then(data => data.json())
   .then(function(json4ik) {
-    function binanceMapper(order) {
-      return { price: order[0], volume: order[1] };
-    }
-
     render(
       [
-        createTable(
-          "Binance",
-          json4ik.asks.slice(0, 10).map(binanceMapper),
-          "ask"
-        ),
-        createTable(
-          "Binance",
-          json4ik.bids.slice(0, 10).map(binanceMapper),
-          "bid"
-        )
+        createTable("Binance", json4ik.bids.slice(0, 10), "bid"),
+        createTable("Binance", json4ik.asks.slice(0, 10), "ask")
       ],
       document.querySelector(".binance")
     );
@@ -44,22 +32,10 @@ fetch("/api/binance")
 fetch("/api/bitfinex")
   .then(data => data.json())
   .then(function(json4ik) {
-    function bitfinexMapper(order) {
-      return { price: order.price, volume: order.amount };
-    }
-
     render(
       [
-        createTable(
-          "BitFinEx",
-          json4ik.asks.slice(0, 10).map(bitfinexMapper),
-          "ask"
-        ),
-        createTable(
-          "BitFinEx",
-          json4ik.bids.slice(0, 10).map(bitfinexMapper),
-          "bid"
-        )
+        createTable("BitFinEx", json4ik.bids.slice(0, 10), "bid"),
+        createTable("BitFinEx", json4ik.asks.slice(0, 10), "ask")
       ],
       document.querySelector(".bitfinex")
     );
@@ -69,22 +45,10 @@ fetch("/api/bitfinex")
 fetch("/api/bittrex")
   .then(data => data.json())
   .then(function(json4ik) {
-    function bittrexMapper(order) {
-      return { price: order.Rate, volume: order.Quantity };
-    }
-
     render(
       [
-        createTable(
-          "Bittrex",
-          json4ik.result.sell.slice(0, 10).map(bittrexMapper),
-          "ask"
-        ),
-        createTable(
-          "Bittrex",
-          json4ik.result.buy.slice(0, 10).map(bittrexMapper),
-          "bid"
-        )
+        createTable("Bittrex", json4ik.bids.slice(0, 10), "bid"),
+        createTable("Bittrex", json4ik.asks.slice(0, 10), "ask")
       ],
       document.querySelector(".bittrex")
     );
