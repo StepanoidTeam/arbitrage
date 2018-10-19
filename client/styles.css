@@ -1,0 +1,12 @@
+.orderbook {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+}
+
+.bid {
+  background-color: lightgreen;
+}
+.ask {
+  background-color: pink;
+}
