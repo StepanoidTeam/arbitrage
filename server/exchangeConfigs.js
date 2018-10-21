@@ -2,7 +2,12 @@ const LIMIT_ORDERS = 3;
 
 const PAIRS = {
   BTC_USDT: "BTC_USDT",
-  XRP_USDT: "XRP_USDT"
+  ETH_USDT: "ETH_USDT",
+  XRP_USDT: "XRP_USDT",
+  EOS_USDT: "EOS_USDT",
+  LTC_USDT: "LTC_USDT",
+  ADA_USDT: "ADA_USDT",
+
   //todo: add new global pair names here first!
   //names-values not important, just follow existing naming
   //then add new pair to all possible exchanges
@@ -67,6 +72,76 @@ const bitfinex = {
     order: data => ({ price: data.price, volume: data.amount })
   }
 };
+
+
+const hitbtc = {
+  name: "hitbtc",
+  url: "https://api.hitbtc.com",
+  query: "/api/2/public/orderbook/",
+  pairs: {
+    [PAIRS.BTC_USDT]: "BTCUSD",
+    [PAIRS.XRP_USDT]: "XRPUSD"
+  },
+  fees: {
+    taker: 0.1
+  },
+  mappers: {
+    orderbook: data => ({
+      bids: data.bid.slice(0, LIMIT_ORDERS),
+      asks: data.ask.slice(0, LIMIT_ORDERS)
+    }),
+    order: data => ({ price: data.price, volume: data.size })
+  }
+};
+
+/*
+//https://github.com/huobiapi/API_Docs_en/wiki/REST_Reference#get-marketdepth---market-depth
+const huobi = {
+  name: "huobi",
+  url: "https://api.huobi.pro",
+  query: "/market/depth?symbol=",
+  pairs: {
+    [PAIRS.BTC_USDT]: "btcusdt",
+    [PAIRS.XRP_USDT]: "xrpusdt"
+  },
+  fees: {
+    taker: 0.2
+  },
+  mappers: {
+    orderbook: data => ({
+    //  bids: data.bids.slice(0, LIMIT_ORDERS),
+    //  asks: data.asks.slice(0, LIMIT_ORDERS)
+    }),
+    //order: data => ({ price: data.price, volume: data.amount })
+  }
+};
+
+
+//https://www.okex.com/docs/en/#spot-data
+//GET /api/spot/v3/instruments/<instrument-id>/book
+const okex = {
+  name: "okex",
+  url: "https://www.okex.com/api",
+  query: "/api/spot/v3/instruments/",
+  pairs: {
+    [PAIRS.BTC_USDT]: "btcusdt",
+    [PAIRS.XRP_USDT]: "xrpusdt"
+  },
+  fees: {
+    taker: 0.2
+  },
+  mappers: {
+    orderbook: data => ({
+    //  bids: data.bids.slice(0, LIMIT_ORDERS),
+    //  asks: data.asks.slice(0, LIMIT_ORDERS)
+    }),
+    //order: data => ({ price: data.price, volume: data.amount })
+  }
+};
+
+
+*/
+
 
 module.exports = {
   exchanges: { binance, bittrex, bitfinex },
