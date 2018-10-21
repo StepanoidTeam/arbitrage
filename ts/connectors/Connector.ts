@@ -1,4 +1,4 @@
-export default class connector {
+export default class Connector {
   constructor() {}
 
   async call(request) {
