@@ -1,10 +1,21 @@
 const LIMIT_ORDERS = 3;
 
+const PAIRS = {
+  BTC_USDT: "BTC_USDT",
+  XRP_USDT: "XRP_USDT"
+  //todo: add new global pair names here first!
+  //names-values not important, just follow existing naming
+  //then add new pair to all possible exchanges
+};
+
 const binance = {
   name: "binance",
   url: "https://api.binance.com",
   query: "/api/v1/depth?symbol=",
-  pairs: ["BTCUSDT", "XRPUSDT"],
+  pairs: {
+    [PAIRS.BTC_USDT]: "BTCUSDT",
+    [PAIRS.XRP_USDT]: "XRPUSDT"
+  },
   fees: {
     taker: 0.1 //0.075 bnb
   },
@@ -21,7 +32,10 @@ const bittrex = {
   name: "bittrex",
   url: "https://bittrex.com",
   query: "/api/v1.1/public/getorderbook?type=both&market=",
-  pairs: ["USDT-BTC", "USDT-XRP"],
+  pairs: {
+    [PAIRS.BTC_USDT]: "USDT-BTC",
+    [PAIRS.XRP_USDT]: "USDT-XRP"
+  },
   fees: {
     taker: 0.25
   },
@@ -38,7 +52,10 @@ const bitfinex = {
   name: "bitfinex",
   url: "https://api.bitfinex.com",
   query: "/v1/book/",
-  pairs: ["btcusd", "xrpusd"],
+  pairs: {
+    [PAIRS.BTC_USDT]: "btcusd",
+    [PAIRS.XRP_USDT]: "xrpusd"
+  },
   fees: {
     taker: 0.2
   },
@@ -52,9 +69,8 @@ const bitfinex = {
 };
 
 module.exports = {
-  binance,
-  bittrex,
-  bitfinex
+  exchanges: { binance, bittrex, bitfinex },
+  PAIRS
 };
 
 //todo: pairs to add
