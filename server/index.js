@@ -3,9 +3,9 @@ const fetch = require("node-fetch");
 
 const { binance, bittrex, bitfinex } = require("./exchangeConfigs");
 const { scheduler } = require("./scheduler");
-const { appendDataToFile } = require("./file");
+const { appendJSONToFile } = require("./file");
 
-function getPairData({ url, query, pairs, mappers }, pairIndex = 0) {
+function getPairData({ url, query, pairs, mappers, name }, pairIndex = 0) {
   let requestUrl = `${url}${query}${pairs[pairIndex]}`;
 
   return fetch(requestUrl)
@@ -15,6 +15,7 @@ function getPairData({ url, query, pairs, mappers }, pairIndex = 0) {
       return {
         bids: bids.map(mappers.order),
         asks: asks.map(mappers.order),
+        name,
         timestamp: Date.now()
       };
     });
@@ -50,60 +51,30 @@ app.listen(port, () => {
 });
 
 function getAllExData() {
-  return Promise.all([
-    getPairData(binance),
-    getPairData(bittrex),
-    getPairData(bitfinex)
-  ]);
+  return Promise.all(
+    [binance, bittrex, bitfinex].map(ex => getPairData(ex, 1))
+  );
 }
 
-const prep = data => {
-  let rawData = JSON.stringify(data);
-  return `let x${data.timestamp}=${rawData}\n`;
-};
+function produceExchangeTF(exchangeData) {
+  let exTF = {
+    ask: exchangeData.asks[0],
+    bid: exchangeData.bids[0],
+    timestamp: exchangeData.timestamp,
+    exName: exchangeData.name
+  };
+
+  return exTF;
+}
+
 const apiCooldown = 2 * 1000;
 async function runUpdate() {
-  for await (let [binance, bittrex, bitfinex] of scheduler(
-    getAllExData,
-    apiCooldown
-  )) {
-    appendDataToFile("./logs/binance.js", prep(binance));
-    appendDataToFile("./logs/bittrex.js", prep(bittrex));
-    appendDataToFile("./logs/bitfinex.js", prep(bitfinex));
+  for await (let exRespArr of scheduler(getAllExData, apiCooldown)) {
+    let timeframe = exRespArr.map(produceExchangeTF);
+
+    appendJSONToFile("./logs/timeframe.js", timeframe);
   }
 }
 
 /* BEWARE!!!! grabber runs here! */
-//runUpdate(); //uncomment this and it will collect ALL THE DATA
-
-//todo: pairs to add
-// BTC-USDT
-// BTC-ETH
-// ETH-USDT
-// BTC-EOS
-// ETH-EOS
-// EOS-USDT
-
-// FEES:
-// -Bittrex - 0.25% / trade
-
-// -Bitfinex
-// 0.1% - Maker Fees/0.2% - Taker Fees
-
-// -Binance
-// 0.1000% - Maker/0.1000% - Taker (0.075/0.075, если юзается BNB)
-
-// -Poloniex
-// 0.1% - Maker Fees/0.2% - Taker Fees
-
-// -OKex
-// 0.1% - Maker Fees/0.15% - Taker Fees
-
-// -Huobi
-// 0.2% - Maker Fees/0.2% - Taker Fees
-
-// -HitBTC
-// +0.01% - Maker Fees/0.1% - Taker Fees
-
-// -BitForex
-// 0% - Maker Fees/0.05% - Taker Fees
+runUpdate(); //uncomment this and it will collect ALL THE DATA
