@@ -5,6 +5,9 @@ const binance = {
   url: "https://api.binance.com",
   query: "/api/v1/depth?symbol=",
   pairs: ["BTCUSDT", "XRPUSDT"],
+  fees: {
+    taker: 0.1 //0.075 bnb
+  },
   mappers: {
     orderbook: data => ({
       bids: data.bids.slice(0, LIMIT_ORDERS),
@@ -19,6 +22,9 @@ const bittrex = {
   url: "https://bittrex.com",
   query: "/api/v1.1/public/getorderbook?type=both&market=",
   pairs: ["USDT-BTC", "USDT-XRP"],
+  fees: {
+    taker: 0.25
+  },
   mappers: {
     orderbook: data => ({
       bids: data.result.buy.slice(0, LIMIT_ORDERS),
@@ -33,6 +39,9 @@ const bitfinex = {
   url: "https://api.bitfinex.com",
   query: "/v1/book/",
   pairs: ["btcusd", "xrpusd"],
+  fees: {
+    taker: 0.2
+  },
   mappers: {
     orderbook: data => ({
       bids: data.bids.slice(0, LIMIT_ORDERS),
