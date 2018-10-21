@@ -22,9 +22,17 @@ function appendJSONToFile(filepath, objData) {
   appendDataToFile(filepath, rawData);
 }
 
+function readLines(filepath) {
+  return fs
+    .readFileSync(filepath)
+    .toString()
+    .split("\n");
+}
+
 module.exports = {
   getDataFromFile,
   saveDataToFile,
   appendDataToFile,
-  appendJSONToFile
+  appendJSONToFile,
+  readLines
 };
