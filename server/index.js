@@ -1,11 +1,14 @@
 const express = require("express");
 const fetch = require("node-fetch");
 
-const { binance, bittrex, bitfinex } = require("./exchangeConfigs");
+const { exchanges, PAIRS } = require("./exchangeConfigs");
 const { scheduler } = require("./scheduler");
 const { appendJSONToFile } = require("./file");
 
-function getPairData({ url, query, pairs, mappers, name }, pairIndex = 0) {
+function getPairData(
+  { url, query, pairs, mappers, name },
+  pairIndex = PAIRS.BTC_USDT
+) {
   let requestUrl = `${url}${query}${pairs[pairIndex]}`;
 
   return fetch(requestUrl)
@@ -30,15 +33,15 @@ app.use(express.static("./client"));
 app.get("/api/binance", async (req, res) => {
   //const { hash, cache } = req.query;
   //console.log("[server] orders requested: ", req.query);
-  res.send(await getPairData(binance));
+  res.send(await getPairData(exchanges.binance));
 });
 //bittrex
 app.get("/api/bittrex", async (req, res) => {
-  res.send(await getPairData(bittrex));
+  res.send(await getPairData(exchanges.bittrex));
 });
 //bitfinex
 app.get("/api/bitfinex", async (req, res) => {
-  res.send(await getPairData(bitfinex));
+  res.send(await getPairData(exchanges.bitfinex));
 });
 //all
 app.get("/api/all", async (req, res) => {
@@ -50,10 +53,8 @@ app.listen(port, () => {
   console.log("[server] started");
 });
 
-function getAllExData() {
-  return Promise.all(
-    [binance, bittrex, bitfinex].map(ex => getPairData(ex, 1))
-  );
+function getAllExData(pair) {
+  return Promise.all(Object.values(exchanges).map(ex => getPairData(ex, pair)));
 }
 
 function produceExchangeTF(exchangeData) {
@@ -68,13 +69,20 @@ function produceExchangeTF(exchangeData) {
 }
 
 const apiCooldown = 2 * 1000;
-async function runUpdate() {
-  for await (let exRespArr of scheduler(getAllExData, apiCooldown)) {
+async function runUpdate(pair) {
+  const timeStarted = Date.now();
+
+  const logFilePath = `./logs/tf-${pair}-${timeStarted}.log`;
+
+  for await (let exRespArr of scheduler(
+    () => getAllExData(pair),
+    apiCooldown
+  )) {
     let timeframe = exRespArr.map(produceExchangeTF);
 
-    appendJSONToFile("./logs/timeframe.log", timeframe);
+    appendJSONToFile(logFilePath, timeframe);
   }
 }
 
 /* BEWARE!!!! grabber runs here! */
-runUpdate(); //uncomment this and it will collect ALL THE DATA
+runUpdate(PAIRS.BTC_USDT); //uncomment this and it will collect ALL THE DATA
