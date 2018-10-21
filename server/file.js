@@ -17,4 +17,14 @@ function appendDataToFile(filepath, data) {
   fs.appendFileSync(filepath, data);
 }
 
-module.exports = { getDataFromFile, saveDataToFile, appendDataToFile };
+function appendJSONToFile(filepath, objData) {
+  let rawData = `${JSON.stringify(objData)}\n`;
+  appendDataToFile(filepath, rawData);
+}
+
+module.exports = {
+  getDataFromFile,
+  saveDataToFile,
+  appendDataToFile,
+  appendJSONToFile
+};
