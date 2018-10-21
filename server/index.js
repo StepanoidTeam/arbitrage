@@ -72,7 +72,7 @@ async function runUpdate() {
   for await (let exRespArr of scheduler(getAllExData, apiCooldown)) {
     let timeframe = exRespArr.map(produceExchangeTF);
 
-    appendJSONToFile("./logs/timeframe.js", timeframe);
+    appendJSONToFile("./logs/timeframe.log", timeframe);
   }
 }
 

@@ -51,7 +51,7 @@ function getStatsFromTimeframe(timeframe) {
 for (let tfIndex in timeframeArr) {
   let timeframe = JSON.parse(timeframeArr[tfIndex]);
   let diffStats = getStatsFromTimeframe(timeframe);
-  appendJSONToFile("./logs/stats.js", diffStats);
+  appendJSONToFile("./logs/stats.log", diffStats);
 
   progress({
     current: tfIndex,
