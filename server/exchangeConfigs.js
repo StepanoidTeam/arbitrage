@@ -7,6 +7,9 @@ const PAIRS = {
   EOS_USDT: "EOS_USDT",
   LTC_USDT: "LTC_USDT",
   ADA_USDT: "ADA_USDT",
+  ZIL_BTC: "ZIL_BTC",
+  RVN_BTC: "RVN/BTC",
+
 
   //todo: add new global pair names here first!
   //names-values not important, just follow existing naming
@@ -19,7 +22,9 @@ const binance = {
   query: "/api/v1/depth?symbol=",
   pairs: {
     [PAIRS.BTC_USDT]: "BTCUSDT",
-    [PAIRS.XRP_USDT]: "XRPUSDT"
+    [PAIRS.XRP_USDT]: "XRPUSDT",
+    [PAIRS.RVN_BTC]: "RVNBTC",
+
   },
   fees: {
     taker: 0.1 //0.075 bnb
@@ -39,7 +44,8 @@ const bittrex = {
   query: "/api/v1.1/public/getorderbook?type=both&market=",
   pairs: {
     [PAIRS.BTC_USDT]: "USDT-BTC",
-    [PAIRS.XRP_USDT]: "USDT-XRP"
+    [PAIRS.XRP_USDT]: "USDT-XRP",
+    [PAIRS.RVN_BTC]: "BTC-RVN",
   },
   fees: {
     taker: 0.25
