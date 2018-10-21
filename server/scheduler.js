@@ -14,7 +14,7 @@ async function* scheduler(asyncTask, delay = 1000) {
 
     if (result === null) {
       console.warn("error freeze");
-      await delayer(delay * errorCount);
+      await delayer(delay * errorCount ** 2);
       continue;
     }
 
