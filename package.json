@@ -5,6 +5,7 @@
   "main": "server/index.js",
   "dependencies": {
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
     "node-fetch": "^2.2.0",
     "request": "^2.88.0"
   },
