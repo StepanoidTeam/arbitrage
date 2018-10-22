@@ -187,11 +187,57 @@ const kucoin = {
   },
 };
 
+//with bibox onboard 10 requests performed by 60 secs insead of default 22-23 secs!
+const bibox = {
+  name: "bibox",
+  url: "https://api.bibox.com",
+  getOrderBook(pairIndex) {
+    return `${this.url}/v1/mdata?cmd=depth&size=10&pair=${this.pairs[pairIndex]}`;
+  },
+  pairs: {
+    [PAIRS.BTC_USDT]: "BTC_USDT",
+    [PAIRS.EOS_BTC]: "EOS_BTC",
+  },
+  fees: {
+    taker: 0.1, //0.05% if we'll use Bibox token
+  },
+  mappers: {
+    orderbook: data => ({
+      bids: data.result.bids.slice(0, LIMIT_ORDERS),
+      asks: data.result.asks.slice(0, LIMIT_ORDERS),
+    }),
+    order: data => ({ price: data.price, volume: data.volume }),
+  },
+};
+
+
+const gate = {
+  name: "gate",
+  url: "https://data.gate.io",
+  getOrderBook(pairIndex) {
+    return `${this.url}/api2/1/orderBook/${this.pairs[pairIndex]}`;
+  },
+  pairs: {
+    [PAIRS.BTC_USDT]: "btc_usdt",
+    [PAIRS.EOS_BTC]: "eos_btc",
+  },
+  fees: {
+    taker: 0.1, //0.05% if we'll use Bibox token
+  },
+  mappers: {
+    orderbook: data => ({
+      bids: data.bids.slice(0, LIMIT_ORDERS),
+      asks: data.asks.slice(0, LIMIT_ORDERS),
+    }),
+    order: data => ({ price: data[0], volume: data[1] }),
+  },
+};
+
 
 
 
 module.exports = {
-  exchanges: {huobi, kucoin},
+  exchanges: {huobi, kucoin, bibox},
   PAIRS,
 };
 
@@ -229,3 +275,9 @@ module.exports = {
 
 // -Kucoin
 // 0.1000% - Maker/0.1000% - Taker
+
+// -Bibox
+// 0.1% Trading Fee will be deducted from your balance. If you pay using BIX, you may enjoy a 50% discount on the trading fee.
+
+// -Gate.io
+// 0.2% on default, but some pairs have 0 comission - https://www.gate.io/fee
