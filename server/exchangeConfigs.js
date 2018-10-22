@@ -78,8 +78,8 @@ const hitbtc = {
   url: "https://api.hitbtc.com",
   query: "/api/2/public/orderbook/",
   pairs: {
-    [PAIRS.BTC_USDT]: "BTCUSD",
-    [PAIRS.XRP_USDT]: "XRPUSD",
+    [PAIRS.BTC_USDT]: "BTCUSDT",
+    [PAIRS.XRP_USDT]: "XRPUSDT",
   },
   fees: {
     taker: 0.1,
