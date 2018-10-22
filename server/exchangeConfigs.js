@@ -9,6 +9,7 @@ const PAIRS = {
   ADA_USDT: "ADA_USDT",
   ZIL_BTC: "ZIL_BTC",
   RVN_BTC: "RVN/BTC",
+  EOS_BTC: "EOS_BTC",
 
 
   //todo: add new global pair names here first!
@@ -94,7 +95,7 @@ const hitbtc = {
     return `${this.url}/api/2/public/orderbook/${this.pairs[pairIndex]}`;
   },
   pairs: {
-    [PAIRS.BTC_USDT]: "BTCUSDT",
+    [PAIRS.BTC_USDT]: "BTCUSD", //weird thing, but seems USD=USDT on hitBTC, like bitfinex
     [PAIRS.XRP_USDT]: "XRPUSDT",
   },
   fees: {
@@ -109,60 +110,88 @@ const hitbtc = {
   },
 };
 
-/*
+
+//https://www.okex.com/docs/en/#spot-data
+//GET /api/spot/v3/instruments/<instrument-id>/book
+
+
+//https://www.okex.com/api/spot/v3/instruments/LTC-USDT/book?size=10
+const okex = {
+  name: "okex",
+  url: "https://www.okex.com/api",
+  getOrderBook(pairIndex) {
+    return `${this.url}/spot/v3/instruments/${this.pairs[pairIndex]}/book?size=10`;
+  },
+  pairs: {
+    [PAIRS.BTC_USDT]: "BTC-USDT",
+    [PAIRS.XRP_USDT]: "XRP-USDT",
+  },
+  fees: {
+    taker: 0.15
+  },
+  mappers: {
+    orderbook: data => ({
+      bids: data.bids.slice(0, LIMIT_ORDERS),
+      asks: data.asks.slice(0, LIMIT_ORDERS),
+    }),
+    order: data => ({ price: data[0], volume: data[1] }),
+  },
+};
+
 //https://github.com/huobiapi/API_Docs_en/wiki/REST_Reference#get-marketdepth---market-depth
-//https://api.huobi.pro/market/depth?symbol=btcusdt&type=step1
 const huobi = {
   name: "huobi",
   url: "https://api.huobi.pro",
-  query: "/market/depth?symbol=",
+  getOrderBook(pairIndex) {
+    return `${this.url}/market/depth?type=step1&symbol=${this.pairs[pairIndex]}`;
+  },
   pairs: {
     //usdt pairs
     [PAIRS.BTC_USDT]: "btcusdt",
-    [PAIRS.BTC_USDT]: "eosusdt",
+    [PAIRS.XRP_USDT]: "xrpusdt",
+    [PAIRS.EOS_BTC]: "eosbtc",
    },
   fees: {
     taker: 0.2
   },
   mappers: {
     orderbook: data => ({
-    //  bids: data.bids.slice(0, LIMIT_ORDERS),
-    //  asks: data.asks.slice(0, LIMIT_ORDERS)
+      bids: data.tick.bids.slice(0, LIMIT_ORDERS),
+      asks: data.tick.asks.slice(0, LIMIT_ORDERS),
     }),
-    //order: data => ({ price: data.price, volume: data.amount })
-  }
+    order: data => ({ price: data[0], volume: data[1] }),
+
+  },
 };
 
 
-//https://www.okex.com/docs/en/#spot-data
-//GET /api/spot/v3/instruments/<instrument-id>/book
-
-https://www.okex.com/api/spot/v3/instruments/LTC-USDT/book?size=10
-const okex = {
-  name: "okex",
-  url: "https://www.okex.com/api",
-  query: "/api/spot/v3/instruments/",
+const kucoin = {
+  name: "kucoin",
+  url: "https://api.kucoin.com",
+  getOrderBook(pairIndex) {
+    return `${this.url}/v1/${this.pairs[pairIndex]}/open/orders/`;
+  },
   pairs: {
-    [PAIRS.BTC_USDT]: "zzz",
-    [PAIRS.XRP_USDT]: "zzz"
+    [PAIRS.BTC_USDT]: "BTC-USDT",
+    [PAIRS.EOS_BTC]: "EOS-BTC",
   },
   fees: {
-    taker: 0.2
+    taker: 0.1, 
   },
   mappers: {
     orderbook: data => ({
-    //  bids: data.bids.slice(0, LIMIT_ORDERS),
-    //  asks: data.asks.slice(0, LIMIT_ORDERS)
+      bids: data.data.BUY.slice(0, LIMIT_ORDERS),
+      asks: data.data.SELL.slice(0, LIMIT_ORDERS),
     }),
-    //order: data => ({ price: data.price, volume: data.amount })
-  }
+    order: data => ({ price: data[0], volume: data[1] }),
+  },
 };
 
 
-*/
+
 
 module.exports = {
-  exchanges: { binance, bittrex, bitfinex, hitbtc },
+  exchanges: {huobi, kucoin},
   PAIRS,
 };
 
@@ -197,3 +226,6 @@ module.exports = {
 
 // -BitForex
 // 0% - Maker Fees/0.05% - Taker Fees
+
+// -Kucoin
+// 0.1000% - Maker/0.1000% - Taker

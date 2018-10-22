@@ -84,4 +84,4 @@ async function runUpdate(pair) {
 }
 
 /* BEWARE!!!! grabber runs here! */
-runUpdate(PAIRS.XRP_USDT); //uncomment this and it will collect ALL THE DATA
+runUpdate(PAIRS.EOS_BTC); //uncomment this and it will collect ALL THE DATA
