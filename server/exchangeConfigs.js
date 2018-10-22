@@ -25,11 +25,8 @@ const binance = {
   pairs: {
     [PAIRS.BTC_USDT]: "BTCUSDT",
     [PAIRS.XRP_USDT]: "XRPUSDT",
-<<<<<<< HEAD
     [PAIRS.RVN_BTC]: "RVNBTC",
 
-=======
->>>>>>> 1364b69b3b23b304acc9775bef80ec4178723f35
   },
   fees: {
     taker: 0.1, //0.075 bnb
@@ -54,10 +51,7 @@ const bittrex = {
   pairs: {
     [PAIRS.BTC_USDT]: "USDT-BTC",
     [PAIRS.XRP_USDT]: "USDT-XRP",
-<<<<<<< HEAD
     [PAIRS.RVN_BTC]: "BTC-RVN",
-=======
->>>>>>> 1364b69b3b23b304acc9775bef80ec4178723f35
   },
   fees: {
     taker: 0.25,
