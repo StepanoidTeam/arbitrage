@@ -21,9 +21,9 @@ for (let statIndex in statsArr) {
   allProfits.push(stats);
 
   progress({
+    message: "get profits",
     current: statIndex,
     max: statsArr.length - 1,
-    message: "get profits"
   });
 }
 
@@ -40,13 +40,13 @@ console.log(
     ({
       availProfit,
       exMinAsk: { ask, exName: askEx },
-      exMaxBid: { bid, exName: bixEx }
+      exMaxBid: { bid, exName: bixEx },
     }) => ({
       availProfit,
       bid,
       bixEx,
       ask,
-      askEx
+      askEx,
     })
   )
 );
