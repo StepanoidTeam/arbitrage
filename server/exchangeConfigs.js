@@ -19,18 +19,18 @@ const binance = {
   query: "/api/v1/depth?symbol=",
   pairs: {
     [PAIRS.BTC_USDT]: "BTCUSDT",
-    [PAIRS.XRP_USDT]: "XRPUSDT"
+    [PAIRS.XRP_USDT]: "XRPUSDT",
   },
   fees: {
-    taker: 0.1 //0.075 bnb
+    taker: 0.1, //0.075 bnb
   },
   mappers: {
     orderbook: data => ({
       bids: data.bids.slice(0, LIMIT_ORDERS),
-      asks: data.asks.slice(0, LIMIT_ORDERS)
+      asks: data.asks.slice(0, LIMIT_ORDERS),
     }),
-    order: data => ({ price: data[0], volume: data[1] })
-  }
+    order: data => ({ price: data[0], volume: data[1] }),
+  },
 };
 
 const bittrex = {
@@ -39,18 +39,18 @@ const bittrex = {
   query: "/api/v1.1/public/getorderbook?type=both&market=",
   pairs: {
     [PAIRS.BTC_USDT]: "USDT-BTC",
-    [PAIRS.XRP_USDT]: "USDT-XRP"
+    [PAIRS.XRP_USDT]: "USDT-XRP",
   },
   fees: {
-    taker: 0.25
+    taker: 0.25,
   },
   mappers: {
     orderbook: data => ({
       bids: data.result.buy.slice(0, LIMIT_ORDERS),
-      asks: data.result.sell.slice(0, LIMIT_ORDERS)
+      asks: data.result.sell.slice(0, LIMIT_ORDERS),
     }),
-    order: data => ({ price: data.Rate, volume: data.Quantity })
-  }
+    order: data => ({ price: data.Rate, volume: data.Quantity }),
+  },
 };
 
 const bitfinex = {
@@ -59,20 +59,19 @@ const bitfinex = {
   query: "/v1/book/",
   pairs: {
     [PAIRS.BTC_USDT]: "btcusd",
-    [PAIRS.XRP_USDT]: "xrpusd"
+    [PAIRS.XRP_USDT]: "xrpusd",
   },
   fees: {
-    taker: 0.2
+    taker: 0.2,
   },
   mappers: {
     orderbook: data => ({
       bids: data.bids.slice(0, LIMIT_ORDERS),
-      asks: data.asks.slice(0, LIMIT_ORDERS)
+      asks: data.asks.slice(0, LIMIT_ORDERS),
     }),
-    order: data => ({ price: data.price, volume: data.amount })
-  }
+    order: data => ({ price: data.price, volume: data.amount }),
+  },
 };
-
 
 const hitbtc = {
   name: "hitbtc",
@@ -80,18 +79,18 @@ const hitbtc = {
   query: "/api/2/public/orderbook/",
   pairs: {
     [PAIRS.BTC_USDT]: "BTCUSD",
-    [PAIRS.XRP_USDT]: "XRPUSD"
+    [PAIRS.XRP_USDT]: "XRPUSD",
   },
   fees: {
-    taker: 0.1
+    taker: 0.1,
   },
   mappers: {
     orderbook: data => ({
       bids: data.bid.slice(0, LIMIT_ORDERS),
-      asks: data.ask.slice(0, LIMIT_ORDERS)
+      asks: data.ask.slice(0, LIMIT_ORDERS),
     }),
-    order: data => ({ price: data.price, volume: data.size })
-  }
+    order: data => ({ price: data.price, volume: data.size }),
+  },
 };
 
 /*
@@ -142,10 +141,9 @@ const okex = {
 
 */
 
-
 module.exports = {
-  exchanges: { binance, bittrex, bitfinex },
-  PAIRS
+  exchanges: { binance, bittrex, bitfinex, hitbtc },
+  PAIRS,
 };
 
 //todo: pairs to add
