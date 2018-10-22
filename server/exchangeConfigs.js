@@ -88,7 +88,7 @@ const hitbtc = {
     return `${this.url}/api/2/public/orderbook/${this.pairs[pairIndex]}`;
   },
   pairs: {
-    [PAIRS.BTC_USDT]: "BTCUSDT",
+    [PAIRS.BTC_USDT]: "BTCUSD", //because of hitbtc's zagon
     [PAIRS.XRP_USDT]: "XRPUSDT",
   },
   fees: {
