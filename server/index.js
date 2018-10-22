@@ -5,11 +5,10 @@ const { exchanges, PAIRS } = require("./exchangeConfigs");
 const { scheduler } = require("./scheduler");
 const { appendJSONToFile } = require("./file");
 
-function getPairData(
-  { url, query, pairs, mappers, name },
-  pairIndex = PAIRS.BTC_USDT
-) {
-  let requestUrl = `${url}${query}${pairs[pairIndex]}`;
+function getPairData(exchange, pairIndex = PAIRS.BTC_USDT) {
+  let { mappers, name } = exchange;
+
+  let requestUrl = exchange.getOrderBook(pairIndex);
 
   return fetch(requestUrl)
     .then(data => data.json())
@@ -19,7 +18,7 @@ function getPairData(
         bids: bids.map(mappers.order),
         asks: asks.map(mappers.order),
         name,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
     });
 }
@@ -62,7 +61,7 @@ function produceExchangeTF(exchangeData) {
     ask: exchangeData.asks[0],
     bid: exchangeData.bids[0],
     timestamp: exchangeData.timestamp,
-    exName: exchangeData.name
+    exName: exchangeData.name,
   };
 
   return exTF;

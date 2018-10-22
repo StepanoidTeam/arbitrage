@@ -19,7 +19,9 @@ const PAIRS = {
 const binance = {
   name: "binance",
   url: "https://api.binance.com",
-  query: "/api/v1/depth?symbol=",
+  getOrderBook(pairIndex) {
+    return `${this.url}/api/v1/depth?symbol=${this.pairs[pairIndex]}`;
+  },
   pairs: {
     [PAIRS.BTC_USDT]: "BTCUSDT",
     [PAIRS.XRP_USDT]: "XRPUSDT",
@@ -44,7 +46,11 @@ const binance = {
 const bittrex = {
   name: "bittrex",
   url: "https://bittrex.com",
-  query: "/api/v1.1/public/getorderbook?type=both&market=",
+  getOrderBook(pairIndex) {
+    return `${this.url}/api/v1.1/public/getorderbook?type=both&market=${
+      this.pairs[pairIndex]
+    }`;
+  },
   pairs: {
     [PAIRS.BTC_USDT]: "USDT-BTC",
     [PAIRS.XRP_USDT]: "USDT-XRP",
@@ -68,7 +74,9 @@ const bittrex = {
 const bitfinex = {
   name: "bitfinex",
   url: "https://api.bitfinex.com",
-  query: "/v1/book/",
+  getOrderBook(pairIndex) {
+    return `${this.url}/v1/book/${this.pairs[pairIndex]}`;
+  },
   pairs: {
     [PAIRS.BTC_USDT]: "btcusd",
     [PAIRS.XRP_USDT]: "xrpusd",
@@ -88,10 +96,12 @@ const bitfinex = {
 const hitbtc = {
   name: "hitbtc",
   url: "https://api.hitbtc.com",
-  query: "/api/2/public/orderbook/",
+  getOrderBook(pairIndex) {
+    return `${this.url}/api/2/public/orderbook/${this.pairs[pairIndex]}`;
+  },
   pairs: {
-    [PAIRS.BTC_USDT]: "BTCUSD",
-    [PAIRS.XRP_USDT]: "XRPUSD",
+    [PAIRS.BTC_USDT]: "BTCUSDT",
+    [PAIRS.XRP_USDT]: "XRPUSDT",
   },
   fees: {
     taker: 0.1,
@@ -132,13 +142,15 @@ const huobi = {
 
 //https://www.okex.com/docs/en/#spot-data
 //GET /api/spot/v3/instruments/<instrument-id>/book
+
+https://www.okex.com/api/spot/v3/instruments/LTC-USDT/book?size=10
 const okex = {
   name: "okex",
   url: "https://www.okex.com/api",
   query: "/api/spot/v3/instruments/",
   pairs: {
-    [PAIRS.BTC_USDT]: "btcusdt",
-    [PAIRS.XRP_USDT]: "xrpusdt"
+    [PAIRS.BTC_USDT]: "zzz",
+    [PAIRS.XRP_USDT]: "zzz"
   },
   fees: {
     taker: 0.2
