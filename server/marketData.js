@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 
 const { binance } = require("./configs/exchanges/binance");
+const { saveDataToFile } = require("./file");
 
 let symbol = "BNBBTC";
 
@@ -10,4 +11,5 @@ fetch(`https://binance.com/api/v1/historicalTrades?symbol=${symbol}`, {
   },
 })
   .then(data => data.json())
-  .then(data => console.log(data));
+  .then(data => JSON.stringify(data))
+  .then(data => saveDataToFile("logs/marketDataCandels.json", data));
