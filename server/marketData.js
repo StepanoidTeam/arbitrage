@@ -1,12 +1,12 @@
 const fetch = require("node-fetch");
 
-const { apiKey } = require("./api-key");
+const { binance } = require("./configs/exchanges/binance");
 
 let symbol = "BNBBTC";
 
 fetch(`https://binance.com/api/v1/historicalTrades?symbol=${symbol}`, {
   headers: {
-    "X-MBX-APIKEY": apiKey,
+    "X-MBX-APIKEY": binance.apiKey,
   },
 })
   .then(data => data.json())

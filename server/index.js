@@ -1,7 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
 
-const { exchanges, PAIRS } = require("./exchangeConfigs");
+const { exchanges, PAIRS } = require("./configs");
 const { scheduler } = require("./scheduler");
 const { appendJSONToFile } = require("./file");
 
