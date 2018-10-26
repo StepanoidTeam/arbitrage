@@ -10,11 +10,5 @@ let tradeStreamName = `${symbol}@depth`;
 
 const ws = new WebSocket(getStreamUrl(tradeStreamName));
 
-ws.on("open", function open() {
-  console.log("opened");
-  //ws.send("connection open");
-});
-
-ws.on("message", function(data) {
-  console.log(data);
-});
+ws.on("open", () => console.log("opened"));
+ws.on("message", data => console.log(data));
