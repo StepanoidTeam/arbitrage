@@ -8,10 +8,26 @@ const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 ws.on("open", () => {
   console.log("opened");
 
-  let msg = JSON.stringify({
+  var msg = JSON.stringify({
     event: "subscribe",
     channel: "book",
-    symbol: "BTCUSD", //"ZRXBTC"
+    symbol: "btcusd", //"ZRXBTC"
+  });
+
+  ws.send(msg);
+
+  var msg = JSON.stringify({
+    event: "subscribe",
+    channel: "book",
+    symbol: "eosbtc", //"ZRXBTC"
+  });
+
+  ws.send(msg);
+
+  var msg = JSON.stringify({
+    event: "subscribe",
+    channel: "book",
+    symbol: "zrxeth", //"ZRXBTC"
   });
 
   ws.send(msg);
@@ -64,4 +80,6 @@ function onWsMessage(message) {
   }
 }
 
-ws.on("message", data => onWsMessage(JSON.parse(data)));
+//ws.on("message", data => onWsMessage(JSON.parse(data)));
+
+ws.on("message", data => console.log(JSON.parse(data)));
