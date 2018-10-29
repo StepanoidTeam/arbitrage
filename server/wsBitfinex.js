@@ -1,7 +1,8 @@
 const WebSocket = require("ws");
+const sortBy = require("lodash/sortBy");
 
 const endpoint = "wss://api.bitfinex.com";
-
+const depth = 5;
 const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
 ws.on("open", () => {
@@ -10,7 +11,7 @@ ws.on("open", () => {
   let msg = JSON.stringify({
     event: "subscribe",
     channel: "book",
-    symbol: "tBTCUSD",
+    symbol: "BTCUSD", //"ZRXBTC"
   });
 
   ws.send(msg);
@@ -18,19 +19,38 @@ ws.on("open", () => {
 
 let orderBook = {};
 
-function initBook(data) {
-  let half = data.length / 2;
+function drawBook() {
+  console.clear();
 
-  orderBook = {
-    bids: data.slice(0, half),
-    asks: data.slice(half),
+  const ob = Array.from(orderBook).map(x => x[1]);
+  const bids = sortBy(ob.filter(x => x[2] > 0), [x => x[0]]).reverse();
+  const asks = sortBy(ob.filter(x => x[2] < 0), x => x[0]);
+
+  const orderbook = {
+    bids: bids.slice(0, depth).map(([price, count, amount]) => [price, amount]),
+    asks: asks.slice(0, depth).map(([price, count, amount]) => [price, amount]),
   };
 
-  console.log("init", orderBook);
+  console.log(orderbook);
+}
+
+function initBook(data) {
+  const mapOrder = data => [data[0], data];
+  orderBook = new Map(data.map(mapOrder));
 }
 
 function updateBook(data) {
-  console.log(data);
+  let [price, count, amount] = data;
+
+  if (count > 0) {
+    //add or update
+    orderBook.set(price, [price, count, amount]);
+  } else {
+    //delete
+    orderBook.delete(price);
+  }
+
+  drawBook();
 }
 
 function onWsMessage(message) {
