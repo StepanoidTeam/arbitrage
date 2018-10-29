@@ -99,6 +99,18 @@ client.serviceHandlers.connected = function(connection) {
       console.log("Subscribed to " + symbol);
     }
   });
+
+  //subscribe to orderbook changes
+  // client
+  //   .call("c2", "SubscribeToExchangeDeltas", "USDT-ETH")
+  //   .done((err, result) => {
+  //     if (err) {
+  //       return console.error(err);
+  //     }
+  //     if (result === true) {
+  //       console.log("Subscribed to " + "USDT-ETH");
+  //     }
+  //   });
 };
 
 client.serviceHandlers.messageReceived = function(message) {
@@ -117,7 +129,7 @@ client.serviceHandlers.messageReceived = function(message) {
           zlib.inflateRaw(raw, function(err, inflated) {
             if (!err) {
               let json = JSON.parse(inflated.toString("utf8"));
-              console.log(json);
+              //console.log(json);
 
               updateBook(json);
               drawBook();
