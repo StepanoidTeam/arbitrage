@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
-const { binance } = require("./configs/exchanges/binance");
-const { saveDataToFile } = require("./helpers/file");
+const { binance } = require("../configs/exchanges/binance");
+const { saveDataToFile } = require("../helpers/file");
 
 let symbol = "BNBBTC";
 
