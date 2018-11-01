@@ -1,12 +1,12 @@
-const { bibox } = require("bibox");
-const { binance } = require("binance");
-const { bitfinex } = require("bitfinex");
-const { bittrex } = require("bittrex");
-const { gate } = require("gate");
-const { hitbtc } = require("hitbtc");
-const { huobi } = require("huobi");
-const { kucoin } = require("kucoin");
-const { okex } = require("okex");
+const { bibox } = require("./bibox");
+const { binance } = require("./binance");
+const { bitfinex } = require("./bitfinex");
+const { bittrex } = require("./bittrex");
+const { gate } = require("./gate");
+const { hitbtc } = require("./hitbtc");
+const { huobi } = require("./huobi");
+const { kucoin } = require("./kucoin");
+const { okex } = require("./okex");
 
 module.exports = {
   bibox,
