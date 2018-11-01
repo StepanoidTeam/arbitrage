@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 const { exchanges, PAIRS } = require("./configs");
 const { scheduler } = require("./scheduler");
-const { appendJSONToFile } = require("./file");
+const { appendJSONToFile } = require("./helpers/file");
 
 function getPairData(exchange, pairIndex = PAIRS.BTC_USDT) {
   let { mappers, name } = exchange;

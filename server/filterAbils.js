@@ -2,7 +2,7 @@ const fs = require("fs");
 const { maxBy, minBy, round, sortBy, uniqBy } = require("lodash");
 
 const { progress } = require("./cli-progress");
-const { appendJSONToFile, readLines } = require("./file");
+const { appendJSONToFile, readLines } = require("./helpers/file");
 
 let logFileName = process.argv[2];
 const getFilePath = filename => `./logs/${filename}`;

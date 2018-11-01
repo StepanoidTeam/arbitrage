@@ -2,7 +2,7 @@ const { maxBy, minBy, round } = require("lodash");
 
 const { exchanges } = require("./exchangeConfigs");
 const { progress } = require("./cli-progress");
-const { appendJSONToFile, readLines } = require("./file");
+const { appendJSONToFile, readLines } = require("./helpers/file");
 
 function appendNetProfit(stats) {
   let { exMinAsk, exMaxBid, availVolume, availProfit } = stats;
