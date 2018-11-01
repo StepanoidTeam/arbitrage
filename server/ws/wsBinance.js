@@ -33,13 +33,13 @@ function getSourceForPairs(pairs = []) {
       //todo: optimize/replace find by dictionary
       let { pair } = pairStreams.find(ps => ps.stream === stream);
 
-      let event = {
+      let bookTop = {
         pair,
         bid: orderbook.bids.map(([a, b]) => [+a, +b]).shift(),
         ask: orderbook.asks.map(([a, b]) => [+a, +b]).shift(),
       };
 
-      return event;
+      return bookTop;
     })
   );
 
