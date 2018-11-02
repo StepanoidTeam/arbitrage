@@ -2,7 +2,7 @@ const { PAIRS } = require("../configs");
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
 
-const pairs = [PAIRS.BTC_USDT]; //, PAIRS.EOS_BTC
+const pairs = [PAIRS.BTC_USDT, PAIRS.XRP_USDT]; //, PAIRS.EOS_BTC
 
 // wsBinance(pairs).subscribe(val => {
 //   console.clear();

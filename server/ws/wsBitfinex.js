@@ -1,85 +1,143 @@
 const WebSocket = require("ws");
 const sortBy = require("lodash/sortBy");
 
-const endpoint = "wss://api.bitfinex.com";
-const depth = 5;
-const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
+const { fromEvent, Subject } = require("rxjs");
+const { map, filter } = require("rxjs/operators");
 
-ws.on("open", () => {
-  console.log("opened");
+const {
+  exchanges: { bitfinex },
+} = require("../configs");
 
-  var msg = JSON.stringify({
-    event: "subscribe",
-    channel: "book",
-    symbol: "btcusd", //"ZRXBTC"
+function getSourceForPairs(pairs = []) {
+  const subject = new Subject();
+
+  //todo: rx-ify this
+  let orderBooks = {};
+  const depth = 5;
+  const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
+
+  //todo: make some common apporoach for that cases
+
+  const pairMapping = pairs.map(globalPair => ({
+    localPair: bitfinex.pairs[globalPair],
+    globalPair,
+  }));
+
+  ws.on("open", () => {
+    pairs
+      .map(pair => bitfinex.pairs[pair])
+      .map(symbol => ({
+        event: "subscribe",
+        channel: "book",
+        symbol,
+      }))
+      .map(msg => JSON.stringify(msg))
+      .forEach(msg => ws.send(msg));
   });
 
-  ws.send(msg);
+  function produceBook(orderBook, localPair) {
+    const ob = Array.from(orderBook).map(x => x[1]);
+    const bids = sortBy(ob.filter(x => x[2] > 0), [x => x[0]]).reverse();
+    const asks = sortBy(ob.filter(x => x[2] < 0), x => x[0]);
 
-  var msg = JSON.stringify({
-    event: "subscribe",
-    channel: "book",
-    symbol: "eosbtc", //"ZRXBTC"
-  });
+    let { globalPair } = pairMapping.find(p => p.localPair === localPair);
 
-  ws.send(msg);
+    const bookTop = {
+      pair: globalPair,
+      bid: bids
+        .slice(0, depth)
+        .map(([price, count, amount]) => [price, amount])
+        .shift(),
+      ask: asks
+        .slice(0, depth)
+        .map(([price, count, amount]) => [price, amount])
+        .shift(),
+    };
 
-  var msg = JSON.stringify({
-    event: "subscribe",
-    channel: "book",
-    symbol: "zrxeth", //"ZRXBTC"
-  });
-
-  ws.send(msg);
-});
-
-let orderBook = {};
-
-function drawBook() {
-  console.clear();
-
-  const ob = Array.from(orderBook).map(x => x[1]);
-  const bids = sortBy(ob.filter(x => x[2] > 0), [x => x[0]]).reverse();
-  const asks = sortBy(ob.filter(x => x[2] < 0), x => x[0]);
-
-  const orderbook = {
-    bids: bids.slice(0, depth).map(([price, count, amount]) => [price, amount]),
-    asks: asks.slice(0, depth).map(([price, count, amount]) => [price, amount]),
-  };
-
-  console.log(orderbook);
-}
-
-function initBook(data) {
-  const mapOrder = data => [data[0], data];
-  orderBook = new Map(data.map(mapOrder));
-}
-
-function updateBook(data) {
-  let [price, count, amount] = data;
-
-  if (count > 0) {
-    //add or update
-    orderBook.set(price, [price, count, amount]);
-  } else {
-    //delete
-    orderBook.delete(price);
+    subject.next(bookTop);
+    return bookTop;
   }
 
-  drawBook();
-}
+  let source = fromEvent(ws, "message").pipe(
+    map(event => event.data),
+    map(data => JSON.parse(data))
+  );
 
-function onWsMessage(message) {
-  if (message.event) return;
+  const pairStreams = [];
 
-  let [id, data] = message;
-  if (Array.isArray(data[0])) {
-    initBook(data);
-  } else {
-    updateBook(data);
+  /*
+  //connect
+  { event: 'subscribed',
+    channel: 'book',
+    chanId: 1220186,
+    symbol: 'tXRPUSD',
+    prec: 'P0',
+    freq: 'F0',
+    len: '25',
+    pair: 'XRPUSD' }
+ */
+  //save opened streams
+  source
+    .pipe(
+      filter(data => data.event === "subscribed"),
+      map(({ chanId, pair }) => ({
+        chanId,
+        pair,
+      }))
+    )
+    .subscribe(stream => pairStreams.push(stream));
+
+  /* 
+  
+  //update
+  [ 1220186,
+    [ [ 0.45861, 2, 1591.47202851 ],...]
+  */
+  //map orderbooks to opened streams
+  source
+    .pipe(
+      filter(data => Array.isArray(data)),
+      map(([chanId, orderBook]) => {
+        let stream = pairStreams.find(stream => stream.chanId === chanId);
+        // console.log("@stream", stream);
+        return {
+          pair: stream.pair,
+          orderBook,
+        };
+      })
+    )
+    .subscribe(data => onWsMessage(data));
+
+  function onWsMessage({ pair, orderBook }) {
+    if (Array.isArray(orderBook[0])) {
+      initBook(orderBook, pair);
+    } else {
+      updateBook(orderBook, pair);
+    }
   }
+
+  function initBook(orderBook, pair) {
+    const mapOrder = data => [data[0], data];
+    orderBooks[pair] = new Map(orderBook.map(mapOrder));
+  }
+
+  function updateBook(data, pair) {
+    let [price, count, amount] = data;
+
+    if (count > 0) {
+      //add or update
+      orderBooks[pair].set(price, [price, count, amount]);
+    } else {
+      //delete
+      orderBooks[pair].delete(price);
+    }
+
+    produceBook(orderBooks[pair], pair);
+  }
+
+  //source.subscribe(data => console.log(data));
+
+  return subject;
 }
 
-//ws.on("message", data => onWsMessage(JSON.parse(data)));
-
-ws.on("message", data => console.log(JSON.parse(data)));
+module.exports = { getSourceForPairs };

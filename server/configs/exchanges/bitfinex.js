@@ -7,8 +7,8 @@ const bitfinex = {
     return `${this.url}/v1/book/${this.pairs[pairIndex]}`;
   },
   pairs: {
-    [PAIRS.BTC_USDT]: "btcusd",
-    [PAIRS.XRP_USDT]: "xrpusd",
+    [PAIRS.BTC_USDT]: "BTCUSD", //uppercased for ws!
+    [PAIRS.XRP_USDT]: "XRPUSD",
   },
   fees: {
     taker: 0.2,
