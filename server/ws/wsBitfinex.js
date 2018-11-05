@@ -9,6 +9,11 @@ const {
 } = require("../configs");
 
 function getSourceForPairs(pairs = []) {
+  //limitation just because bitfinex
+  // gives different response when sub to 1 or 2-n pairs
+  if (pairs.length < 2)
+    throw new Error("bitfinex ws works with 2 pairs minimum, sorry");
+
   const subject = new Subject();
 
   //todo: rx-ify this
@@ -50,7 +55,7 @@ function getSourceForPairs(pairs = []) {
         .shift(),
       ask: asks
         .slice(0, depth)
-        .map(([price, count, amount]) => [price, amount])
+        .map(([price, count, amount]) => [price, -amount])
         .shift(),
     };
 
