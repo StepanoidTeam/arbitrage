@@ -14,22 +14,26 @@ let sources = [wsBinance, wsBitfinex, wsBittrex].map(ex => ex(pairs));
 function listenAllPairs(pairs) {
   //const subject = new Subject();
 
-  pairs.forEach(pair => {
+  let aggPairs = pairs.map(pair => {
     //all exchanges sources for 1 pair
     let pairSources = sources.map(s =>
       s.pipe(filter(data => data.pair === pair))
     );
 
-    combineLatest(...pairSources).subscribe(srcDatas => {
-      //all exchanges data for 1 pair
+    //combine all exchanges data for 1 pair into 1 stream
+    return combineLatest(...pairSources);
+  });
 
-      //todo: analyse all data for 1 pair
-      //save that info into file?
+  //todo: this combine is just for test purposes!!!
+  combineLatest(...aggPairs).subscribe(allPairsDataAgg => {
+    //all pairs data aggregated from all ex's by pair
+    //todo: analyse all data for 1 pair
+    //save that info into file?
 
-      console.clear();
-      srcDatas.forEach(data => console.log(data));
-
-      //todo: somehow concat diff pairs into one tick?
+    console.clear();
+    allPairsDataAgg.forEach(aggPair => {
+      console.log(aggPair[0].pair);
+      aggPair.forEach(ex => console.log(ex.bid, ex.ask));
     });
   });
 }
