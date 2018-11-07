@@ -82,6 +82,10 @@ function logAnalytics() {
   aggStats.forEach(aggPairSource => {
     aggPairSource.subscribe(stats => {
       if (stats === null) return;
+
+      //skip shit deals
+      if (stats.netProfit <= 0) return;
+
       const logFilePath = `./logs/stats-${stats.pair}-${timeStarted}.log`;
       appendJSONToFile(logFilePath, stats);
     });
