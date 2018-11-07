@@ -70,14 +70,18 @@ function listenAllPairs(pairs) {
   return aggPairs;
 }
 
-let aggPairSources = listenAllPairs(pairs).map(aggPairSrc =>
+let aggPairSources = listenAllPairs(pairs);
+
+const aggStats = aggPairSources.map(aggPairSrc =>
   aggPairSrc.pipe(map(aggPair => getStatsFromTimeframe(aggPair)))
 );
 
 function logAnalytics() {
   const timeStarted = Date.now();
-  aggPairSources.forEach(aggPairSource => {
+
+  aggStats.forEach(aggPairSource => {
     aggPairSource.subscribe(stats => {
+      if (stats === null) return;
       const logFilePath = `./logs/stats-${stats.pair}-${timeStarted}.log`;
       appendJSONToFile(logFilePath, stats);
     });
