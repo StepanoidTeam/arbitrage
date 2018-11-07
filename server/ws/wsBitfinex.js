@@ -24,14 +24,17 @@ function getSourceForPairs(globalPairs = []) {
   const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
   ws.on("open", () => {
+    console.log(`${bitfinex.name} - connected`);
     pairs
       .map(({ localPair: symbol }) => ({
         event: "subscribe",
         channel: "book",
         symbol,
       }))
-      .map(msg => JSON.stringify(msg))
-      .forEach(msg => ws.send(msg));
+      .forEach(msg => {
+        ws.send(JSON.stringify(msg));
+        console.log(`${bitfinex.name} - subscribed for: ${msg.symbol}`);
+      });
   });
 
   function produceBook(orderBook, localPair) {
