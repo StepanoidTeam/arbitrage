@@ -10,7 +10,49 @@ const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
 const { getSourceForPairs: wsBittrex } = require("./wsBittrex");
 
-const pairs = [PAIRS.BTC_USDT, PAIRS.XRP_USDT]; //, PAIRS.EOS_BTC
+const pairs = [
+  PAIRS.BTC_USDT,
+  PAIRS.XRP_USDT,
+  PAIRS.ETH_USDT,
+  PAIRS.ETC_USDT,
+  PAIRS.XRP_BTC,
+  PAIRS.ETH_BTC,
+  PAIRS.NEO_USDT,
+  PAIRS.LTC_USDT,
+  PAIRS.XMR_BTC,
+  PAIRS.ETC_BTC,
+  PAIRS.LTC_BTC,
+  PAIRS.NEO_BTC,
+  PAIRS.TRX_USDT,
+  PAIRS.ZEC_BTC,
+  PAIRS.DASH_BTC,
+  PAIRS.QTUM_BTC,
+  PAIRS.NEO_ETH,
+  PAIRS.XLM_BTC,
+  PAIRS.TRX_BTC,
+  PAIRS.QTUM_ETH,
+  PAIRS.TRX_ETH,
+  PAIRS.XVG_BTC,
+  PAIRS.XLM_ETH,
+  PAIRS.ZRX_ETH,
+  PAIRS.OMG_BTC,
+  PAIRS.BAT_BTC,
+  PAIRS.ZRX_BTC,
+  PAIRS.BAT_ETH,
+  PAIRS.REP_ETH,
+  PAIRS.OMG_ETH,
+  PAIRS.RLC_ETH,
+  PAIRS.SNT_ETH,
+  PAIRS.GNT_BTC,
+  PAIRS.RLC_BTC,
+  PAIRS.REP_BTC,
+  PAIRS.GNT_ETH,
+  PAIRS.SNT_BTC,
+  PAIRS.LRC_BTC,
+  PAIRS.BNT_BTC,
+  PAIRS.RCN_BTC,
+  PAIRS.BNT_ETH,
+];
 
 let sources = [wsBinance, wsBitfinex, wsBittrex].map(ex => ex(pairs));
 
