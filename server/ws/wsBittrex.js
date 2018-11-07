@@ -8,15 +8,14 @@ const sortBy = require("lodash/sortBy");
 
 const {
   exchanges: { bittrex },
+  getLocalPairs,
 } = require("../configs");
 
-function getSourceForPairs(pairs = []) {
+function getSourceForPairs(globalPairs = []) {
   //todo: make some common apporoach for that cases
 
-  const pairMapping = pairs.map(globalPair => ({
-    localPair: bittrex.pairs[globalPair],
-    globalPair,
-  }));
+  const pairs = getLocalPairs(globalPairs, bittrex);
+
   //todo: rx-ify this
   let orderBooks = {};
 
@@ -87,48 +86,46 @@ function getSourceForPairs(pairs = []) {
       }
     };
 
-    //console.log(orderBooks[pair]);
-
     asks.forEach(applyUpdates(orderBooks[pair].asks));
     bids.forEach(applyUpdates(orderBooks[pair].bids));
   }
 
   client.serviceHandlers.connected = function(connection) {
-    console.log("connected");
+    console.log(`${bittrex.name} connected`);
 
-    pairs.map(pair => bittrex.pairs[pair]).forEach(pair => {
+    pairs.forEach(pair => {
       //get initial orderbook
-      client.call("c2", "QueryExchangeState", pair).done((err, result) => {
-        if (err) {
-          return console.error(err);
-        }
-        if (result) {
-          let raw = new Buffer.from(result, "base64");
-          zlib.inflateRaw(raw, function(err, inflated) {
-            if (!err) {
-              json = JSON.parse(inflated.toString("utf8"));
+      client
+        .call("c2", "QueryExchangeState", pair.localPair)
+        .done((err, result) => {
+          if (err) {
+            return console.error(err);
+          }
+          if (result) {
+            let raw = new Buffer.from(result, "base64");
+            zlib.inflateRaw(raw, function(err, inflated) {
+              if (!err) {
+                console.log(
+                  `${bittrex.name} - got orderbook for: ${pair.localPair}`
+                );
+                json = JSON.parse(inflated.toString("utf8"));
 
-              let localPair = json.M;
-              let { globalPair } = pairMapping.find(
-                p => p.localPair === localPair
-              );
-              initBook(json, globalPair);
-
-              produceBook(globalPair);
-            }
-          });
-        }
-      });
+                initBook(json, pair.globalPair);
+                produceBook(pair.globalPair);
+              }
+            });
+          }
+        });
 
       //subscribe to orderbook changes
       client
-        .call("c2", "SubscribeToExchangeDeltas", pair)
+        .call("c2", "SubscribeToExchangeDeltas", pair.localPair)
         .done((err, result) => {
           if (err) {
             return console.error(err);
           }
           if (result === true) {
-            console.log("Subscribed to " + pair);
+            console.log(`${bittrex.name} - subscribed to: ${pair.localPair}`);
           }
         });
     });
@@ -154,9 +151,7 @@ function getSourceForPairs(pairs = []) {
                 //console.log(json);
 
                 let localPair = json.M;
-                let { globalPair } = pairMapping.find(
-                  p => p.localPair === localPair
-                );
+                let { globalPair } = pairs.find(p => p.localPair === localPair);
 
                 updateBook(json, globalPair);
 

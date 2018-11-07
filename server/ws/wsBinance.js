@@ -4,21 +4,22 @@ const { map } = require("rxjs/operators");
 
 const {
   exchanges: { binance },
+  getLocalPairs,
 } = require("../configs");
 
 const depth = 5; // 5, 10
 
-function getStreamName(pair) {
-  let stream = `${binance.pairs[pair].toLowerCase()}@depth${depth}`;
-
+function getStreamName({ globalPair, localPair }) {
+  let stream = `${localPair.toLowerCase()}@depth${depth}`;
   return {
-    pair,
+    localPair,
+    globalPair,
     stream,
   };
 }
 
-function getSourceForPairs(pairs = []) {
-  let pairStreams = pairs.map(getStreamName);
+function getSourceForPairs(globalPairs = []) {
+  let pairStreams = getLocalPairs(globalPairs, binance).map(getStreamName);
 
   let wsUrl = `wss://stream.binance.com:9443/stream?streams=${pairStreams
     .map(ps => ps.stream)
@@ -26,12 +27,14 @@ function getSourceForPairs(pairs = []) {
 
   const ws = new WebSocket(wsUrl);
 
+  console.log("binance connected:", wsUrl);
+
   let source = fromEvent(ws, "message").pipe(
     map(event => event.data),
     map(data => JSON.parse(data)),
     map(({ data: orderbook, stream }) => {
       //todo: optimize/replace find by dictionary
-      let { pair } = pairStreams.find(ps => ps.stream === stream);
+      let { globalPair: pair } = pairStreams.find(ps => ps.stream === stream);
 
       let bookTop = {
         exName: binance.name,
