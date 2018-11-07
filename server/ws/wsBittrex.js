@@ -86,6 +86,13 @@ function getSourceForPairs(globalPairs = []) {
       }
     };
 
+    if (!orderBooks[pair]) {
+      console.warn(
+        `⛔️  shit! ${pair} not found for ${JSON.stringify(orderBooks)}`
+      );
+      return;
+    }
+
     asks.forEach(applyUpdates(orderBooks[pair].asks));
     bids.forEach(applyUpdates(orderBooks[pair].bids));
   }
