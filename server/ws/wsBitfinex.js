@@ -6,9 +6,11 @@ const { map, filter } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex },
+  getLocalPairs,
 } = require("../configs");
 
-function getSourceForPairs(pairs = []) {
+function getSourceForPairs(globalPairs = []) {
+  let pairs = getLocalPairs(globalPairs, bitfinex);
   //limitation just because bitfinex
   // gives different response when sub to 1 or 2-n pairs
   if (pairs.length < 2)
@@ -21,23 +23,18 @@ function getSourceForPairs(pairs = []) {
   const depth = 5;
   const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
-  //todo: make some common apporoach for that cases
-
-  const pairMapping = pairs.map(globalPair => ({
-    localPair: bitfinex.pairs[globalPair],
-    globalPair,
-  }));
-
   ws.on("open", () => {
+    console.log(`${bitfinex.name} - connected`);
     pairs
-      .map(pair => bitfinex.pairs[pair])
-      .map(symbol => ({
+      .map(({ localPair: symbol }) => ({
         event: "subscribe",
         channel: "book",
         symbol,
       }))
-      .map(msg => JSON.stringify(msg))
-      .forEach(msg => ws.send(msg));
+      .forEach(msg => {
+        ws.send(JSON.stringify(msg));
+        console.log(`${bitfinex.name} - subscribed for: ${msg.symbol}`);
+      });
   });
 
   function produceBook(orderBook, localPair) {
@@ -45,7 +42,7 @@ function getSourceForPairs(pairs = []) {
     const bids = sortBy(ob.filter(x => x[2] > 0), [x => x[0]]).reverse();
     const asks = sortBy(ob.filter(x => x[2] < 0), x => x[0]);
 
-    let { globalPair } = pairMapping.find(p => p.localPair === localPair);
+    let { globalPair } = pairs.find(p => p.localPair === localPair);
 
     const bookTop = {
       exName: bitfinex.name,
