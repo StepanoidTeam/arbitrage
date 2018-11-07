@@ -1,48 +1,5 @@
-const { maxBy, minBy, round } = require("lodash");
-
-const { exchanges } = require("./exchangeConfigs");
-const { progress } = require("./cli-progress");
+const { progress } = require("./helpers/cli-progress");
 const { appendJSONToFile, readLines } = require("./helpers/file");
-
-function appendNetProfit(stats) {
-  let { exMinAsk, exMaxBid, availVolume, availProfit } = stats;
-
-  let buyFeePt = exchanges[exMinAsk.exName].fees.taker;
-  let sellFeePt = exchanges[exMaxBid.exName].fees.taker;
-
-  let buyFee = (exMinAsk.ask.price * availVolume * buyFeePt) / 100;
-  let sellFee = (exMaxBid.bid.price * availVolume * sellFeePt) / 100;
-
-  let netProfit = availProfit - buyFee - sellFee;
-
-  return { ...stats, netProfit };
-}
-
-function getStatsFromTimeframe(timeframe) {
-  let exMinAsk = minBy(timeframe, exTF => +exTF.ask.price);
-  let exMaxBid = maxBy(timeframe, exTF => +exTF.bid.price);
-
-  let priceDiff = exMaxBid.bid.price - exMinAsk.ask.price;
-  let priceDiffPt = (priceDiff / exMinAsk.ask.price) * 100;
-  let availVolume = Math.min(exMinAsk.ask.volume, exMaxBid.bid.volume);
-  let availProfit = availVolume * priceDiff;
-
-  if (exMinAsk.exName === exMaxBid.exName) {
-    //console.log("no profit", availProfit);
-    return null;
-  }
-
-  let stats = {
-    exMinAsk,
-    exMaxBid,
-    priceDiff,
-    priceDiffPt,
-    availVolume,
-    availProfit,
-  };
-
-  return appendNetProfit(stats);
-}
 
 const getFilePath = fileName => `./logs/${fileName}.log`;
 
@@ -131,5 +88,7 @@ function nonZeroProfit({ netProfit }) {
   return netProfit > 0;
 }
 
-filterStats(logFileName, [uniqueExchanges, nonZeroProfit]);
+//filterStats(logFileName, [uniqueExchanges, nonZeroProfit]);
 //processTimeframes(logFileName);
+
+module.exports = { getStatsFromTimeframe };
