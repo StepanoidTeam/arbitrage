@@ -1,6 +1,4 @@
-const { fromEvent, Subject } = require("rxjs");
-
-const { map } = require("rxjs/operators");
+const { Subject } = require("rxjs");
 
 const signalR = require("signalr-client");
 const jsonic = require("jsonic");
@@ -27,26 +25,35 @@ function getSourceForPairs(pairs = []) {
   const client = new signalR.client("wss://beta.bittrex.com/signalr", ["c2"]);
 
   function produceBook(pair) {
-    // const orderbook = {
-    //   bids: bids.slice(0, depth).map(([price, count, amount]) => [price, amount]),
-    //   asks: asks.slice(0, depth).map(([price, count, amount]) => [price, amount]),
-    // };
+    const bid = sortBy([...orderBooks[pair].bids.values()], x => x.price)
+      .reverse()
+      .shift();
+
+    const ask = sortBy(
+      [...orderBooks[pair].asks.values()],
+      x => x.price
+    ).shift();
 
     subject.next({
+      exName: bittrex.name,
       pair,
-      bid: sortBy([...orderBooks[pair].bids.values()], x => x[0])
-        .reverse()
-        .shift(),
-      ask: sortBy([...orderBooks[pair].asks.values()], x => x[0]).shift(),
+      bid,
+      ask,
     });
   }
 
   function initBook(json, pair) {
     //todo: how can i understand what pair came?
-    let bidArr = json.Z.map(({ R: price, Q: amount }) => [price, amount]);
-    let askArr = json.S.map(({ R: price, Q: amount }) => [price, amount]);
+    let bidArr = json.Z.map(({ R: price, Q: volume }) => ({
+      price,
+      volume,
+    }));
+    let askArr = json.S.map(({ R: price, Q: volume }) => ({
+      price,
+      volume,
+    }));
 
-    const mapOrder = data => [data[0], data];
+    const mapOrder = data => [data.price, data];
 
     orderBooks[pair] = {
       bids: new Map(bidArr.map(mapOrder)),
@@ -69,11 +76,11 @@ function getSourceForPairs(pairs = []) {
     const applyUpdates = bookpart => ({
       TY: updateType,
       R: price,
-      Q: amount,
+      Q: volume,
     }) => {
       if (updateType === 0 || updateType === 2) {
         //0 = ADD, 2 = UPDATE
-        bookpart.set(price, [price, amount]);
+        bookpart.set(price, { price, volume });
       } else {
         // 1 = REMOVE
         bookpart.delete(price);

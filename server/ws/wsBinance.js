@@ -34,9 +34,14 @@ function getSourceForPairs(pairs = []) {
       let { pair } = pairStreams.find(ps => ps.stream === stream);
 
       let bookTop = {
+        exName: binance.name,
         pair,
-        bid: orderbook.bids.map(([a, b]) => [+a, +b]).shift(),
-        ask: orderbook.asks.map(([a, b]) => [+a, +b]).shift(),
+        bid: orderbook.bids
+          .map(([price, volume]) => ({ price: +price, volume: +volume }))
+          .shift(),
+        ask: orderbook.asks
+          .map(([price, volume]) => ({ price: +price, volume: +volume }))
+          .shift(),
       };
 
       return bookTop;

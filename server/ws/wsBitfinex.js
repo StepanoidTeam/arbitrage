@@ -48,14 +48,15 @@ function getSourceForPairs(pairs = []) {
     let { globalPair } = pairMapping.find(p => p.localPair === localPair);
 
     const bookTop = {
+      exName: bitfinex.name,
       pair: globalPair,
       bid: bids
         .slice(0, depth)
-        .map(([price, count, amount]) => [price, amount])
+        .map(([price, count, amount]) => ({ price, amount }))
         .shift(),
       ask: asks
         .slice(0, depth)
-        .map(([price, count, amount]) => [price, -amount])
+        .map(([price, count, amount]) => ({ price, amount: -amount }))
         .shift(),
     };
 
