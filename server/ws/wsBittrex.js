@@ -105,9 +105,9 @@ function getSourceForPairs(globalPairs = []) {
             let raw = new Buffer.from(result, "base64");
             zlib.inflateRaw(raw, function(err, inflated) {
               if (!err) {
-                console.log(
-                  `${bittrex.name} - got orderbook for: ${pair.localPair}`
-                );
+                // console.log(
+                //   `${bittrex.name} - got orderbook for: ${pair.localPair}`
+                // );
                 json = JSON.parse(inflated.toString("utf8"));
 
                 initBook(json, pair.globalPair);
