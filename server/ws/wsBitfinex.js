@@ -52,11 +52,11 @@ function getSourceForPairs(pairs = []) {
       pair: globalPair,
       bid: bids
         .slice(0, depth)
-        .map(([price, count, amount]) => ({ price, amount }))
+        .map(([price, count, volume]) => ({ price, volume }))
         .shift(),
       ask: asks
         .slice(0, depth)
-        .map(([price, count, amount]) => ({ price, amount: -amount }))
+        .map(([price, count, volume]) => ({ price, volume: -volume }))
         .shift(),
     };
 
