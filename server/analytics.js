@@ -28,6 +28,7 @@ function getStatsFromTimeframe(timeframe) {
   let { pair } = exMinAsk;
 
   let stats = {
+    timestamp: Date.now(),
     pair,
     exMinAsk,
     exMaxBid,
