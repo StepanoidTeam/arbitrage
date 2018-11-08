@@ -112,7 +112,7 @@ function logAnalytics() {
   const timeStarted = Date.now();
 
   const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/stats-${pair}-${timeStarted}.log`;
+    `./logs/${subdir}/stats-${pair}-${timeStarted}.csv`;
 
   aggStats.forEach(aggPairSource => {
     aggPairSource.pipe(first()).subscribe(stats => {
