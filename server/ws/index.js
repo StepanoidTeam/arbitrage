@@ -3,7 +3,7 @@ const { map } = require("rxjs/operators");
 
 const { filter, first } = require("rxjs/operators");
 
-const { appendJSONToFile } = require("../helpers/file");
+const { appendTextToFile, makeDir } = require("../helpers/file");
 const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
 const { PAIRS } = require("../configs");
@@ -82,21 +82,55 @@ const aggStats = aggPairSources.map(aggPairSrc =>
   )
 );
 
+function getMiniStats({
+  timestamp,
+  pair,
+  exMinAsk: {
+    exName: minAskExName,
+    ask: { price: minAskPrice },
+  },
+  exMaxBid: {
+    exName: maxBidExName,
+    bid: { price: maxBidPrice },
+  },
+  availVolume,
+  netProfit,
+}) {
+  return {
+    date: new Date(timestamp).toISOString(),
+    pair,
+    minAskExName,
+    minAskPrice,
+    maxBidExName,
+    maxBidPrice,
+    availVolume,
+    netProfit,
+  };
+}
+
 function logAnalytics() {
   const timeStarted = Date.now();
 
+  const getLogName = (subdir, pair) =>
+    `./logs/${subdir}/stats-${pair}-${timeStarted}.log`;
+
   aggStats.forEach(aggPairSource => {
-    aggPairSource.pipe(first(stats => stats !== null)).subscribe(stats => {
-      //todo: make header csv
-      const logFilePath = `./logs/stats-${stats.pair}-${timeStarted}.log`;
-      let csvHeader = getCsvHeaders(stats);
-      appendJSONToFile(logFilePath, csvHeader);
+    aggPairSource.pipe(first()).subscribe(stats => {
+      makeDir("./logs/max");
+      makeDir("./logs/min");
+      appendTextToFile(getLogName("max", stats.pair), getCsvHeaders(stats));
+      appendTextToFile(
+        getLogName("min", stats.pair),
+        getCsvHeaders(getMiniStats(stats))
+      );
     });
 
     aggPairSource.subscribe(stats => {
-      const logFilePath = `./logs/stats-${stats.pair}-${timeStarted}.log`;
-      let csvValues = getCsvValues(stats);
-      appendJSONToFile(logFilePath, csvValues);
+      appendTextToFile(getLogName("max", stats.pair), getCsvValues(stats));
+      appendTextToFile(
+        getLogName("min", stats.pair),
+        getCsvValues(getMiniStats(stats))
+      );
     });
   });
 }
