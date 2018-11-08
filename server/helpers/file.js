@@ -26,6 +26,10 @@ function appendDataToFile(filepath, data) {
   fs.appendFileSync(filepath, data);
 }
 
+function makeDir(filepath) {
+  fs.mkdirSync(filepath, { recursive: true });
+}
+
 function readLines(filepath) {
   return fs
     .readFileSync(filepath)
@@ -34,9 +38,11 @@ function readLines(filepath) {
 }
 
 module.exports = {
+  makeDir,
   getDataFromFile,
   saveDataToFile,
   appendDataToFile,
+  appendTextToFile,
   appendJSONToFile,
   readLines,
 };
