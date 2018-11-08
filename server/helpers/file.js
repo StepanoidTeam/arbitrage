@@ -13,13 +13,17 @@ function saveDataToFile(filepath, data) {
   return Promise.resolve(data);
 }
 
-function appendDataToFile(filepath, data) {
-  fs.appendFileSync(filepath, data);
+function appendJSONToFile(filepath, objData) {
+  appendTextToFile(filepath, JSON.stringify(objData));
 }
 
-function appendJSONToFile(filepath, objData) {
-  let rawData = `${JSON.stringify(objData)}\n`;
+function appendTextToFile(filepath, textData) {
+  let rawData = `${textData}\n`;
   appendDataToFile(filepath, rawData);
+}
+
+function appendDataToFile(filepath, data) {
+  fs.appendFileSync(filepath, data);
 }
 
 function readLines(filepath) {
@@ -34,5 +38,5 @@ module.exports = {
   saveDataToFile,
   appendDataToFile,
   appendJSONToFile,
-  readLines
+  readLines,
 };
