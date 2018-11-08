@@ -24,7 +24,13 @@ function getSourceForPairs(globalPairs = []) {
   const client = new signalR.client("wss://beta.bittrex.com/signalr", ["c2"]);
 
   function produceBook(pair) {
-    const bid = sortBy([...orderBooks[pair].bids.values()], x => x.price)
+    let orderBook = orderBooks[pair];
+    if (!orderBook) {
+      console.warn(`⛔️  bittrex: orderbook not exists for ${pair}`);
+      return;
+    }
+
+    const bid = sortBy([...orderBook.bids.values()], x => x.price)
       .reverse()
       .shift();
 
@@ -88,7 +94,9 @@ function getSourceForPairs(globalPairs = []) {
 
     if (!orderBooks[pair]) {
       console.warn(
-        `⛔️  shit! ${pair} not found for ${JSON.stringify(orderBooks)}`
+        `⛔️  bittrex: shit! ${pair} not found for ${JSON.stringify(
+          orderBooks
+        )}`
       );
       return;
     }
