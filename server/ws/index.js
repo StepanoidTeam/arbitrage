@@ -1,9 +1,10 @@
 const { combineLatest } = require("rxjs");
 const { map } = require("rxjs/operators");
 
-const { filter } = require("rxjs/operators");
+const { filter, first } = require("rxjs/operators");
 
 const { appendJSONToFile } = require("../helpers/file");
+const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
 const { PAIRS } = require("../configs");
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
@@ -73,21 +74,29 @@ function listenAllPairs(pairs) {
 let aggPairSources = listenAllPairs(pairs);
 
 const aggStats = aggPairSources.map(aggPairSrc =>
-  aggPairSrc.pipe(map(aggPair => getStatsFromTimeframe(aggPair)))
+  aggPairSrc.pipe(
+    map(aggPair => getStatsFromTimeframe(aggPair)),
+    filter(stats => stats !== null),
+    //skip shit deals
+    filter(stats => stats.netProfit > 0)
+  )
 );
 
 function logAnalytics() {
   const timeStarted = Date.now();
 
   aggStats.forEach(aggPairSource => {
-    aggPairSource.subscribe(stats => {
-      if (stats === null) return;
-
-      //skip shit deals
-      if (stats.netProfit <= 0) return;
-
+    aggPairSource.pipe(first(stats => stats !== null)).subscribe(stats => {
+      //todo: make header csv
       const logFilePath = `./logs/stats-${stats.pair}-${timeStarted}.log`;
-      appendJSONToFile(logFilePath, stats);
+      let csvHeader = getCsvHeaders(stats);
+      appendJSONToFile(logFilePath, csvHeader);
+    });
+
+    aggPairSource.subscribe(stats => {
+      const logFilePath = `./logs/stats-${stats.pair}-${timeStarted}.log`;
+      let csvValues = getCsvValues(stats);
+      appendJSONToFile(logFilePath, csvValues);
     });
   });
 }
