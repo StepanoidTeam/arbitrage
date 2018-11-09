@@ -140,6 +140,7 @@ function getSourceForPairs(globalPairs = []) {
             return console.error(err);
           }
           if (result === true) {
+            //todo: debounce these messages
             console.log(`${bittrex.name} - subscribed to: ${pair.localPair}`);
           }
         });
