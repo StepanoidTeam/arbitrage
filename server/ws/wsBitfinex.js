@@ -23,6 +23,11 @@ function getSourceForPairs(globalPairs = []) {
   const depth = 5;
   const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
+  //todo: reconnect!
+  ws.onclose = () => {
+    console.log(`❌   ${bitfinex.name} disconnected`);
+  };
+
   ws.on("open", () => {
     console.log(`${bitfinex.name} - connected`);
     pairs

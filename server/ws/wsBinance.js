@@ -27,7 +27,12 @@ function getSourceForPairs(globalPairs = []) {
 
   const ws = new WebSocket(wsUrl);
 
-  console.log("binance connected:", wsUrl);
+  console.log(`${binance.name} connected:`, wsUrl);
+
+  //todo: reconnect!
+  ws.onclose = () => {
+    console.log(`❌   ${binance.name} disconnected`);
+  };
 
   let source = fromEvent(ws, "message").pipe(
     map(event => event.data),

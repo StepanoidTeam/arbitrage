@@ -105,6 +105,11 @@ function getSourceForPairs(globalPairs = []) {
     bids.forEach(applyUpdates(orderBooks[pair].bids));
   }
 
+  client.serviceHandlers.disconnected = function() {
+    //todo: reconnect!
+    console.log(`❌   ${bittrex.name} disconnected`);
+  };
+
   client.serviceHandlers.connected = function(connection) {
     console.log(`${bittrex.name} connected`);
 
