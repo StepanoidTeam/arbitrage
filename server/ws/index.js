@@ -1,5 +1,5 @@
 const { combineLatest } = require("rxjs");
-const { map } = require("rxjs/operators");
+const { map, distinctUntilChanged } = require("rxjs/operators");
 
 const { filter, first } = require("rxjs/operators");
 
@@ -108,6 +108,17 @@ function getMiniStats({
   };
 }
 
+function sameMiniStats(ms1, ms2) {
+  return (
+    ms1.minAskExName === ms2.minAskExName &&
+    ms1.minAskPrice === ms2.minAskPrice &&
+    ms1.maxBidExName === ms2.maxBidExName &&
+    ms1.maxBidPrice === ms2.maxBidPrice &&
+    ms1.availVolume === ms2.availVolume &&
+    ms1.netProfit === ms2.netProfit
+  );
+}
+
 function logAnalytics() {
   const timeStarted = Date.now();
 
@@ -127,11 +138,20 @@ function logAnalytics() {
 
     aggPairSource.subscribe(stats => {
       appendTextToFile(getLogName("max", stats.pair), getCsvValues(stats));
-      appendTextToFile(
-        getLogName("min", stats.pair),
-        getCsvValues(getMiniStats(stats))
-      );
     });
+
+    aggPairSource
+      .pipe(
+        map(getMiniStats),
+        //log only diff mini stats
+        distinctUntilChanged(sameMiniStats)
+      )
+      .subscribe(minStats => {
+        appendTextToFile(
+          getLogName("min", minStats.pair),
+          getCsvValues(minStats)
+        );
+      });
   });
 }
 
