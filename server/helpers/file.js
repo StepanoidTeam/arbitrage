@@ -27,6 +27,7 @@ function appendDataToFile(filepath, data) {
 }
 
 function makeDir(filepath) {
+  if (fs.existsSync(filepath)) return;
   fs.mkdirSync(filepath, { recursive: true });
 }
 
