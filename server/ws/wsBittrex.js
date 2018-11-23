@@ -30,14 +30,8 @@ function getSourceForPairs(globalPairs = []) {
       return;
     }
 
-    const bid = sortBy([...orderBook.bids.values()], x => x.price)
-      .reverse()
-      .shift();
-
-    const ask = sortBy(
-      [...orderBooks[pair].asks.values()],
-      x => x.price
-    ).shift();
+    const bid = sortBy([...orderBook.bids.values()], x => -x.price).shift();
+    const ask = sortBy([...orderBook.asks.values()], x => x.price).shift();
 
     subject.next({
       exName: bittrex.name,
@@ -47,13 +41,13 @@ function getSourceForPairs(globalPairs = []) {
     });
   }
 
-  function initBook(json, pair) {
+  function initBook({ Z: bids, S: asks }, pair) {
     //todo: how can i understand what pair came?
-    let bidArr = json.Z.map(({ R: price, Q: volume }) => ({
+    let bidArr = bids.map(({ R: price, Q: volume }) => ({
       price,
       volume,
     }));
-    let askArr = json.S.map(({ R: price, Q: volume }) => ({
+    let askArr = asks.map(({ R: price, Q: volume }) => ({
       price,
       volume,
     }));
@@ -66,7 +60,7 @@ function getSourceForPairs(globalPairs = []) {
     };
   }
 
-  function updateBook(json, pair) {
+  function updateBook({ Z: bids, S: asks }, pair) {
     //todo: how can i understand what pair came?
 
     //   Z:
@@ -75,9 +69,7 @@ function getSourceForPairs(globalPairs = []) {
     //     { TY: 1, R: 0.03090601, Q: 0 },
     //     { TY: 0, R: 0.02422006, Q: 0.20644048 } ],
     //  S: [ { TY: 2, R: 0.03095308, Q: 0.06539122 } ],
-
-    let { S: asks, Z: bids } = json;
-
+ 
     const applyUpdates = bookpart => ({
       TY: updateType,
       R: price,
@@ -101,8 +93,8 @@ function getSourceForPairs(globalPairs = []) {
       return;
     }
 
-    asks.forEach(applyUpdates(orderBooks[pair].asks));
     bids.forEach(applyUpdates(orderBooks[pair].bids));
+    asks.forEach(applyUpdates(orderBooks[pair].asks));
   }
 
   client.serviceHandlers.disconnected = function() {
@@ -169,7 +161,7 @@ function getSourceForPairs(globalPairs = []) {
             zlib.inflateRaw(raw, function(err, inflated) {
               if (!err) {
                 let json = JSON.parse(inflated.toString("utf8"));
-                //console.log(json);
+                console.log("@", json);
 
                 let localPair = json.M;
                 let { globalPair } = pairs.find(p => p.localPair === localPair);
