@@ -18,7 +18,6 @@ function getSourceForPairs(globalPairs = []) {
 
   function subscribe(ws) {
     for (let pair of pairs) {
-      console.log(pair.localPair);
       ws.send(
         JSON.stringify({
           sub: `market.${pair.localPair}.depth.step0`,
