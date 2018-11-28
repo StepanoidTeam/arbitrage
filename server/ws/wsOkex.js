@@ -45,7 +45,7 @@ function getSourceForPairs(globalPairs = []) {
       exName: exConfig.name,
       pair: pair.globalPair,
       bid: data.bids.shift().map(x => +x),
-      ask: data.asks.shift().map(x => +x),
+      ask: data.asks.pop().map(x => +x),
     };
 
     subject.next(bookTop);
@@ -71,6 +71,7 @@ function getSourceForPairs(globalPairs = []) {
     });
 
     let msg = JSON.parse(text);
+
     handle(msg);
   });
 
