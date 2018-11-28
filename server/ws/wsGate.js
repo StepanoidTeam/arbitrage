@@ -31,24 +31,23 @@ function getSourceForPairs(globalPairs = []) {
     ws.send(JSON.stringify(msg));
   }
 
-  let orderbook = {
-    bid: [],
-    ask: [],
-  };
+  const orderbook = {};
 
   function handle(params) {
     let [, data, localPair] = params;
 
     let { globalPair } = pairs.find(p => p.localPair === localPair);
 
-    orderbook.bid = data.bids ? data.bids.pop() : orderbook.bid;
-    orderbook.ask = data.asks ? data.asks.pop() : orderbook.ask;
+    orderbook[globalPair] = {
+      bid: data.bids ? data.bids.pop() : orderbook[globalPair].bid,
+      ask: data.asks ? data.asks.pop() : orderbook[globalPair].ask,
+    };
 
     const bookTop = {
       exName: exConfig.name,
       pair: globalPair,
-      bid: orderbook.bid.map(x => +x),
-      ask: orderbook.ask.map(x => +x),
+      bid: orderbook[globalPair].bid.map(x => +x),
+      ask: orderbook[globalPair].ask.map(x => +x),
     };
 
     subject.next(bookTop);
