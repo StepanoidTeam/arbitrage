@@ -14,6 +14,7 @@ const huobi = {
     [PAIRS.BTC_USDT]: "btcusdt",
     [PAIRS.XRP_USDT]: "xrpusdt",
     [PAIRS.EOS_BTC]: "eosbtc",
+    [PAIRS.ZIL_BTC]: "zilbtc",
   },
   fees: {
     taker: 0.2,
