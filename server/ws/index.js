@@ -61,7 +61,7 @@ const pairs = [
 ];
 
 function listenAllPairs(pairs) {
-  let sources = [wsGate].map(ex => ex(pairs));
+  let sources = [wsOkex].map(ex => ex(pairs));
 
   // let sources = [wsBinance, wsBitfinex, wsBittrex, wsHuobi].map(ex =>
   //   ex(pairs)
@@ -183,10 +183,10 @@ function debugPairs() {
 //debugPairs();
 //logAnalytics();
 
-// wsHuobi(["ZIL_BTC"]).subscribe(data => {
-//   console.clear();
-//   console.log(`✳️`,data);
-// });
+wsHuobi([PAIRS.XRP_USDT]).subscribe(data => {
+  console.clear();
+  console.log(`✳️`, data);
+});
 
 // wsKucoin(["EOS_BTC"]).subscribe(data => {
 //kukan not working
@@ -206,4 +206,4 @@ function debugPairs() {
 //   console.log(`✳️`, data);
 // });
 
-debugPairs();
+//debugPairs();
