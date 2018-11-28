@@ -7,11 +7,12 @@ const { appendTextToFile, makeDir } = require("../helpers/file");
 const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
 const { PAIRS } = require("../configs");
+
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
 const { getSourceForPairs: wsBittrex } = require("./wsBittrex");
-
 const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
+const { getSourceForPairs: wsKucoin } = require("./wsKucoin");
 
 const pairs = [
   PAIRS.BTC_USDT,
@@ -181,3 +182,8 @@ function debugPairs() {
 //   console.clear();
 //   console.log(data);
 // });
+
+wsKucoin(["EOS_BTC"]).subscribe(data => {
+  //console.clear();
+  console.log(`✳️`, data);
+});
