@@ -7,8 +7,9 @@ const gate = {
     return `${this.url}/api2/1/orderBook/${this.pairs[pairIndex]}`;
   },
   pairs: {
-    [PAIRS.BTC_USDT]: "btc_usdt",
-    [PAIRS.EOS_BTC]: "eos_btc",
+    [PAIRS.BTC_USDT]: "BTC_USDT",
+    [PAIRS.EOS_BTC]: "EOS_BTC",
+    [PAIRS.XRP_USDT]: "XRP_USDT",
   },
   fees: {
     taker: 0.1, //0.05% if we'll use Bibox token

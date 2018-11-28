@@ -14,10 +14,11 @@ const { getSourceForPairs: wsBittrex } = require("./wsBittrex");
 const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
 const { getSourceForPairs: wsKucoin } = require("./wsKucoin");
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
+const { getSourceForPairs: wsGate } = require("./wsGate");
 
 const pairs = [
   PAIRS.BTC_USDT,
-  // PAIRS.XRP_USDT,
+  PAIRS.XRP_USDT,
   // PAIRS.ETH_USDT,
   // PAIRS.ETC_USDT,
   // PAIRS.XRP_BTC,
@@ -60,9 +61,11 @@ const pairs = [
 ];
 
 function listenAllPairs(pairs) {
-  let sources = [wsBinance, wsBitfinex, wsBittrex, wsHuobi].map(ex =>
-    ex(pairs)
-  );
+  let sources = [wsGate].map(ex => ex(pairs));
+
+  // let sources = [wsBinance, wsBitfinex, wsBittrex, wsHuobi].map(ex =>
+  //   ex(pairs)
+  // );
 
   let aggPairs = pairs.map(pair => {
     //all exchanges sources for 1 pair
@@ -162,6 +165,7 @@ function logAnalytics() {
 }
 
 function debugPairs() {
+  let aggPairSources = listenAllPairs(pairs);
   //todo: this combine is just for test purposes!!!
   combineLatest(...aggPairSources).subscribe(allPairsDataAgg => {
     //all pairs data aggregated from all ex's by pair
@@ -190,8 +194,16 @@ function debugPairs() {
 //   console.log(`✳️`, data);
 // });
 
-//PAIRS.BTC_USDT,
-wsOkex([PAIRS.XRP_USDT]).subscribe(data => {
-  console.clear();
-  console.log(`✳️`, data);
-});
+// //PAIRS.BTC_USDT,
+// wsOkex([PAIRS.XRP_USDT]).subscribe(data => {
+//   console.clear();
+//   console.log(`✳️`, data);
+// });
+
+//, PAIRS.XRP_BTC
+// wsGate([PAIRS.BTC_USDT]).subscribe(data => {
+//   console.clear();
+//   console.log(`✳️`, data);
+// });
+
+debugPairs();
