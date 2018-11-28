@@ -13,8 +13,8 @@ const okex = {
     }/book?size=10`;
   },
   pairs: {
-    [PAIRS.BTC_USDT]: "BTC-USDT",
-    [PAIRS.XRP_USDT]: "XRP-USDT",
+    [PAIRS.BTC_USDT]: "btc_usdt",
+    [PAIRS.XRP_USDT]: "xrp_usdt",
   },
   fees: {
     taker: 0.15,

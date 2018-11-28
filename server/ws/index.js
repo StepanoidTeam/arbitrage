@@ -13,6 +13,7 @@ const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
 const { getSourceForPairs: wsBittrex } = require("./wsBittrex");
 const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
 const { getSourceForPairs: wsKucoin } = require("./wsKucoin");
+const { getSourceForPairs: wsOkex } = require("./wsOkex");
 
 const pairs = [
   PAIRS.BTC_USDT,
@@ -180,10 +181,17 @@ function debugPairs() {
 
 // wsHuobi(["ZIL_BTC"]).subscribe(data => {
 //   console.clear();
-//   console.log(data);
+//   console.log(`✳️`,data);
 // });
 
-wsKucoin(["EOS_BTC"]).subscribe(data => {
-  //console.clear();
+// wsKucoin(["EOS_BTC"]).subscribe(data => {
+//kukan not working
+//   //console.clear();
+//   console.log(`✳️`, data);
+// });
+
+//PAIRS.BTC_USDT,
+wsOkex([PAIRS.XRP_USDT]).subscribe(data => {
+  console.clear();
   console.log(`✳️`, data);
 });
