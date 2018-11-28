@@ -1,5 +1,7 @@
 const { PAIRS } = require("../pairs");
 
+// bug: bid greater than ask!!!
+
 const bittrex = {
   name: "bittrex",
   url: "https://bittrex.com",
