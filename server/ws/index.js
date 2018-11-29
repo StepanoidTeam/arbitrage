@@ -1,13 +1,20 @@
 "use strict";
-const { combineLatest } = require("rxjs");
-const { map, distinctUntilChanged } = require("rxjs/operators");
-
-const { filter, first } = require("rxjs/operators");
+const { combineLatest, merge, Subject } = require("rxjs");
+const {
+  map,
+  distinctUntilChanged,
+  groupBy,
+  filter,
+  first,
+  mergeMap,
+  reduce,
+} = require("rxjs/operators");
+const { toArray } = require("lodash");
 
 const { appendTextToFile, makeDir } = require("../helpers/file");
 const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
-const { PAIRS } = require("../configs");
+const { PAIRS, pairs2use } = require("../configs");
 
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
@@ -17,56 +24,35 @@ const { getSourceForPairs: wsKucoin } = require("./wsKucoin");
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
 
-const pairs = [
-  PAIRS.BTC_USDT,
-  PAIRS.XRP_USDT,
-  // PAIRS.ETH_USDT,
-  // PAIRS.ETC_USDT,
-  // PAIRS.XRP_BTC,
-  // PAIRS.ETH_BTC,
-  // PAIRS.NEO_USDT,
-  // PAIRS.LTC_USDT,
-  // PAIRS.XMR_BTC,
-  // PAIRS.ETC_BTC,
-  // PAIRS.LTC_BTC,
-  // PAIRS.NEO_BTC,
-  // PAIRS.TRX_USDT,
-  // PAIRS.ZEC_BTC,
-  // PAIRS.DASH_BTC,
-  // PAIRS.QTUM_BTC,
-  // PAIRS.NEO_ETH,
-  // PAIRS.XLM_BTC,
-  // PAIRS.TRX_BTC,
-  // PAIRS.QTUM_ETH,
-  // PAIRS.TRX_ETH,
-  // PAIRS.XVG_BTC,
-  // PAIRS.XLM_ETH,
-  // PAIRS.ZRX_ETH,
-  // PAIRS.OMG_BTC,
-  // PAIRS.BAT_BTC,
-  // PAIRS.ZRX_BTC,
-  // PAIRS.BAT_ETH,
-  // PAIRS.REP_ETH,
-  // PAIRS.OMG_ETH,
-  // PAIRS.RLC_ETH,
-  // PAIRS.SNT_ETH,
-  // PAIRS.GNT_BTC,
-  // PAIRS.RLC_BTC,
-  // PAIRS.REP_BTC,
-  // PAIRS.GNT_ETH,
-  // PAIRS.SNT_BTC,
-  // PAIRS.LRC_BTC,
-  // PAIRS.BNT_BTC,
-  // PAIRS.RCN_BTC,
-  // PAIRS.BNT_ETH,
-];
+function getPairsAggSource({ pairs, wsex }) {
+  //activate all exchanges
+  let exSources = wsex.map(ex => ex(pairs));
+  let exSrc = merge(...exSources);
 
-function listenAllPairs(pairs, wsex) {
-  let sources = wsex.map(ex => ex(pairs));
+  let subjects = pairs.map(pair => {
+    let subject = new Subject();
+    let agg = {};
+
+    //group by pair
+    exSrc.pipe(filter(exData => exData.pair === pair)).subscribe(exData => {
+      //agg.pair = pair;
+      agg[exData.exName] = exData;
+
+      subject.next(toArray(agg));
+    });
+
+    return subject;
+  });
+
+  return subjects;
+}
+
+function listenAllPairs({ pairs, wsex }) {
+  let exSources = wsex.map(ex => ex(pairs));
 
   let aggPairs = pairs.map(pair => {
     //all exchanges sources for 1 pair
-    let pairSources = sources.map(s =>
+    let pairSources = exSources.map(s =>
       s.pipe(filter(data => data.pair === pair))
     );
 
@@ -114,15 +100,10 @@ function sameMiniStats(ms1, ms2) {
   );
 }
 
-function logAnalytics() {
+function logAnalytics({ pairs, wsex }) {
   const timeStarted = Date.now();
 
-  let aggPairSources = listenAllPairs(pairs, [
-    wsBinance,
-    wsBitfinex,
-    wsBittrex,
-    wsHuobi,
-  ]);
+  let aggPairSources = getPairsAggSource({ pairs, wsex });
 
   const aggStats = aggPairSources.map(aggPairSrc =>
     aggPairSrc.pipe(
@@ -167,7 +148,7 @@ function logAnalytics() {
 }
 
 function debugPairs({ pairs, wsex }) {
-  let aggPairSources = listenAllPairs(pairs, wsex);
+  let aggPairSources = listenAllPairs({ pairs, wsex });
   //todo: this combine is just for test purposes!!!
   combineLatest(...aggPairSources).subscribe(allPairsDataAgg => {
     //all pairs data aggregated from all ex's by pair
@@ -175,6 +156,7 @@ function debugPairs({ pairs, wsex }) {
     //save that info into file?
 
     console.clear();
+
     allPairsDataAgg.forEach(aggPair => {
       console.log(aggPair[0].pair);
       aggPair.forEach(ex => console.log(ex.exName, ex.bid, ex.ask));
@@ -183,32 +165,25 @@ function debugPairs({ pairs, wsex }) {
 }
 
 //debugPairs();
-//logAnalytics();
 
-// wsHuobi([PAIRS.XRP_USDT]).subscribe(data => {
+// wsBinance([PAIRS.BTC_USDT, PAIRS.XRP_USDT]).subscribe(data => {
 //   console.clear();
 //   console.log(`✳️`, data);
 // });
 
-// wsKucoin(["EOS_BTC"]).subscribe(data => {
-//kukan not working
-//   //console.clear();
-//   console.log(`✳️`, data);
+// debugPairs({
+//   pairs,
+//   wsex: [wsBinance], // wsBitfinex, wsHuobi, wsOkex, wsGate
 // });
 
-// //PAIRS.BTC_USDT,
-// wsOkex([PAIRS.XRP_USDT]).subscribe(data => {
-//   console.clear();
-//   console.log(`✳️`, data);
+// getPairsAggSource({
+//   pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+//   wsex: [wsBinance, wsBitfinex, wsGate],
+// })[0].subscribe(x => {
+//   console.log(x);
 // });
 
-//, PAIRS.XRP_BTC
-// wsGate([PAIRS.BTC_USDT]).subscribe(data => {
-//   console.clear();
-//   console.log(`✳️`, data);
-// });
-
-debugPairs({
-  pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsex: [wsBinance, wsBitfinex, wsHuobi, wsOkex, wsGate],
+logAnalytics({
+  pairs: pairs2use,
+  wsex: [wsBinance, wsBitfinex, wsGate, wsHuobi],
 });
