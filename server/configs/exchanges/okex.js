@@ -1,4 +1,4 @@
-const { PAIRS } = require("../pairs");
+const { PAIRS } = require("../globalPairs");
 
 //https://www.okex.com/docs/en/#spot-data
 //GET /api/spot/v3/instruments/<instrument-id>/book

@@ -1,4 +1,4 @@
-const { PAIRS } = require("../pairs");
+const { PAIRS } = require("../globalPairs");
 
 // bug: bid greater than ask!!!
 

@@ -1,4 +1,4 @@
-const { PAIRS } = require("../pairs");
+const { PAIRS } = require("../globalPairs");
 
 //https://github.com/huobiapi/API_Docs_en/wiki/REST_Reference#get-marketdepth---market-depth
 const huobi = {

@@ -1,4 +1,5 @@
 const PAIRS = {
+  //global pair dictionary - all available pairs on all exchanges
   BNB_USDT: "BNB_USDT",
   BTC_USDT: "BTC_USDT",
   ETH_USDT: "ETH_USDT",
