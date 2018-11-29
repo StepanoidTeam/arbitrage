@@ -85,7 +85,7 @@ function getSourceForPairs(globalPairs = []) {
     } else if (msg.tick) {
       handle(msg);
     } else if (msg.subbed) {
-      console.log(`✅${exConfig.name} - subscribed to: ${msg.id}`);
+      console.log(`✅  ${exConfig.name} - subscribed to: ${msg.id}`);
     } else {
       console.log(`❓`, text);
     }
