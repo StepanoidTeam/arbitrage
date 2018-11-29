@@ -1,7 +1,9 @@
+"use strict";
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
 const pako = require("pako");
+const { head } = require("lodash");
 
 const {
   exchanges: { huobi: exConfig },
@@ -32,13 +34,21 @@ function getSourceForPairs(globalPairs = []) {
 
     let { globalPair } = pairs.find(p => p.localPair === localPair);
 
+    const arrToPriceVolume = ([price, volume]) => ({
+      price,
+      volume,
+    });
+
+    let bid = arrToPriceVolume(head(data.tick.bids));
+    let ask = arrToPriceVolume(head(data.tick.asks));
+
     switch (channel) {
       case "depth":
         const bookTop = {
           exName: exConfig.name,
           pair: globalPair,
-          bid: data.tick.bids.shift(),
-          ask: data.tick.asks.shift(),
+          bid,
+          ask,
         };
 
         subject.next(bookTop);

@@ -8,8 +8,8 @@ const gate = {
   },
   pairs: {
     [PAIRS.BTC_USDT]: "BTC_USDT",
-    [PAIRS.EOS_BTC]: "EOS_BTC",
     [PAIRS.XRP_USDT]: "XRP_USDT",
+    [PAIRS.EOS_BTC]: "EOS_BTC",
   },
   fees: {
     taker: 0.1, //0.05% if we'll use Bibox token
@@ -19,7 +19,7 @@ const gate = {
       bids: data.bids,
       asks: data.asks,
     }),
-    order: data => ({ price: data[0], volume: data[1] }),
+    order: ([price, volume]) => ({ price, volume }),
   },
 };
 

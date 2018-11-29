@@ -1,3 +1,4 @@
+"use strict";
 const { combineLatest } = require("rxjs");
 const { map, distinctUntilChanged } = require("rxjs/operators");
 
@@ -60,12 +61,8 @@ const pairs = [
   // PAIRS.BNT_ETH,
 ];
 
-function listenAllPairs(pairs) {
-  let sources = [wsOkex].map(ex => ex(pairs));
-
-  // let sources = [wsBinance, wsBitfinex, wsBittrex, wsHuobi].map(ex =>
-  //   ex(pairs)
-  // );
+function listenAllPairs(pairs, wsex) {
+  let sources = wsex.map(ex => ex(pairs));
 
   let aggPairs = pairs.map(pair => {
     //all exchanges sources for 1 pair
@@ -120,7 +117,12 @@ function sameMiniStats(ms1, ms2) {
 function logAnalytics() {
   const timeStarted = Date.now();
 
-  let aggPairSources = listenAllPairs(pairs);
+  let aggPairSources = listenAllPairs(pairs, [
+    wsBinance,
+    wsBitfinex,
+    wsBittrex,
+    wsHuobi,
+  ]);
 
   const aggStats = aggPairSources.map(aggPairSrc =>
     aggPairSrc.pipe(
@@ -164,8 +166,8 @@ function logAnalytics() {
   });
 }
 
-function debugPairs() {
-  let aggPairSources = listenAllPairs(pairs);
+function debugPairs({ pairs, wsex }) {
+  let aggPairSources = listenAllPairs(pairs, wsex);
   //todo: this combine is just for test purposes!!!
   combineLatest(...aggPairSources).subscribe(allPairsDataAgg => {
     //all pairs data aggregated from all ex's by pair
@@ -183,10 +185,10 @@ function debugPairs() {
 //debugPairs();
 //logAnalytics();
 
-wsHuobi([PAIRS.XRP_USDT]).subscribe(data => {
-  console.clear();
-  console.log(`✳️`, data);
-});
+// wsHuobi([PAIRS.XRP_USDT]).subscribe(data => {
+//   console.clear();
+//   console.log(`✳️`, data);
+// });
 
 // wsKucoin(["EOS_BTC"]).subscribe(data => {
 //kukan not working
@@ -206,4 +208,7 @@ wsHuobi([PAIRS.XRP_USDT]).subscribe(data => {
 //   console.log(`✳️`, data);
 // });
 
-//debugPairs();
+debugPairs({
+  pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+  wsex: [wsBinance, wsBitfinex, wsHuobi, wsOkex, wsGate],
+});

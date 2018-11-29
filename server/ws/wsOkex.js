@@ -2,6 +2,7 @@ const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
 const pako = require("pako");
+const { last, head } = require("lodash");
 
 //https://github.com/okcoin-okex/API-docs-OKEx.com/blob/master/API-For-Spot-EN/WEBSOCKET%20API%20for%20SPOT.md
 
@@ -41,11 +42,19 @@ function getSourceForPairs(globalPairs = []) {
     //skip addChannel events
     if (!pair) return;
 
+    const arrToPriceVolume = ([price, volume]) => ({
+      price,
+      volume,
+    });
+
+    let bid = arrToPriceVolume(head(data.bids).map(x => +x));
+    let ask = arrToPriceVolume(last(data.asks).map(x => +x));
+
     const bookTop = {
       exName: exConfig.name,
       pair: pair.globalPair,
-      bid: data.bids.shift().map(x => +x),
-      ask: data.asks.pop().map(x => +x),
+      bid,
+      ask,
     };
 
     subject.next(bookTop);

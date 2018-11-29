@@ -2,6 +2,7 @@ const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
 const pako = require("pako");
+const { last, head } = require("lodash");
 
 //https://www.gate.io/api2#depth
 //https://github.com/gateio/WebSocket-API/blob/master/nodejs/ws.js
@@ -23,7 +24,7 @@ function getSourceForPairs(globalPairs = []) {
 
   function subscribe(ws) {
     let msg = {
-      id: 12312,
+      id: 12312, //random?
       method: "depth.subscribe",
       params: pairs.map(pair => [pair.localPair, 1, "0"]),
     };
@@ -39,15 +40,23 @@ function getSourceForPairs(globalPairs = []) {
     let { globalPair } = pairs.find(p => p.localPair === localPair);
 
     orderbook[globalPair] = {
-      bid: data.bids ? data.bids.pop() : orderbook[globalPair].bid,
-      ask: data.asks ? data.asks.pop() : orderbook[globalPair].ask,
+      bid: data.bids ? last(data.bids) : orderbook[globalPair].bid,
+      ask: data.asks ? last(data.asks) : orderbook[globalPair].ask,
     };
+
+    const arrToPriceVolume = ([price, volume]) => ({
+      price,
+      volume,
+    });
+
+    let bid = arrToPriceVolume(orderbook[globalPair].bid.map(x => +x));
+    let ask = arrToPriceVolume(orderbook[globalPair].ask.map(x => +x));
 
     const bookTop = {
       exName: exConfig.name,
       pair: globalPair,
-      bid: orderbook[globalPair].bid.map(x => +x),
-      ask: orderbook[globalPair].ask.map(x => +x),
+      bid,
+      ask,
     };
 
     subject.next(bookTop);
