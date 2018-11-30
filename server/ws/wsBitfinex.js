@@ -39,7 +39,7 @@ function getSourceForPairs(globalPairs = []) {
       .forEach(msg => {
         ws.send(JSON.stringify(msg));
         //todo: debounce these messages
-        console.log(`${bitfinex.name} - subscribed for: ${msg.symbol}`);
+        console.log(`✅  ${bitfinex.name} - subscribed for: ${msg.symbol}`);
       });
   });
 

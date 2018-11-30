@@ -1,5 +1,5 @@
 //with bibox onboard 10 requests performed by 60 secs insead of default 22-23 secs!
-const { PAIRS } = require("../pairs");
+const { PAIRS } = require("../globalPairs");
 
 const bibox = {
   name: "bibox",
