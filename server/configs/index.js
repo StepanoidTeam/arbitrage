@@ -8,4 +8,9 @@ module.exports = {
   PAIRS,
   getLocalPairs,
   pairs2use,
+  logger: {
+    disconnect: ({ name }) => {
+      console.log(`❌   ${name} disconnected at ${new Date().toISOString()}`);
+    },
+  },
 };

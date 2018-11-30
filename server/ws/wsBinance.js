@@ -5,6 +5,7 @@ const { map } = require("rxjs/operators");
 const {
   exchanges: { binance: exConfig },
   getLocalPairs,
+  logger,
 } = require("../configs");
 
 const depth = 5; // 5, 10
@@ -31,7 +32,7 @@ function getSourceForPairs(globalPairs = []) {
 
   //todo: reconnect!
   ws.onclose = () => {
-    console.log(`❌   ${exConfig.name} disconnected`);
+    logger.disconnect(exConfig);
   };
 
   let source = fromEvent(ws, "message").pipe(

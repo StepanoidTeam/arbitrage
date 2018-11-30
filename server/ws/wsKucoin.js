@@ -15,6 +15,7 @@ const { map } = require("rxjs/operators");
 const {
   exchanges: { kucoin: exConfig },
   getLocalPairs,
+  logger,
 } = require("../configs");
 
 const depth = 5; // 5, 10
@@ -83,7 +84,7 @@ function getSourceForPairs(globalPairs = []) {
 
     //todo: reconnect!
     ws.onclose = () => {
-      console.log(`❌   ${exConfig.name} disconnected`);
+      logger.disconnect(exConfig);
     };
 
     ws.onerror = err => {

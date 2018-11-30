@@ -9,6 +9,7 @@ const { last, head } = require("lodash");
 const {
   exchanges: { okex: exConfig },
   getLocalPairs,
+  logger,
 } = require("../configs");
 
 function getSourceForPairs(globalPairs = []) {
@@ -67,7 +68,7 @@ function getSourceForPairs(globalPairs = []) {
 
   //todo: reconnect!
   ws.onclose = () => {
-    console.log(`❌   ${exConfig.name} disconnected`);
+    logger.disconnect(exConfig);
   };
 
   ws.onerror = err => {

@@ -9,6 +9,7 @@ const sortBy = require("lodash/sortBy");
 const {
   exchanges: { bittrex: exConfig },
   getLocalPairs,
+  logger,
 } = require("../configs");
 
 function getSourceForPairs(globalPairs = []) {
@@ -99,7 +100,7 @@ function getSourceForPairs(globalPairs = []) {
 
   client.serviceHandlers.disconnected = function() {
     //todo: reconnect!
-    console.log(`❌   ${exConfig.name} disconnected`);
+    logger.disconnect(exConfig);
   };
 
   client.serviceHandlers.connected = function(connection) {

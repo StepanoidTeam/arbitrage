@@ -7,6 +7,7 @@ const { map, filter } = require("rxjs/operators");
 const {
   exchanges: { bitfinex: exConfig },
   getLocalPairs,
+  logger,
 } = require("../configs");
 
 function getSourceForPairs(globalPairs = []) {
@@ -25,7 +26,7 @@ function getSourceForPairs(globalPairs = []) {
 
   //todo: reconnect!
   ws.onclose = () => {
-    console.log(`❌   ${exConfig.name} disconnected`);
+    logger.disconnect(exConfig);
   };
 
   ws.on("open", () => {
