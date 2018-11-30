@@ -3,7 +3,7 @@ const { fromEvent } = require("rxjs");
 const { map } = require("rxjs/operators");
 
 const {
-  exchanges: { binance },
+  exchanges: { binance: exConfig },
   getLocalPairs,
 } = require("../configs");
 
@@ -19,7 +19,7 @@ function getStreamName({ globalPair, localPair }) {
 }
 
 function getSourceForPairs(globalPairs = []) {
-  let pairStreams = getLocalPairs(globalPairs, binance).map(getStreamName);
+  let pairStreams = getLocalPairs(globalPairs, exConfig).map(getStreamName);
 
   let wsUrl = `wss://stream.binance.com:9443/stream?streams=${pairStreams
     .map(ps => ps.stream)
@@ -27,11 +27,11 @@ function getSourceForPairs(globalPairs = []) {
 
   const ws = new WebSocket(wsUrl);
 
-  console.log(`${binance.name} connected:`, wsUrl);
+  console.log(`${exConfig.name} connected:`, wsUrl);
 
   //todo: reconnect!
   ws.onclose = () => {
-    console.log(`❌   ${binance.name} disconnected`);
+    console.log(`❌   ${exConfig.name} disconnected`);
   };
 
   let source = fromEvent(ws, "message").pipe(
@@ -42,7 +42,7 @@ function getSourceForPairs(globalPairs = []) {
       let { globalPair: pair } = pairStreams.find(ps => ps.stream === stream);
 
       let bookTop = {
-        exName: binance.name,
+        exName: exConfig.name,
         pair,
         bid: orderbook.bids
           .map(([price, volume]) => ({ price: +price, volume: +volume }))

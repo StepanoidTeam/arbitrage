@@ -5,16 +5,16 @@ const { fromEvent, Subject } = require("rxjs");
 const { map, filter } = require("rxjs/operators");
 
 const {
-  exchanges: { bitfinex },
+  exchanges: { bitfinex: exConfig },
   getLocalPairs,
 } = require("../configs");
 
 function getSourceForPairs(globalPairs = []) {
-  let pairs = getLocalPairs(globalPairs, bitfinex);
+  let pairs = getLocalPairs(globalPairs, exConfig);
   //limitation just because bitfinex
   // gives different response when sub to 1 or 2-n pairs
   if (pairs.length < 2)
-    throw new Error("bitfinex ws works with 2 pairs minimum, sorry");
+    throw new Error(`${exConfig.name} ws works with 2 pairs minimum, sorry`);
 
   const subject = new Subject();
 
@@ -25,11 +25,11 @@ function getSourceForPairs(globalPairs = []) {
 
   //todo: reconnect!
   ws.onclose = () => {
-    console.log(`❌   ${bitfinex.name} disconnected`);
+    console.log(`❌   ${exConfig.name} disconnected`);
   };
 
   ws.on("open", () => {
-    console.log(`${bitfinex.name} - connected`);
+    console.log(`${exConfig.name} - connected`);
     pairs
       .map(({ localPair: symbol }) => ({
         event: "subscribe",
@@ -39,7 +39,7 @@ function getSourceForPairs(globalPairs = []) {
       .forEach(msg => {
         ws.send(JSON.stringify(msg));
         //todo: debounce these messages
-        console.log(`✅  ${bitfinex.name} - subscribed for: ${msg.symbol}`);
+        console.log(`✅  ${exConfig.name} - subscribed for: ${msg.symbol}`);
       });
   });
 
@@ -51,7 +51,7 @@ function getSourceForPairs(globalPairs = []) {
     let { globalPair } = pairs.find(p => p.localPair === localPair);
 
     const bookTop = {
-      exName: bitfinex.name,
+      exName: exConfig.name,
       pair: globalPair,
       bid: bids
         .slice(0, depth)

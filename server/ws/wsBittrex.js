@@ -7,14 +7,14 @@ const zlib = require("zlib");
 const sortBy = require("lodash/sortBy");
 
 const {
-  exchanges: { bittrex },
+  exchanges: { bittrex: exConfig },
   getLocalPairs,
 } = require("../configs");
 
 function getSourceForPairs(globalPairs = []) {
   //todo: make some common apporoach for that cases
 
-  const pairs = getLocalPairs(globalPairs, bittrex);
+  const pairs = getLocalPairs(globalPairs, exConfig);
 
   //todo: rx-ify this
   let orderBooks = {};
@@ -26,7 +26,7 @@ function getSourceForPairs(globalPairs = []) {
   function produceBook(pair) {
     let orderBook = orderBooks[pair];
     if (!orderBook) {
-      console.warn(`⛔️  bittrex: orderbook not exists for ${pair}`);
+      console.warn(`⛔️  ${exConfig.name}: orderbook not exists for ${pair}`);
       return;
     }
 
@@ -34,7 +34,7 @@ function getSourceForPairs(globalPairs = []) {
     const ask = sortBy([...orderBook.asks.values()], x => x.price).shift();
 
     subject.next({
-      exName: bittrex.name,
+      exName: exConfig.name,
       pair,
       bid,
       ask,
@@ -69,7 +69,7 @@ function getSourceForPairs(globalPairs = []) {
     //     { TY: 1, R: 0.03090601, Q: 0 },
     //     { TY: 0, R: 0.02422006, Q: 0.20644048 } ],
     //  S: [ { TY: 2, R: 0.03095308, Q: 0.06539122 } ],
- 
+
     const applyUpdates = bookpart => ({
       TY: updateType,
       R: price,
@@ -86,7 +86,7 @@ function getSourceForPairs(globalPairs = []) {
 
     if (!orderBooks[pair]) {
       console.warn(
-        `⛔️  bittrex: shit! ${pair} not found for ${JSON.stringify(
+        `⛔️  ${exConfig.name}: shit! ${pair} not found for ${JSON.stringify(
           orderBooks
         )}`
       );
@@ -99,11 +99,11 @@ function getSourceForPairs(globalPairs = []) {
 
   client.serviceHandlers.disconnected = function() {
     //todo: reconnect!
-    console.log(`❌   ${bittrex.name} disconnected`);
+    console.log(`❌   ${exConfig.name} disconnected`);
   };
 
   client.serviceHandlers.connected = function(connection) {
-    console.log(`${bittrex.name} connected`);
+    console.log(`${exConfig.name} connected`);
 
     pairs.forEach(pair => {
       //get initial orderbook
@@ -118,7 +118,7 @@ function getSourceForPairs(globalPairs = []) {
             zlib.inflateRaw(raw, function(err, inflated) {
               if (!err) {
                 // console.log(
-                //   `${bittrex.name} - got orderbook for: ${pair.localPair}`
+                //   `${exConfig.name} - got orderbook for: ${pair.localPair}`
                 // );
                 json = JSON.parse(inflated.toString("utf8"));
 
@@ -138,7 +138,9 @@ function getSourceForPairs(globalPairs = []) {
           }
           if (result === true) {
             //todo: debounce these messages
-            console.log(`✅${bittrex.name} - subscribed to: ${pair.localPair}`);
+            console.log(
+              `✅${exConfig.name} - subscribed to: ${pair.localPair}`
+            );
           }
         });
     });
