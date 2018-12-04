@@ -104,9 +104,8 @@ function sameMiniStats(ms1, ms2) {
 }
 
 function logAnalytics({ pairs, wsex }) {
-  const timeStarted = Date.now();
+  const timeStarted = new Date().toISOString();
   const progressSub = new Subject();
-  const minSub = new Subject();
 
   let aggPairSources = getPairsAggSource({ pairs, wsex });
 
@@ -114,9 +113,10 @@ function logAnalytics({ pairs, wsex }) {
     aggPairSrc.pipe(
       map(aggPair => getStatsFromTimeframe(aggPair)),
       filter(stats => stats !== null),
-      tap(() => progressSub.next()),
+      tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
-      filter(stats => stats.netProfit > 0)
+      filter(stats => stats.netProfit > 0),
+      tap(() => progressSub.next({ key: ">0" }))
     )
   );
 
@@ -143,7 +143,7 @@ function logAnalytics({ pairs, wsex }) {
         map(getMiniStats),
         //log only diff mini stats
         distinctUntilChanged(sameMiniStats),
-        tap(() => minSub.next())
+        tap(() => progressSub.next({ key: "min" }))
       )
       .subscribe(minStats => {
         appendTextToFile(
@@ -154,14 +154,21 @@ function logAnalytics({ pairs, wsex }) {
 
     progressSub
       .pipe(
-        scan((acc, val) => acc + 1, 0),
+        scan((acc, { key }) => {
+          if (acc[key]) {
+            acc[key]++;
+          } else {
+            acc[key] = 1;
+          }
+          return acc;
+        }, {}),
         throttleTime(300)
       )
       .subscribe(value => {
-        consoleRewrite("logged:" + value);
+        consoleRewrite(`log stats: ${JSON.stringify(value)}`);
       });
 
-    console.log(`bot started at ${timeStarted.toISOString()}`);
+    console.log(`bot started at ${timeStarted}`);
   });
 }
 
@@ -202,8 +209,8 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 logAnalytics({
-  pairs: pairs2use,
-  // pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
-  // wsex: [wsGate, wsOkex],
+  //pairs: pairs2use,
+  pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+  // wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
+  wsex: [wsGate, wsOkex],
 });
