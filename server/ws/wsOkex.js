@@ -53,7 +53,7 @@ function getSourceForPairs(globalPairs = []) {
         ws.send(JSON.stringify(msg));
       }
 
-      stopPing = startPing();
+      stopPing = startPing(ws);
     }
 
     function handleWsMessage([{ channel, data }]) {
