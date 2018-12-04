@@ -202,8 +202,8 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 logAnalytics({
-  //pairs: pairs2use,
-  pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  //wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
-  wsex: [wsGate, wsOkex],
+  pairs: pairs2use,
+  // pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+  wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
+  // wsex: [wsGate, wsOkex],
 });
