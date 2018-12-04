@@ -22,6 +22,18 @@ function getSourceForPairs(globalPairs = []) {
 
   const channel2pairMapping = {};
 
+  const pingPongInterval = 30 * 1000;
+  function ping() {
+    ws.send(JSON.stringify({ event: "ping" }));
+  }
+  const noop = () => void 0;
+  let stopPing = noop;
+  function startPing() {
+    const timerId = setInterval(ping, pingPongInterval);
+
+    return () => clearInterval(timerId);
+  }
+
   function subscribe(ws) {
     for (let pair of pairs) {
       let channel = `ok_sub_spot_${pair.localPair}_depth_5`;
@@ -35,9 +47,11 @@ function getSourceForPairs(globalPairs = []) {
 
       ws.send(JSON.stringify(msg));
     }
+
+    stopPing = startPing();
   }
 
-  function handle([{ channel, data }]) {
+  function handleWsMessage([{ channel, data }]) {
     let pair = channel2pairMapping[channel];
 
     //skip addChannel events
@@ -66,9 +80,10 @@ function getSourceForPairs(globalPairs = []) {
     subscribe(ws);
   });
 
-  //todo: reconnect!
   ws.onclose = () => {
     logger.disconnect(exConfig);
+    stopPing();
+    //todo: reconnect!
   };
 
   ws.onerror = err => {
@@ -81,8 +96,13 @@ function getSourceForPairs(globalPairs = []) {
     });
 
     let msg = JSON.parse(text);
-
-    handle(msg);
+    if (Array.isArray(msg)) {
+      handleWsMessage(msg);
+    } else if (msg.event === "pong") {
+      //pong received
+    } else {
+      console.log("❓ msg", msg);
+    }
   });
 
   return subject;
