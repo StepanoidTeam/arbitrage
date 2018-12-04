@@ -9,13 +9,17 @@ function progress({ current, max, message }) {
     .fill(emptyChar, filledChars)
     .join("");
 
-  process.stdout.clearLine();
-  process.stdout.cursorTo(0);
-  process.stdout.write(
+  consoleRewrite(
     `${message}: [${progressBar}] | ${current} of ${max} | ${Math.floor(
       filledPt * 100
     )}%`
   );
 }
 
-module.exports = { progress };
+function consoleRewrite(message) {
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
+  process.stdout.write(message);
+}
+
+module.exports = { progress, consoleRewrite };
