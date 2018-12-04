@@ -14,96 +14,104 @@ const {
 
 function getSourceForPairs(globalPairs = []) {
   let pairs = getLocalPairs(globalPairs, exConfig);
+  const subject = new Subject();
 
   const wsUrl = "wss://real.okex.com:10441/websocket?compress=true";
 
-  const ws = new WebSocket(wsUrl);
-  const subject = new Subject();
-
-  const channel2pairMapping = {};
-
   const pingPongInterval = 30 * 1000;
-  function ping() {
+
+  function ping(ws) {
     ws.send(JSON.stringify({ event: "ping" }));
   }
+
   const noop = () => void 0;
-  let stopPing = noop;
-  function startPing() {
-    const timerId = setInterval(ping, pingPongInterval);
+
+  function startPing(ws) {
+    const timerId = setInterval(() => ping(ws), pingPongInterval);
 
     return () => clearInterval(timerId);
   }
 
-  function subscribe(ws) {
-    for (let pair of pairs) {
-      let channel = `ok_sub_spot_${pair.localPair}_depth_5`;
+  function connect() {
+    const ws = new WebSocket(wsUrl);
 
-      channel2pairMapping[channel] = pair;
+    const channel2pairMapping = {};
 
-      let msg = {
-        event: "addChannel",
-        channel,
+    let stopPing = noop;
+
+    function subscribe(ws) {
+      for (let pair of pairs) {
+        let channel = `ok_sub_spot_${pair.localPair}_depth_5`;
+
+        channel2pairMapping[channel] = pair;
+
+        let msg = {
+          event: "addChannel",
+          channel,
+        };
+
+        ws.send(JSON.stringify(msg));
+      }
+
+      stopPing = startPing();
+    }
+
+    function handleWsMessage([{ channel, data }]) {
+      let pair = channel2pairMapping[channel];
+
+      //skip addChannel events
+      if (!pair) return;
+
+      const arrToPriceVolume = ([price, volume]) => ({
+        price,
+        volume,
+      });
+
+      let bid = arrToPriceVolume(head(data.bids).map(x => +x));
+      let ask = arrToPriceVolume(last(data.asks).map(x => +x));
+
+      const bookTop = {
+        exName: exConfig.name,
+        pair: pair.globalPair,
+        bid,
+        ask,
       };
 
-      ws.send(JSON.stringify(msg));
+      subject.next(bookTop);
     }
 
-    stopPing = startPing();
-  }
-
-  function handleWsMessage([{ channel, data }]) {
-    let pair = channel2pairMapping[channel];
-
-    //skip addChannel events
-    if (!pair) return;
-
-    const arrToPriceVolume = ([price, volume]) => ({
-      price,
-      volume,
+    ws.on("open", () => {
+      console.log(`${exConfig.name} connected:`, wsUrl);
+      subscribe(ws);
     });
 
-    let bid = arrToPriceVolume(head(data.bids).map(x => +x));
-    let ask = arrToPriceVolume(last(data.asks).map(x => +x));
-
-    const bookTop = {
-      exName: exConfig.name,
-      pair: pair.globalPair,
-      bid,
-      ask,
+    ws.onclose = () => {
+      logger.disconnect(exConfig);
+      stopPing();
+      //todo: reconnect!
+      setTimeout(() => connect(), 10 * 1000);
     };
 
-    subject.next(bookTop);
-  }
+    ws.onerror = err => {
+      console.log(`⛔️   ${exConfig.name} error ${err}`);
+    };
 
-  ws.on("open", () => {
-    console.log(`${exConfig.name} connected:`, wsUrl);
-    subscribe(ws);
-  });
+    ws.on("message", data => {
+      let text = pako.inflateRaw(data, {
+        to: "string",
+      });
 
-  ws.onclose = () => {
-    logger.disconnect(exConfig);
-    stopPing();
-    //todo: reconnect!
-  };
-
-  ws.onerror = err => {
-    console.log(`⛔️   ${exConfig.name} error ${err}`);
-  };
-
-  ws.on("message", data => {
-    let text = pako.inflateRaw(data, {
-      to: "string",
+      let msg = JSON.parse(text);
+      if (Array.isArray(msg)) {
+        handleWsMessage(msg);
+      } else if (msg.event === "pong") {
+        //pong received
+      } else {
+        console.log("❓ msg", msg);
+      }
     });
-
-    let msg = JSON.parse(text);
-    if (Array.isArray(msg)) {
-      handleWsMessage(msg);
-    } else if (msg.event === "pong") {
-      //pong received
-    } else {
-      console.log("❓ msg", msg);
-    }
-  });
+  }
+  setImmediate(() => connect());
 
   return subject;
 }
