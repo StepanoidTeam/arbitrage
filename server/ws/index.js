@@ -6,8 +6,10 @@ const {
   groupBy,
   filter,
   first,
+  tap,
   mergeMap,
-  reduce,
+  throttleTime,
+  scan, //reduce-like
 } = require("rxjs/operators");
 const { toArray } = require("lodash");
 
@@ -15,6 +17,7 @@ const { appendTextToFile, makeDir } = require("../helpers/file");
 const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
 const { PAIRS, pairs2use } = require("../configs");
+const { consoleRewrite } = require("../helpers/cli-progress");
 
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
@@ -102,6 +105,8 @@ function sameMiniStats(ms1, ms2) {
 
 function logAnalytics({ pairs, wsex }) {
   const timeStarted = Date.now();
+  const progressSub = new Subject();
+  const minSub = new Subject();
 
   let aggPairSources = getPairsAggSource({ pairs, wsex });
 
@@ -109,6 +114,7 @@ function logAnalytics({ pairs, wsex }) {
     aggPairSrc.pipe(
       map(aggPair => getStatsFromTimeframe(aggPair)),
       filter(stats => stats !== null),
+      tap(() => progressSub.next()),
       //skip shit deals
       filter(stats => stats.netProfit > 0)
     )
@@ -136,7 +142,8 @@ function logAnalytics({ pairs, wsex }) {
       .pipe(
         map(getMiniStats),
         //log only diff mini stats
-        distinctUntilChanged(sameMiniStats)
+        distinctUntilChanged(sameMiniStats),
+        tap(() => minSub.next())
       )
       .subscribe(minStats => {
         appendTextToFile(
@@ -144,6 +151,17 @@ function logAnalytics({ pairs, wsex }) {
           getCsvValues(minStats)
         );
       });
+
+    progressSub
+      .pipe(
+        scan((acc, val) => acc + 1, 0),
+        throttleTime(300)
+      )
+      .subscribe(value => {
+        consoleRewrite("logged:" + value);
+      });
+
+    console.log(`bot started at ${timeStarted.toISOString()}`);
   });
 }
 
@@ -184,6 +202,8 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 logAnalytics({
-  pairs: pairs2use,
-  wsex: [wsBinance, wsBitfinex, wsGate, wsHuobi],
+  //pairs: pairs2use,
+  pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+  //wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
+  wsex: [wsGate, wsOkex],
 });
