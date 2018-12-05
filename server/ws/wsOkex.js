@@ -56,11 +56,27 @@ function getSourceForPairs(globalPairs = []) {
       stopPing = startPing(ws);
     }
 
-    function handleWsMessage([{ channel, data }]) {
+    function handleWsMessage(msg) {
+      let [{ channel, data }] = msg;
+
+      if (!channel || !data) {
+        console.log(
+          `⚠️  ${exConfig.name}: wrong msg format - msg: ${JSON.stringify(msg)}`
+        );
+        return;
+      }
+
       let pair = channel2pairMapping[channel];
 
       //skip addChannel events
-      if (!pair) return;
+      if (!pair) {
+        console.log(
+          `⚠️  ${
+            exConfig.name
+          }: channel not found -${channel}; msg: ${JSON.stringify(msg)}`
+        );
+        return;
+      }
 
       const arrToPriceVolume = ([price, volume]) => ({
         price,
