@@ -46,7 +46,9 @@ function getSourceForPairs(globalPairs = []) {
 
     //todo: do these when subscribe ok received from ws instead - as at Huobi
     console.log(
-      `✅  ${exConfig.name} - subscribed to: ${pairsSubscribed.join(", ")}`
+      `✅  ${exConfig.name} - subscribed (tried) to: ${pairsSubscribed.join(
+        ", "
+      )}`
     );
   });
 

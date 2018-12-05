@@ -140,7 +140,7 @@ function getSourceForPairs(globalPairs = []) {
           if (result === true) {
             //todo: rewrite as at bitfinex?
             console.log(
-              `✅${exConfig.name} - subscribed to: ${pair.localPair}`
+              `✅${exConfig.name} - subscribed (tried) to: ${pair.localPair}`
             );
           }
         });

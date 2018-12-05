@@ -1,7 +1,7 @@
 "use strict";
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
-const { map } = require("rxjs/operators");
+const { map, bufferTime } = require("rxjs/operators");
 const pako = require("pako");
 const { head } = require("lodash");
 
@@ -20,6 +20,7 @@ function getSourceForPairs(globalPairs = []) {
   const subject = new Subject();
 
   function subscribe(ws) {
+    let pairsSubscribed = [];
     for (let pair of pairs) {
       ws.send(
         JSON.stringify({
@@ -27,7 +28,14 @@ function getSourceForPairs(globalPairs = []) {
           id: `${pair.localPair}`,
         })
       );
+      pairsSubscribed.push(pair.localPair);
     }
+
+    console.log(
+      `✅  ${exConfig.name} - subscribed (tried) to: ${pairsSubscribed.join(
+        ", "
+      )}`
+    );
   }
 
   function handle(data) {
@@ -86,7 +94,7 @@ function getSourceForPairs(globalPairs = []) {
     } else if (msg.tick) {
       handle(msg);
     } else if (msg.subbed) {
-      console.log(`✅  ${exConfig.name} - subscribed to: ${msg.id}`);
+      //todo: do real subscribed log here + buffer it
     } else {
       console.log(`❓   ${exConfig.name}`, text);
     }
