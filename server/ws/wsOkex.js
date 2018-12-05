@@ -56,16 +56,7 @@ function getSourceForPairs(globalPairs = []) {
       stopPing = startPing(ws);
     }
 
-    function handleWsMessage(msg) {
-      let [{ channel, data }] = msg;
-
-      if (!channel || !data) {
-        console.log(
-          `⚠️  ${exConfig.name}: wrong msg format - msg: ${JSON.stringify(msg)}`
-        );
-        return;
-      }
-
+    function handleWsMessage([{ channel, data }]) {
       let pair = channel2pairMapping[channel];
 
       //skip addChannel events
@@ -73,7 +64,9 @@ function getSourceForPairs(globalPairs = []) {
         console.log(
           `⚠️  ${
             exConfig.name
-          }: channel not found -${channel}; msg: ${JSON.stringify(msg)}`
+          }: pair not found - ${channel}; data: ${JSON.stringify(
+            data
+          )}; channels: ${Object.keys(channel2pairMapping)}`
         );
         return;
       }
@@ -119,11 +112,17 @@ function getSourceForPairs(globalPairs = []) {
 
       let msg = JSON.parse(text);
       if (Array.isArray(msg)) {
-        handleWsMessage(msg);
+        let [{ channel: event }] = msg;
+        if (event === "addChannel") {
+          //todo: pair subscribed
+        } else {
+          //todo: add specific condition, else - log warning
+          handleWsMessage(msg);
+        }
       } else if (msg.event === "pong") {
         //pong received
       } else {
-        console.log("❓ msg", msg);
+        console.log(`❓   ${exConfig.name}`, msg);
       }
     });
   }
