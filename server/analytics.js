@@ -3,6 +3,15 @@ const { maxBy, minBy } = require("lodash");
 const { exchanges } = require("./configs");
 
 function getStatsFromTimeframe(timeframe) {
+  if (
+    !timeframe.every(exTF => exTF.bid) ||
+    !timeframe.every(exTF => exTF.ask)
+  ) {
+    console.log(`🤬  timeframe error`);
+    console.log(JSON.stringify(timeframe));
+    return null;
+  }
+
   let exMinAsk = minBy(timeframe, exTF => +exTF.ask.price);
   let exMaxBid = maxBy(timeframe, exTF => +exTF.bid.price);
 
@@ -12,6 +21,7 @@ function getStatsFromTimeframe(timeframe) {
   let availProfit = availVolume * priceDiff;
 
   if (exMinAsk.exName === exMaxBid.exName) {
+    //same exchange
     //console.log("no profit", availProfit);
     return null;
   }
