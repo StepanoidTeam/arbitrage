@@ -122,13 +122,24 @@ function logAnalytics({ pairs, wsex }) {
     )
   );
 
+  const getMainCoin = pair => {
+    let [, mainCoin] = pair.split("_");
+    return mainCoin;
+  };
+
   const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/${pair}/stats-${pair}-${timeStarted}.csv`;
+    `./logs/${subdir}/${getMainCoin(pair)}/stats-${pair}-${timeStarted}.csv`;
+
+  makeDir(`./logs/max`);
+  makeDir(`./logs/min`);
 
   aggStats.forEach(aggPairSource => {
     aggPairSource.pipe(first()).subscribe(stats => {
-      makeDir(`./logs/max/${stats.pair}`);
-      makeDir(`./logs/min/${stats.pair}`);
+      let mainCoin = getMainCoin(stats.pair);
+
+      makeDir(`./logs/max/${mainCoin}`);
+      makeDir(`./logs/min/${mainCoin}`);
+
       appendTextToFile(getLogName("max", stats.pair), getCsvHeaders(stats));
       appendTextToFile(
         getLogName("min", stats.pair),
@@ -211,6 +222,6 @@ function debugPairs({ pairs, wsex }) {
 logAnalytics({
   pairs: pairs2use,
   //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  // wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
-  wsex: [wsGate, wsOkex],
+  wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
+  //wsex: [wsGate, wsOkex],
 });
