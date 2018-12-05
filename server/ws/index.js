@@ -27,7 +27,8 @@ const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
 //to prevent node eventEmitter warning about memory leak. 11 used, 10 is default
-require("events").EventEmitter.defaultMaxListeners = 15;
+//upd: 17 used
+require("events").EventEmitter.defaultMaxListeners = 20;
 
 function getPairsAggSource({ pairs, wsex }) {
   //activate all exchanges
@@ -123,7 +124,9 @@ function logAnalytics({ pairs, wsex }) {
       tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
       filter(stats => stats.netProfit > 0),
-      tap(() => progressSub.next({ key: ">0" }))
+      // tap(() => progressSub.next({ key: ">0" })),
+      tap(({ exMinAsk: { exName: key } }) => progressSub.next({ key })),
+      tap(({ exMaxBid: { exName: key } }) => progressSub.next({ key }))
     )
   );
 
@@ -160,8 +163,8 @@ function logAnalytics({ pairs, wsex }) {
       .pipe(
         map(getMiniStats),
         //log only diff mini stats
-        distinctUntilChanged(sameMiniStats),
-        tap(() => progressSub.next({ key: "min" }))
+        distinctUntilChanged(sameMiniStats)
+        //tap(() => progressSub.next({ key: "min" }))
       )
       .subscribe(minStats => {
         appendTextToFile(
