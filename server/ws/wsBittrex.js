@@ -138,7 +138,7 @@ function getSourceForPairs(globalPairs = []) {
             return console.error(err);
           }
           if (result === true) {
-            //todo: debounce these messages
+            //todo: rewrite as at bitfinex?
             console.log(
               `✅${exConfig.name} - subscribed to: ${pair.localPair}`
             );
