@@ -169,23 +169,23 @@ function logAnalytics({ pairs, wsex }) {
           getCsvValues(minStats)
         );
       });
-
-    progressSub
-      .pipe(
-        scan((acc, { key }) => {
-          if (acc[key]) {
-            acc[key]++;
-          } else {
-            acc[key] = 1;
-          }
-          return acc;
-        }, {}),
-        throttleTime(500)
-      )
-      .subscribe(value => {
-        consoleRewrite(`log stats: ${JSON.stringify(value)}`);
-      });
   });
+
+  progressSub
+    .pipe(
+      scan((acc, { key }) => {
+        if (acc[key]) {
+          acc[key]++;
+        } else {
+          acc[key] = 1;
+        }
+        return acc;
+      }, {}),
+      throttleTime(1000)
+    )
+    .subscribe(value => {
+      consoleRewrite(`log stats: ${JSON.stringify(value)}`);
+    });
 }
 
 function debugPairs({ pairs, wsex }) {
