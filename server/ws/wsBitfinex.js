@@ -31,6 +31,8 @@ function getSourceForPairs(globalPairs = []) {
 
   ws.on("open", () => {
     console.log(`${exConfig.name} - connected`);
+
+    let pairsSubscribed = [];
     pairs
       .map(({ localPair: symbol }) => ({
         event: "subscribe",
@@ -39,9 +41,13 @@ function getSourceForPairs(globalPairs = []) {
       }))
       .forEach(msg => {
         ws.send(JSON.stringify(msg));
-        //todo: debounce these messages
-        console.log(`✅  ${exConfig.name} - subscribed for: ${msg.symbol}`);
+        pairsSubscribed.push(msg.symbol);
       });
+
+    //todo: do these when subscribe ok received from ws instead - as at Huobi
+    console.log(
+      `✅  ${exConfig.name} - subscribed to: ${pairsSubscribed.join(", ")}`
+    );
   });
 
   function produceBook(orderBook, localPair) {
