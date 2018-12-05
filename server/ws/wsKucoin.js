@@ -110,7 +110,7 @@ function getSourceForPairs(globalPairs = []) {
       } else if (msg.tick) {
         handle(msg);
       } else {
-        console.log(`❓`, text);
+        console.log(`❓   ${exConfig.name}`, text);
       }
     });
   }

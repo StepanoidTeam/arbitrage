@@ -85,7 +85,11 @@ function getSourceForPairs(globalPairs = []) {
           handle(msg.params);
           break;
         default:
-          console.log(`❓`, msg);
+          if (msg.error === null) {
+            //no error, some success?
+          } else {
+            console.log(`❓   ${exConfig.name}`, msg);
+          }
           break;
       }
     });
