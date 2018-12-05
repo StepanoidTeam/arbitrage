@@ -1,5 +1,7 @@
 const noLocalPairMessage = (exConfig, pairs) =>
-  `⚠️  ${exConfig.name}: no local pairs for: ${pairs.join(", ")}`;
+  `⚠️  ${exConfig.name}: no local pairs for ${pairs.length} pairs: ${pairs
+    .join(", ")
+    .substr(0, 100)}`;
 
 function getLocalPairs(globalPairs, exConfig) {
   let pairs = globalPairs.map(globalPair => ({
