@@ -123,12 +123,12 @@ function logAnalytics({ pairs, wsex }) {
   );
 
   const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/stats-${pair}-${timeStarted}.csv`;
+    `./logs/${subdir}/${pair}/stats-${pair}-${timeStarted}.csv`;
 
   aggStats.forEach(aggPairSource => {
     aggPairSource.pipe(first()).subscribe(stats => {
-      makeDir("./logs/max");
-      makeDir("./logs/min");
+      makeDir(`./logs/max/${stats.pair}`);
+      makeDir(`./logs/min/${stats.pair}`);
       appendTextToFile(getLogName("max", stats.pair), getCsvHeaders(stats));
       appendTextToFile(
         getLogName("min", stats.pair),
