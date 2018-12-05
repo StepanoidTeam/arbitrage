@@ -72,6 +72,12 @@ function getSourceForPairs(globalPairs = []) {
         .shift(),
     };
 
+    //todo: bitfinex loosing bid sometimes - investigate this shit!
+    if (!bookTop.bid) {
+      console.log(`💩  ${exConfig.name} bid lost!`);
+      console.log(bookTop);
+    }
+
     subject.next(bookTop);
     return bookTop;
   }
