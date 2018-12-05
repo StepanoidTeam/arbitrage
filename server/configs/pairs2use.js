@@ -171,6 +171,8 @@ const pairs2use = [
   PAIRS.CND_BTC,
   PAIRS.CVC_ETH,
   PAIRS.DATA_BTC,
+
+  //with additional pairs there is an error
   // PAIRS.DENT_BTC,
   // PAIRS.DGD_BTC,
   // PAIRS.DLT_BTC,
