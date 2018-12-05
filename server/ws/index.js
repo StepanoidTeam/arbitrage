@@ -121,7 +121,7 @@ function logAnalytics({ pairs, wsex }) {
   );
 
   const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/stats-${pair}-${timeStarted}.csv`;
+    `./logs/${subdir}/stats-${pair}-${timeStarted.replace(":", ";")}.csv`;
 
   aggStats.forEach(aggPairSource => {
     aggPairSource.pipe(first()).subscribe(stats => {
