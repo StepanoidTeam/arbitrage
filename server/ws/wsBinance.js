@@ -28,7 +28,7 @@ function getSourceForPairs(globalPairs = []) {
 
   const ws = new WebSocket(wsUrl);
 
-  console.log(`${exConfig.name} connected:`, wsUrl);
+  console.log(`${exConfig.name} connected: ${wsUrl.substr(0, 100)}`);
 
   //todo: reconnect!
   ws.onclose = () => {

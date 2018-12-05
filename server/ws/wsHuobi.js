@@ -32,9 +32,9 @@ function getSourceForPairs(globalPairs = []) {
     }
 
     console.log(
-      `✅  ${exConfig.name} - subscribed (tried) to: ${pairsSubscribed.join(
-        ", "
-      )}`
+      `✅  ${exConfig.name} - subscribed (tried) to ${
+        pairsSubscribed.length
+      } pairs: ${pairsSubscribed.join(", ").substr(0, 100)}`
     );
   }
 
