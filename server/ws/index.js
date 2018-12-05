@@ -104,8 +104,9 @@ function sameMiniStats(ms1, ms2) {
 }
 
 function logAnalytics({ pairs, wsex }) {
-  const timeStarted = Date.now();
-  console.log(`🤖  bot started at: ${new Date().toISOString()}`);
+  const dateStarted = new Date();
+
+  console.log(`🤖  bot started at: ${dateStarted.toLocaleString()}`);
 
   const progressSub = new Subject();
 
@@ -128,7 +129,7 @@ function logAnalytics({ pairs, wsex }) {
   };
 
   const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/${getMainCoin(pair)}/stats-${pair}-${timeStarted}.csv`;
+    `./logs/${subdir}/${getMainCoin(pair)}/stats-${pair}-${+dateStarted}.csv`;
 
   makeDir(`./logs/max`);
   makeDir(`./logs/min`);

@@ -10,7 +10,9 @@ module.exports = {
   pairs2use,
   logger: {
     disconnect: ({ name }) => {
-      console.log(`❌   ${name} disconnected at ${new Date().toISOString()}`);
+      console.log(
+        `❌   ${name} disconnected at ${new Date().toLocaleString()}`
+      );
     },
   },
 };
