@@ -104,7 +104,7 @@ function sameMiniStats(ms1, ms2) {
 }
 
 function logAnalytics({ pairs, wsex }) {
-  const timeStarted = new Date().toISOString();
+  const timeStarted = Date.now();
   const progressSub = new Subject();
 
   let aggPairSources = getPairsAggSource({ pairs, wsex });
@@ -121,7 +121,7 @@ function logAnalytics({ pairs, wsex }) {
   );
 
   const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/stats-${pair}-${timeStarted.replace(":", ";")}.csv`;
+    `./logs/${subdir}/stats-${pair}-${timeStarted}.csv`;
 
   aggStats.forEach(aggPairSource => {
     aggPairSource.pipe(first()).subscribe(stats => {
@@ -168,7 +168,7 @@ function logAnalytics({ pairs, wsex }) {
         consoleRewrite(`log stats: ${JSON.stringify(value)}`);
       });
 
-    console.log(`bot started at ${timeStarted}`);
+    console.log(`bot started at ${new Date().toISOString()}`);
   });
 }
 
