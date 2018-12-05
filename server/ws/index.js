@@ -105,6 +105,8 @@ function sameMiniStats(ms1, ms2) {
 
 function logAnalytics({ pairs, wsex }) {
   const timeStarted = Date.now();
+  console.log(`🤖  bot started at: ${new Date().toISOString()}`);
+
   const progressSub = new Subject();
 
   let aggPairSources = getPairsAggSource({ pairs, wsex });
@@ -162,13 +164,11 @@ function logAnalytics({ pairs, wsex }) {
           }
           return acc;
         }, {}),
-        throttleTime(300)
+        throttleTime(500)
       )
       .subscribe(value => {
         consoleRewrite(`log stats: ${JSON.stringify(value)}`);
       });
-
-    console.log(`bot started at ${new Date().toISOString()}`);
   });
 }
 
@@ -209,8 +209,8 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 logAnalytics({
-  //pairs: pairs2use,
-  pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+  pairs: pairs2use,
+  //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
   // wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
   wsex: [wsGate, wsOkex],
 });
