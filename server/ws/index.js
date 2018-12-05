@@ -21,9 +21,9 @@ const { consoleRewrite } = require("../helpers/cli-progress");
 
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
-const { getSourceForPairs: wsBittrex } = require("./wsBittrex");
+const { getSourceForPairs: wsBittrex } = require("./wsBittrex"); //buggy
 const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
-const { getSourceForPairs: wsKucoin } = require("./wsKucoin");
+const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
 //to prevent node eventEmitter warning about memory leak. 11 used, 10 is default
@@ -31,25 +31,27 @@ require("events").EventEmitter.defaultMaxListeners = 15;
 
 function getPairsAggSource({ pairs, wsex }) {
   //activate all exchanges
-  let exSources = wsex.map(ex => ex(pairs));
-  let exSrc = merge(...exSources);
+  let wsexSources = wsex.map(ex => ex(pairs));
+  let globalWsexSource = merge(...wsexSources);
 
-  let subjects = pairs.map(pair => {
-    let subject = new Subject();
-    let agg = {};
+  let timeframeSubs = pairs.map(pair => {
+    let timeframeSub = new Subject();
+    let timeframe = {};
 
     //group by pair
-    exSrc.pipe(filter(exData => exData.pair === pair)).subscribe(exData => {
-      //agg.pair = pair;
-      agg[exData.exName] = exData;
+    globalWsexSource
+      .pipe(filter(exData => exData.pair === pair))
+      .subscribe(exData => {
+        //timeframe.pair = pair;
+        timeframe[exData.exName] = exData;
 
-      subject.next(toArray(agg));
-    });
+        timeframeSub.next(toArray(timeframe));
+      });
 
-    return subject;
+    return timeframeSub;
   });
 
-  return subjects;
+  return timeframeSubs;
 }
 
 function listenAllPairs({ pairs, wsex }) {
