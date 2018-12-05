@@ -2,11 +2,15 @@ const { maxBy, minBy } = require("lodash");
 
 const { exchanges } = require("./configs");
 
+//timeframe is data about 1 pair, for all related exchanges, in 1 moment of time
+//it contains top bid/ask for each exchange, for 1 pair
+
 function getStatsFromTimeframe(timeframe) {
   if (
     !timeframe.every(exTF => exTF.bid) ||
     !timeframe.every(exTF => exTF.ask)
   ) {
+    //todo: we need to go deeper, to understand this error, when bid is empty
     console.log(`🤬  timeframe error`);
     console.log(JSON.stringify(timeframe));
     return null;
