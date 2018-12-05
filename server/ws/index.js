@@ -26,6 +26,8 @@ const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
 const { getSourceForPairs: wsKucoin } = require("./wsKucoin");
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
+//to prevent node eventEmitter warning about memory leak. 11 used, 10 is default
+require("events").EventEmitter.defaultMaxListeners = 15;
 
 function getPairsAggSource({ pairs, wsex }) {
   //activate all exchanges
