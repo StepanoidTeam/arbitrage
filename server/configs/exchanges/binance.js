@@ -162,8 +162,10 @@ const binance = {
     [PAIRS.GXS_BTC]: "GXSBTC",
     [PAIRS.GXS_ETH]: "GXSETH",
     [PAIRS.HC_ETH]: "HCETH",
-    [PAIRS.HOT_BTC]: "HOTBTC",
-    [PAIRS.HOT_ETH]: "HOTETH",
+    [PAIRS.HOLOCHAIN_BTC]: "HOTBTC", // for Binance
+    [PAIRS.HOLOCHAIN_ETH]: "HOTETH", // for Binance
+    //[PAIRS.HOT_BTC]: "HOTBTC",
+    //[PAIRS.HOT_ETH]: "HOTETH",
     [PAIRS.ICX_BTC]: "ICXBTC",
     [PAIRS.INS_BTC]: "INSBTC",
     [PAIRS.INS_ETH]: "INSETH",

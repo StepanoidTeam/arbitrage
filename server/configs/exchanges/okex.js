@@ -289,13 +289,18 @@ const okex = {
     [PAIRS.FAIR_USDT]: "fair_usdt",
     [PAIRS.BNT_BTC]: "bnt_btc",
     [PAIRS.NULS_USDT]: "nuls_usdt",
-    [PAIRS.HOT_BTC]: "hot_btc",
+    //[PAIRS.HOT_BTC]: "hot_btc",
+    //[PAIRS.HOT_USDT]: "hot_usdt",
+    //[PAIRS.HOT_ETH]: "hot_eth",
+    [PAIRS.HydroProtocol_BTC]: "hot_btc", // for Huobi and OKex
+    [PAIRS.HydroProtocol_USDT]: "hot_usdt", // for Huobi and OKex
+    [PAIRS.HydroProtocol_ETH]: "hot_eth", // for Huobi and OKex
     [PAIRS.YEE_BTC]: "yee_btc",
     [PAIRS.KEY_USDT]: "key_usdt",
     [PAIRS.NAS_ETH]: "nas_eth",
     [PAIRS.EGT_USDT]: "egt_usdt",
     [PAIRS.TRUE_ETH]: "true_eth",
-    [PAIRS.HOT_USDT]: "hot_usdt",
+
     [PAIRS.DCR_BTC]: "dcr_btc",
     [PAIRS.WIN_USDT]: "win_usdt",
     [PAIRS.ZRX_ETH]: "zrx_eth",
@@ -324,7 +329,6 @@ const okex = {
     [PAIRS.ENG_USDT]: "eng_usdt",
     [PAIRS.WRC_USDT]: "wrc_usdt",
     [PAIRS.CAN_BTC]: "can_btc",
-    [PAIRS.HOT_ETH]: "hot_eth",
     [PAIRS.MCO_ETH]: "mco_eth",
     [PAIRS.ZEN_ETH]: "zen_eth",
     [PAIRS.GNX_USDT]: "gnx_usdt",

@@ -319,11 +319,14 @@ const huobi = {
     [PAIRS.SEELE_BTC]: "seelebtc",
     [PAIRS.AAC_ETH]: "aaceth",
     [PAIRS.XMX_ETH]: "xmxeth",
-    [PAIRS.HOT_BTC]: "hotbtc",
+    //[PAIRS.HOT_BTC]: "hotbtc",
+    //[PAIRS.HOT_ETH]: "hoteth",
+    [PAIRS.HydroProtocol_BTC]: "hotbtc", // for Huobi and OKex
+    [PAIRS.HydroProtocol_ETH]: "hoteth", // for Huobi and OKex
     [PAIRS.TOS_ETH]: "toseth",
     [PAIRS.KCASH_BTC]: "kcashbtc",
     [PAIRS.CDC_BTC]: "cdcbtc",
-    [PAIRS.HOT_ETH]: "hoteth",
+
     [PAIRS.SEELE_ETH]: "seeleeth",
     [PAIRS.IDT_BTC]: "idtbtc",
     [PAIRS.GTC_BTC]: "gtcbtc",

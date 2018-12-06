@@ -161,7 +161,12 @@ const bitfinex = {
     [PAIRS.QSH_BTC]: "QSHBTC",
     [PAIRS.TNB_USDT]: "TNBUSD",
     [PAIRS.DAI_ETH]: "DAIETH",
-    [PAIRS.HOT_BTC]: "HOTBTC",
+    //[PAIRS.HOT_BTC]: "HOTBTC",
+    //[PAIRS.HOT_ETH]: "HOTETH",
+    //[PAIRS.HOT_USDT]: "HOTUSD",
+    [PAIRS.HydroProtocol_BTC]: "HOTBTC", // for Huobi, OKex and Bitfinex
+    [PAIRS.HydroProtocol_USDT]: "HOTUSD", // for Huobi, OKex and Bitfinex
+    [PAIRS.HydroProtocol_ETH]: "HOTETH", // for Huobi, OKex and Bitfinex
     [PAIRS.ZIL_USDT]: "ZILUSD",
     [PAIRS.FUN_USDT]: "FUNUSD",
     [PAIRS.GNT_BTC]: "GNTBTC",
@@ -178,13 +183,11 @@ const bitfinex = {
     [PAIRS.REP_USDT]: "REPUSD",
     [PAIRS.NEC_ETH]: "NECETH",
     [PAIRS.MNA_BTC]: "MNABTC",
-    [PAIRS.HOT_ETH]: "HOTETH",
     [PAIRS.AGI_USDT]: "AGIUSD",
     [PAIRS.KNC_BTC]: "KNCBTC",
     [PAIRS.POY_BTC]: "POYBTC",
     [PAIRS.YYW_ETH]: "YYWETH",
     [PAIRS.RDN_USDT]: "RDNUSD",
-    [PAIRS.HOT_USDT]: "HOTUSD",
     [PAIRS.BFT_BTC]: "BFTBTC",
     [PAIRS.REP_BTC]: "REPBTC",
     [PAIRS.SAN_BTC]: "SANBTC",
