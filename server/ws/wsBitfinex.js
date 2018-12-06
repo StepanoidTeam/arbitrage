@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const sortBy = require("lodash/sortBy");
 
 const { fromEvent, Subject } = require("rxjs");
-const { map, filter } = require("rxjs/operators");
+const { map, filter, tap } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex: exConfig },
@@ -26,11 +26,11 @@ function getSourceForPairs(globalPairs = []) {
 
     const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
-    ws.onclose = () => {
+    ws.on("close", () => {
       logger.disconnected(exConfig);
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
-    };
+    });
 
     ws.on("open", () => {
       logger.connected(exConfig);
@@ -57,7 +57,7 @@ function getSourceForPairs(globalPairs = []) {
 
     function produceBook(orderBook, localPair) {
       const ob = Array.from(orderBook).map(x => x[1]);
-      const bids = sortBy(ob.filter(x => x[2] > 0), [x => x[0]]).reverse();
+      const bids = sortBy(ob.filter(x => x[2] > 0), x => x[0]).reverse();
       const asks = sortBy(ob.filter(x => x[2] < 0), x => x[0]);
 
       let { globalPair } = pairs.find(p => p.localPair === localPair);
@@ -113,6 +113,7 @@ function getSourceForPairs(globalPairs = []) {
           chanId,
           pair,
         }))
+        //tap(data => console.log(data))
       )
       .subscribe(stream => pairStreams.push(stream));
 

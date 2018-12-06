@@ -217,7 +217,7 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 // debugPairs({
-//   pairs: [PAIRS.ETH_BTC, PAIRS.BTC_USDT],
+//   pairs: [PAIRS.IOTA_BTC, PAIRS.IOTA_USDT, PAIRS.BTC_USDT],
 //   wsex: [wsBitfinex], // wsBitfinex, wsHuobi, wsOkex, wsGate
 // });
 
