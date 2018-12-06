@@ -9,8 +9,9 @@ const bitfinex = {
   pairs: {
     //uppercased for ws!
     [PAIRS.USDT_USD]: "USDTUSD",
-    [PAIRS.BTC_USD]: "BTCUSD",
-    [PAIRS.ETH_USD]: "ETHUSD",
+    [PAIRS.BTC_USDT]: "BTCUSD",
+    //todo: update all usd to usdt
+    [PAIRS.ETH_USDT]: "ETHUSD",
     [PAIRS.XRP_USD]: "XRPUSD",
     [PAIRS.BCH_USD]: "BCHUSD",
     [PAIRS.EOS_USD]: "EOSUSD",
