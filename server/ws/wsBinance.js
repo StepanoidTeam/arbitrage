@@ -28,12 +28,15 @@ function getSourceForPairs(globalPairs = []) {
 
   const ws = new WebSocket(wsUrl);
 
-  console.log(`${exConfig.name} connected: ${wsUrl.substr(0, 100)}`);
-
-  //todo: reconnect!
   ws.onclose = () => {
-    logger.disconnect(exConfig);
+    logger.disconnected(exConfig);
+    //todo: reconnect!
   };
+
+  ws.on("open", () => {
+    logger.connected(exConfig);
+    //already subscribed using url
+  });
 
   let source = fromEvent(ws, "message").pipe(
     map(event => event.data),

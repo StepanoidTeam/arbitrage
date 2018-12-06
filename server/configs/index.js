@@ -9,7 +9,10 @@ module.exports = {
   getLocalPairs,
   pairs2use,
   logger: {
-    disconnect: ({ name }) => {
+    connected: ({ name }) => {
+      console.log(`✔️   ${name} connected at ${new Date().toLocaleString()}`);
+    },
+    disconnected: ({ name }) => {
       console.log(
         `❌   ${name} disconnected at ${new Date().toLocaleString()}`
       );

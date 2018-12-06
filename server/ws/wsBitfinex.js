@@ -27,13 +27,13 @@ function getSourceForPairs(globalPairs = []) {
     const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
     ws.onclose = () => {
-      logger.disconnect(exConfig);
+      logger.disconnected(exConfig);
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
     };
 
     ws.on("open", () => {
-      console.log(`${exConfig.name} - connected`);
+      logger.connected(exConfig);
 
       let pairsSubscribed = [];
       pairs

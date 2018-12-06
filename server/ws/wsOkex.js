@@ -90,12 +90,12 @@ function getSourceForPairs(globalPairs = []) {
     }
 
     ws.on("open", () => {
-      console.log(`${exConfig.name} connected:`, wsUrl);
+      logger.connected(exConfig);
       subscribe(ws);
     });
 
     ws.onclose = () => {
-      logger.disconnect(exConfig);
+      logger.disconnected(exConfig);
       stopPing();
       //todo: reconnect!
       setTimeout(() => connect(), 10 * 1000);
