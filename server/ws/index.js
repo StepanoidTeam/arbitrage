@@ -119,7 +119,7 @@ function logAnalytics({ pairs, wsex }) {
 
   const aggStats = aggPairSources.map(aggPairSrc =>
     aggPairSrc.pipe(
-      map(aggPair => getStatsFromTimeframe(aggPair)),
+      map(timeframe => getStatsFromTimeframe(timeframe)),
       filter(stats => stats !== null),
       tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
