@@ -12,93 +12,98 @@ const {
 } = require("../configs");
 
 function getSourceForPairs(globalPairs = []) {
-  let pairs = getLocalPairs(globalPairs, exConfig);
-
+  const pairs = getLocalPairs(globalPairs, exConfig);
   const wsUrl = "wss://api.huobi.pro/ws";
-
-  const ws = new WebSocket(wsUrl);
   const subject = new Subject();
 
-  function subscribe(ws) {
-    let pairsSubscribed = [];
-    for (let pair of pairs) {
-      ws.send(
-        JSON.stringify({
-          sub: `market.${pair.localPair}.depth.step0`,
-          id: `${pair.localPair}`,
-        })
+  function connect() {
+    const ws = new WebSocket(wsUrl);
+
+    function subscribe(ws) {
+      let pairsSubscribed = [];
+      for (let pair of pairs) {
+        ws.send(
+          JSON.stringify({
+            sub: `market.${pair.localPair}.depth.step0`,
+            id: `${pair.localPair}`,
+          })
+        );
+        pairsSubscribed.push(pair.localPair);
+      }
+
+      console.log(
+        `✅  ${exConfig.name} - subscribed (tried) to ${
+          pairsSubscribed.length
+        } pairs: ${pairsSubscribed.join(", ").substr(0, 100)}`
       );
-      pairsSubscribed.push(pair.localPair);
     }
 
-    console.log(
-      `✅  ${exConfig.name} - subscribed (tried) to ${
-        pairsSubscribed.length
-      } pairs: ${pairsSubscribed.join(", ").substr(0, 100)}`
-    );
-  }
+    function handle(data) {
+      let [, localPair, channel] = data.ch.split(".");
 
-  function handle(data) {
-    let [, localPair, channel] = data.ch.split(".");
+      let { globalPair } = pairs.find(p => p.localPair === localPair);
 
-    let { globalPair } = pairs.find(p => p.localPair === localPair);
+      const arrToPriceVolume = ([price, volume]) => ({
+        price,
+        volume,
+      });
 
-    const arrToPriceVolume = ([price, volume]) => ({
-      price,
-      volume,
+      let bid = arrToPriceVolume(head(data.tick.bids));
+      let ask = arrToPriceVolume(head(data.tick.asks));
+
+      switch (channel) {
+        case "depth":
+          const bookTop = {
+            exName: exConfig.name,
+            pair: globalPair,
+            bid,
+            ask,
+          };
+
+          subject.next(bookTop);
+          break;
+      }
+    }
+
+    ws.on("open", () => {
+      console.log(`${exConfig.name} connected:`, wsUrl);
+      subscribe(ws);
     });
 
-    let bid = arrToPriceVolume(head(data.tick.bids));
-    let ask = arrToPriceVolume(head(data.tick.asks));
+    ws.onclose = () => {
+      logger.disconnect(exConfig);
+      //todo: reconnect!
 
-    switch (channel) {
-      case "depth":
-        const bookTop = {
-          exName: exConfig.name,
-          pair: globalPair,
-          bid,
-          ask,
-        };
+      setTimeout(() => connect(), 3000);
+    };
 
-        subject.next(bookTop);
-        break;
-    }
+    ws.onerror = err => {
+      console.log(`⛔️   ${exConfig.name} error ${err}`);
+    };
+
+    ws.on("message", data => {
+      let text = pako.inflate(data, {
+        to: "string",
+      });
+      let msg = JSON.parse(text);
+
+      if (msg.ping) {
+        ws.send(
+          JSON.stringify({
+            pong: msg.ping,
+          })
+        );
+      } else if (msg.tick) {
+        handle(msg);
+      } else if (msg.subbed) {
+        //todo: do real subscribed log here + buffer it
+      } else {
+        console.log(`❓   ${exConfig.name}`, text);
+      }
+    });
   }
 
-  ws.on("open", () => {
-    console.log(`${exConfig.name} connected:`, wsUrl);
-    subscribe(ws);
-  });
-
-  //todo: reconnect!
-  ws.onclose = () => {
-    logger.disconnect(exConfig);
-  };
-
-  ws.onerror = err => {
-    console.log(`⛔️   ${exConfig.name} error ${err}`);
-  };
-
-  ws.on("message", data => {
-    let text = pako.inflate(data, {
-      to: "string",
-    });
-    let msg = JSON.parse(text);
-
-    if (msg.ping) {
-      ws.send(
-        JSON.stringify({
-          pong: msg.ping,
-        })
-      );
-    } else if (msg.tick) {
-      handle(msg);
-    } else if (msg.subbed) {
-      //todo: do real subscribed log here + buffer it
-    } else {
-      console.log(`❓   ${exConfig.name}`, text);
-    }
-  });
+  setImmediate(() => connect());
 
   return subject;
 }
