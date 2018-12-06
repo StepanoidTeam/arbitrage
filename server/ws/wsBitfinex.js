@@ -76,6 +76,8 @@ function getSourceForPairs(globalPairs = []) {
     if (!bookTop.bid) {
       console.log(`💩  ${exConfig.name} bid lost!`);
       console.log(bookTop);
+      console.log(orderBook);
+      console.log(ob);
     }
 
     subject.next(bookTop);
