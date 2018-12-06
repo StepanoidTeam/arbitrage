@@ -125,6 +125,7 @@ function logAnalytics({ pairs, wsex }) {
       //skip shit deals
       filter(stats => stats.netProfit > 0),
       // tap(() => progressSub.next({ key: ">0" })),
+      //count profitable exchanges
       tap(({ exMinAsk: { exName: key } }) => progressSub.next({ key })),
       tap(({ exMaxBid: { exName: key } }) => progressSub.next({ key }))
     )
@@ -216,8 +217,8 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 // debugPairs({
-//   pairs,
-//   wsex: [wsBinance], // wsBitfinex, wsHuobi, wsOkex, wsGate
+//   pairs: [PAIRS.ETH_BTC, PAIRS.BTC_USDT],
+//   wsex: [wsBitfinex], // wsBitfinex, wsHuobi, wsOkex, wsGate
 // });
 
 // getPairsAggSource({

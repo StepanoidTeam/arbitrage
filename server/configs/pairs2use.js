@@ -171,7 +171,6 @@ const pairs2use = [
   PAIRS.CND_BTC,
   PAIRS.CVC_ETH,
   PAIRS.DATA_BTC,
-
   //PAIRS.DENT_BTC, //this pair ruins OKex
   PAIRS.DGD_BTC,
   PAIRS.DLT_BTC,
