@@ -27,6 +27,14 @@ function getSourceForPairs(globalPairs = []) {
     };
 
     ws.send(JSON.stringify(msg));
+
+    let subscribedPairs = pairs.map(p => p.localPair);
+
+    console.log(
+      `✅  ${exConfig.name} - subscribed (tried) to ${
+        subscribedPairs.length
+      } pairs: ${subscribedPairs.join(", ").substr(0, 100)}`
+    );
   }
 
   function connect() {
@@ -74,7 +82,7 @@ function getSourceForPairs(globalPairs = []) {
     };
 
     ws.onerror = err => {
-      console.log(`⛔️   ${exConfig.name} error ${err}`);
+      console.log(`⛔️   ${exConfig.name} error`, err);
     };
 
     ws.on("message", data => {
