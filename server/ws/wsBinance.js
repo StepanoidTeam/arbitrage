@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const { fromEvent } = require("rxjs");
+const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
 
 const {
@@ -26,41 +26,52 @@ function getSourceForPairs(globalPairs = []) {
     .map(ps => ps.stream)
     .join("/")}`;
 
-  const ws = new WebSocket(wsUrl);
+  const subject = new Subject();
 
-  ws.onclose = () => {
-    logger.disconnected(exConfig);
-    //todo: reconnect!
-  };
+  function connect() {
+    const ws = new WebSocket(wsUrl);
 
-  ws.on("open", () => {
-    logger.connected(exConfig);
-    //already subscribed using url
-  });
+    ws.onclose = () => {
+      logger.disconnected(exConfig);
+      //todo: reconnect!
+      setTimeout(() => connect(), 3000);
+    };
 
-  let source = fromEvent(ws, "message").pipe(
-    map(event => event.data),
-    map(data => JSON.parse(data)),
-    map(({ data: orderbook, stream }) => {
-      //todo: optimize/replace find by dictionary
-      let { globalPair: pair } = pairStreams.find(ps => ps.stream === stream);
+    ws.on("open", () => {
+      logger.connected(exConfig);
+      //already subscribed using url
+    });
 
-      let bookTop = {
-        exName: exConfig.name,
-        pair,
-        bid: orderbook.bids
-          .map(([price, volume]) => ({ price: +price, volume: +volume }))
-          .shift(),
-        ask: orderbook.asks
-          .map(([price, volume]) => ({ price: +price, volume: +volume }))
-          .shift(),
-      };
+    fromEvent(ws, "message")
+      .pipe(
+        map(event => event.data),
+        map(data => JSON.parse(data)),
+        map(({ data: orderbook, stream }) => {
+          //todo: optimize/replace find by dictionary
+          let { globalPair: pair } = pairStreams.find(
+            ps => ps.stream === stream
+          );
 
-      return bookTop;
-    })
-  );
+          let bookTop = {
+            exName: exConfig.name,
+            pair,
+            bid: orderbook.bids
+              .map(([price, volume]) => ({ price: +price, volume: +volume }))
+              .shift(),
+            ask: orderbook.asks
+              .map(([price, volume]) => ({ price: +price, volume: +volume }))
+              .shift(),
+          };
 
-  return source;
+          return bookTop;
+        })
+      )
+      .subscribe(data => subject.next(data));
+  }
+
+  setImmediate(() => connect());
+
+  return subject;
 }
 
 module.exports = { getSourceForPairs };
