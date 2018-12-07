@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const sortBy = require("lodash/sortBy");
 
 const { fromEvent, Subject } = require("rxjs");
-const { map, filter, tap } = require("rxjs/operators");
+const { map, tap, filter, tap } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex: exConfig },
@@ -31,6 +31,10 @@ function getSourceForPairs(globalPairs = []) {
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
     });
+
+    ws.onerror = err => {
+      console.log(`⛔️   ${exConfig.name} error`, err);
+    };
 
     ws.on("open", () => {
       logger.connected(exConfig);
@@ -87,11 +91,6 @@ function getSourceForPairs(globalPairs = []) {
       return bookTop;
     }
 
-    let source = fromEvent(ws, "message").pipe(
-      map(event => event.data),
-      map(data => JSON.parse(data))
-    );
-
     const pairStreams = [];
 
     /*
@@ -105,6 +104,16 @@ function getSourceForPairs(globalPairs = []) {
     len: '25',
     pair: 'XRPUSD' }
   */
+
+    let source = fromEvent(ws, "message").pipe(
+      map(event => event.data),
+      map(data => JSON.parse(data))
+    );
+
+    source
+      .pipe(filter(data => data.event === "error"))
+      .subscribe(err => console.log(`⭕️   ${exConfig.name} ws error`, err));
+
     //save opened streams
     source
       .pipe(

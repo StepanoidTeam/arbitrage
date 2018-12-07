@@ -102,7 +102,7 @@ function getSourceForPairs(globalPairs = []) {
     };
 
     ws.onerror = err => {
-      console.log(`⛔️   ${exConfig.name} error ${err}`);
+      console.log(`⛔️   ${exConfig.name} error`, err);
     };
 
     ws.on("message", data => {

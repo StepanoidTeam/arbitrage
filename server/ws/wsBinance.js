@@ -37,6 +37,10 @@ function getSourceForPairs(globalPairs = []) {
       setTimeout(() => connect(), 3000);
     };
 
+    ws.onerror = err => {
+      console.log(`⛔️   ${exConfig.name} error`, err);
+    };
+
     ws.on("open", () => {
       logger.connected(exConfig);
       //already subscribed using url
