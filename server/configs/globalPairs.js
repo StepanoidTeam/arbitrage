@@ -181,11 +181,11 @@ const PAIRS = {
   GXS_BTC: "GXS_BTC",
   GXS_ETH: "GXS_ETH",
   HC_ETH: "HC_ETH",
-  HOLOCHAIN_BTC: "HOT_BTC", // for Binance
-  HOLOCHAIN_ETH: "HOT_ETH", // for Binance
-  HydroProtocol_USDT: "HOT_USDT", // for Huobi, OKex and Bitfinex
-  HydroProtocol_BTC: "HOT_BTC", // for Huobi, OKex and Bitfinex
-  HydroProtocol_ETH: "HOT_ETH", // for Huobi, OKex and Bitfinex
+  HOLO_BTC: "HOLO_BTC", // for Binance
+  HOLO_ETH: "HOLO_ETH", // for Binance
+  HydroProtocol_USDT: "HydroProtocol_USDT", // for Huobi, OKex and Bitfinex
+  HydroProtocol_BTC: "HydroProtocol_BTC", // for Huobi, OKex and Bitfinex
+  HydroProtocol_ETH: "HydroProtocol_ETH", // for Huobi, OKex and Bitfinex
   ICX_BNB: "ICX_BNB",
   ICX_BTC: "ICX_BTC",
   INS_BTC: "INS_BTC",

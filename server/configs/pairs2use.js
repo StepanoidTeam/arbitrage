@@ -196,8 +196,8 @@ const pairs2use = [
   PAIRS.HC_ETH,
   //PAIRS.HOT_BTC,
   //PAIRS.HOT_ETH,
-  PAIRS.HOLOCHAIN_BTC, // for Binance
-  PAIRS.HOLOCHAIN_ETH, // for Binance
+  PAIRS.HOLO_BTC, // for Binance
+  PAIRS.HOLO_ETH, // for Binance
   PAIRS.HydroProtocol_USDT, // for Huobi, OKex and Bitfinex
   PAIRS.HydroProtocol_BTC, // for Huobi, OKex and Bitfinex
   PAIRS.HydroProtocol_ETH, // for Huobi, OKex and Bitfinex
