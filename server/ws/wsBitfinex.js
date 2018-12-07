@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const sortBy = require("lodash/sortBy");
 
 const { fromEvent, Subject } = require("rxjs");
-const { map, tap, filter, tap } = require("rxjs/operators");
+const { map, filter, tap } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex: exConfig },
@@ -21,9 +21,6 @@ function getSourceForPairs(globalPairs = []) {
   const depth = 5;
 
   function connect() {
-    //todo: rx-ify this
-    let orderBooks = {};
-
     const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
     ws.on("close", () => {
@@ -59,39 +56,7 @@ function getSourceForPairs(globalPairs = []) {
       );
     });
 
-    function produceBook(orderBook, localPair) {
-      const ob = Array.from(orderBook).map(x => x[1]);
-      const bids = sortBy(ob.filter(x => x[2] > 0), x => x[0]).reverse();
-      const asks = sortBy(ob.filter(x => x[2] < 0), x => x[0]);
-
-      let { globalPair } = pairs.find(p => p.localPair === localPair);
-
-      const bookTop = {
-        exName: exConfig.name,
-        pair: globalPair,
-        bid: bids
-          .slice(0, depth)
-          .map(([price, count, volume]) => ({ price, volume }))
-          .shift(),
-        ask: asks
-          .slice(0, depth)
-          .map(([price, count, volume]) => ({ price, volume: -volume }))
-          .shift(),
-      };
-
-      //todo: bitfinex loosing bid sometimes - investigate this shit!
-      if (!bookTop.bid || !bookTop.ask) {
-        console.log(`💩  ${exConfig.name} bid/ask lost!`);
-        console.log(bookTop);
-        console.log(orderBook);
-        console.log(ob);
-      }
-
-      subject.next(bookTop);
-      return bookTop;
-    }
-
-    const pairStreams = [];
+    const pairStreams = new Map();
 
     /*
   //connect
@@ -114,65 +79,120 @@ function getSourceForPairs(globalPairs = []) {
       .pipe(filter(data => data.event === "error"))
       .subscribe(err => console.log(`⭕️   ${exConfig.name} ws error`, err));
 
-    //save opened streams
+    //save subscribed pairs/streams
     source
       .pipe(
         filter(data => data.event === "subscribed"),
-        map(({ chanId, pair }) => ({
-          chanId,
-          pair,
-        }))
-        //tap(data => console.log(data))
+        map(({ chanId, pair }) => [chanId, pair])
       )
-      .subscribe(stream => pairStreams.push(stream));
+      .subscribe(([chanId, pair]) => pairStreams.set(chanId, pair));
 
     /* 
     //update
     [ 1220186,
       [ [ 0.45861, 2, 1591.47202851 ],...]
   */
-    //map orderbooks to opened streams
+    //map order-books to opened streams
     source
       .pipe(
         filter(data => Array.isArray(data)),
-        map(([chanId, orderBook]) => {
-          let stream = pairStreams.find(stream => stream.chanId === chanId);
-          // console.log("@stream", stream);
+        filter(([, message]) => message !== "hb"), //heartbeat
+        map(([chanId, message]) => {
+          let pair = pairStreams.get(chanId);
+
           return {
-            pair: stream.pair,
-            orderBook,
+            pair,
+            message,
           };
         })
       )
-      .subscribe(data => onWsMessage(data));
+      .subscribe(data => {
+        let { pair, message } = data;
 
-    function onWsMessage({ pair, orderBook }) {
-      if (Array.isArray(orderBook[0])) {
-        initBook(orderBook, pair);
-      } else {
-        updateBook(orderBook, pair);
-      }
+        if (Array.isArray(message[0])) {
+          initBook(message, pair);
+        } else {
+          updateBook(message, pair);
+        }
+      });
+
+    //todo: rx-ify this
+    const orderBooks = new Map();
+
+    function initBook(initData, pair) {
+      const toKeyValue = ([price, count, amount]) => [
+        //key
+        price,
+        //value
+        { price, volume: Math.abs(amount) },
+      ];
+
+      const bidsKeyValues = initData
+        .filter(([price, count, amount]) => amount > 0)
+        .map(toKeyValue);
+      const asksKeyValues = initData
+        .filter(([price, count, amount]) => amount < 0)
+        .map(toKeyValue);
+
+      const orderbook = {
+        bids: new Map(bidsKeyValues),
+        asks: new Map(asksKeyValues),
+      };
+
+      orderBooks.set(pair, orderbook);
     }
 
-    function initBook(orderBook, pair) {
-      const mapOrder = data => [data[0], data];
-      orderBooks[pair] = new Map(orderBook.map(mapOrder));
-    }
-
-    function updateBook(data, pair) {
-      let [price, count, amount] = data;
+    function updateBook(updateData, pair) {
+      let [price, count, amount] = updateData;
+      let orderbook = orderBooks.get(pair);
 
       if (count > 0) {
         //add or update
-        orderBooks[pair].set(price, [price, count, amount]);
-      } else {
-        //delete
-        orderBooks[pair].delete(price);
+        if (amount > 0) {
+          //update bids
+          orderbook.bids.set(price, { price, volume: Math.abs(amount) });
+        } else if (amount < 0) {
+          //update asks
+          orderbook.asks.set(price, { price, volume: Math.abs(amount) });
+        }
+      } else if (count === 0) {
+        //delete price level
+        if (amount === 1) {
+          //remove bid
+          orderbook.bids.delete(price);
+        } else if (amount === -1) {
+          //remove ask
+          orderbook.asks.delete(price);
+        }
       }
 
-      produceBook(orderBooks[pair], pair);
+      produceBook(orderbook, pair);
     }
-  }
+
+    function produceBook(orderbook, localPair) {
+      let maxBidPrice = Math.max(...orderbook.bids.keys());
+      let minAskPrice = Math.min(...orderbook.asks.keys());
+
+      let { globalPair } = pairs.find(p => p.localPair === localPair);
+
+      const bookTop = {
+        exName: exConfig.name,
+        pair: globalPair,
+        bid: orderbook.bids.get(maxBidPrice),
+        ask: orderbook.asks.get(minAskPrice),
+      };
+
+      //todo: bitfinex loosing bid sometimes - investigate this shit!
+      if (!bookTop.bid || !bookTop.ask) {
+        console.log(`💩  ${exConfig.name} bid/ask lost!`);
+        console.log(`bid:${maxBidPrice}, ask: ${minAskPrice}`);
+        console.log(bookTop);
+        console.log(orderbook);
+      }
+
+      subject.next(bookTop);
+    }
+  } //connect
 
   setImmediate(() => connect());
 
