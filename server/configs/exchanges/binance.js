@@ -324,6 +324,12 @@ const binance = {
   fees: {
     taker: 0.1, //0.075 bnb
   },
+  //https://support.binance.com/hc/en-us/articles/115000594711-Trading-Rule
+  minOrder: {
+    BTC: 0.001,
+    ETH: 0.01,
+    USDT: 10,
+  },
   mappers: {
     orderbook: data => ({
       bids: data.bids,

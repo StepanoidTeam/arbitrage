@@ -296,6 +296,12 @@ const bittrex = {
   fees: {
     taker: 0.25,
   },
+  minOrder: {
+    //todo: add min order volumes
+    // BTC: 0.001,
+    // ETH: 0.01,
+    // USDT: 10,
+  },
   mappers: {
     orderbook: data => ({
       bids: data.result.buy,

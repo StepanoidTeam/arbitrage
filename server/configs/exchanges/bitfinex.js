@@ -7,6 +7,8 @@ const bitfinex = {
     return `${this.url}/v1/book/${this.pairs[pairIndex]}`;
   },
   pairs: {
+    //Starting September 15th, 2018, 00:00 UTC
+    //All websocket connections will have a limit of 250 subscriptions
     //uppercased for ws!
     [PAIRS.USDT_USDT]: "USDTUSD",
     [PAIRS.BTC_USDT]: "BTCUSD",
@@ -319,6 +321,11 @@ const bitfinex = {
   },
   fees: {
     taker: 0.2,
+  },
+  minOrder: {
+    //todo: add min order volumes
+    //based on:
+    //  10 mod token_usd - 1
   },
   mappers: {
     orderbook: data => ({

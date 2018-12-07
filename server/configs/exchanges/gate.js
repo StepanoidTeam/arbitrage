@@ -363,6 +363,12 @@ const gate = {
   fees: {
     taker: 0.1, //0.05% if we'll use Bibox token
   },
+  minOrder: {
+    //based on real trade error msg
+    BTC: 0.0001,
+    ETH: 0.001,
+    USDT: 1,
+  },
   mappers: {
     orderbook: data => ({
       bids: data.bids,

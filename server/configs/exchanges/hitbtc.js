@@ -13,6 +13,10 @@ const hitbtc = {
   fees: {
     taker: 0.1,
   },
+  minOrder: {
+    //todo: add min order volumes
+    // no data
+  },
   mappers: {
     orderbook: data => ({
       bids: data.bid,

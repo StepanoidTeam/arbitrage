@@ -376,6 +376,10 @@ const huobi = {
   fees: {
     taker: 0.2,
   },
+  minOrder: {
+    //todo: add min order volumes
+    // checking ...
+  },
   mappers: {
     orderbook: data => ({
       bids: data.tick.bids,

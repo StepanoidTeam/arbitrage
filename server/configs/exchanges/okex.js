@@ -534,6 +534,10 @@ const okex = {
   fees: {
     taker: 0.15,
   },
+  minOrder: {
+    //todo: add min order volumes
+    // 0.10$
+  },
   mappers: {
     orderbook: data => ({
       bids: data.bids,
