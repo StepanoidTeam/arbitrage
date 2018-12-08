@@ -1,5 +1,5 @@
 "use strict";
-const { combineLatest, merge, Subject } = require("rxjs");
+const { combineLatest, merge, Subject, of } = require("rxjs");
 const {
   map,
   distinctUntilChanged,
@@ -125,6 +125,7 @@ function logAnalytics({ pairs, wsex }) {
   const aggStats = aggPairSources.map(aggPairSrc =>
     aggPairSrc.pipe(
       map(timeframe => getStatsFromTimeframe(timeframe)),
+      mergeMap(stats => of(...stats)),
       filter(stats => stats !== null),
       tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
