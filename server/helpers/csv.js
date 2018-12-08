@@ -1,6 +1,6 @@
 const flatten = require("flat");
 
-const separator = ";";
+const separator = "\t";
 
 function getCsvHeaders(data) {
   return Object.keys(flatten(data)).join(separator);
