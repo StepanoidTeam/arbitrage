@@ -42,7 +42,7 @@ function getStatsFromTimeframe(timeframe) {
   let { pair } = exMinAsk;
 
   let stats = {
-    timestamp: Date.now(),
+    datetime: new Date().toLocaleString().replace(",", ""),
     pair,
     exMinAsk,
     exMaxBid,

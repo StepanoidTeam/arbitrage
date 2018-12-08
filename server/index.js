@@ -18,7 +18,7 @@ function getPairData(exchange, pairIndex = PAIRS.BTC_USDT) {
         bids: bids.map(mappers.order),
         asks: asks.map(mappers.order),
         name,
-        timestamp: Date.now(),
+        datetime: new Date().toLocaleString().replace(",", ""),
       };
     });
 }
