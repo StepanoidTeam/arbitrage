@@ -6,70 +6,63 @@ const { exchanges } = require("./configs");
 //it contains top bid/ask for each exchange, for 1 pair
 
 /* 
-  https://en.wikipedia.org/wiki/Triangular_number
+  not our case - https://en.wikipedia.org/wiki/Triangular_number
 
-  T = n*(n-1)/2
-
-  1 2 3 4 5  6
-  0 1 3 6 10 15
+  T = n*n-n
+  
 */
 
-function getStatsFromTimeframe(timeframe) {
-  if (
-    !timeframe.every(exTF => exTF.bid) ||
-    !timeframe.every(exTF => exTF.ask)
-  ) {
-    //todo: we need to go deeper, to understand this error, when bid is empty
-    console.log(`🤬  timeframe bid/ask lost error`);
-    console.log(JSON.stringify(timeframe));
-    return [];
-  }
+function getExPairsFromTimeframe(timeframe) {
+  let result = timeframe
+    //filter when ask lost - ie bitfinex
+    .filter(exAsk => exAsk.ask !== undefined)
+    .reduce(
+      (acc, exAsk) =>
+        acc.concat(
+          timeframe
+            //filter when bid lost - ie bitfinex
+            .filter(exBid => exBid.bid !== undefined)
+            //get ex pair
+            .map(exBid => ({ exAsk, exBid }))
+        ),
+      []
+    )
+    //filter same ex
+    .filter(({ exAsk, exBid }) => exAsk.exName !== exBid.exName)
+    .filter(({ exAsk, exBid }) => exAsk.ask.price < exBid.bid.price);
 
-  //todo: get all avail profitable deals, not only the best, return as array/observable?
+  return result;
+}
 
-  //get all bids
-  //get all asks
+function getStatsForExPair({ exAsk, exBid }) {
+  let priceDiff = exBid.bid.price - exAsk.ask.price;
+  let priceDiffPt = (priceDiff / exAsk.ask.price) * 100;
 
-  //get min ask
-  //get max bid
+  //todo: minimalo4ka calc
+  let availVolume = Math.min(exAsk.ask.volume, exBid.bid.volume);
 
-  //todo: netprofit at first!
-  let exMinAsk = minBy(timeframe, exTF => +exTF.ask.price);
-  let exMaxBid = maxBy(timeframe, exTF => +exTF.bid.price);
-
-  let priceDiff = exMaxBid.bid.price - exMinAsk.ask.price;
-  let priceDiffPt = (priceDiff / exMinAsk.ask.price) * 100;
-  let availVolume = Math.min(exMinAsk.ask.volume, exMaxBid.bid.volume);
   let availProfit = availVolume * priceDiff;
 
-  let avgPrice = (exMaxBid.bid.price + exMinAsk.ask.price) / 2;
+  let avgPrice = (exBid.bid.price + exAsk.ask.price) / 2;
 
   let mainAvailVolumeAvg = availVolume * avgPrice;
 
-  //todo: minimalo4ka
-
-  //todo: bad proverka
-  if (exMinAsk.exName === exMaxBid.exName) {
-    //same exchange
-    return [];
-  }
-
   //get net profit
-  let buyFeePt = exchanges[exMinAsk.exName].fees.taker;
-  let sellFeePt = exchanges[exMaxBid.exName].fees.taker;
+  let buyFeePt = exchanges[exAsk.exName].fees.taker;
+  let sellFeePt = exchanges[exBid.exName].fees.taker;
 
-  let buyFee = (exMinAsk.ask.price * availVolume * buyFeePt) / 100;
-  let sellFee = (exMaxBid.bid.price * availVolume * sellFeePt) / 100;
+  let buyFee = (exAsk.ask.price * availVolume * buyFeePt) / 100;
+  let sellFee = (exBid.bid.price * availVolume * sellFeePt) / 100;
 
   let netProfit = availProfit - buyFee - sellFee;
 
-  let { pair } = exMinAsk;
+  let { pair } = exAsk;
 
   let stats = {
     datetime: new Date().toLocaleString().replace(",", ""),
     pair,
-    exMinAsk,
-    exMaxBid,
+    exMinAsk: exAsk,
+    exMaxBid: exBid,
     priceDiff,
     priceDiffPt,
     availVolume,
@@ -78,8 +71,18 @@ function getStatsFromTimeframe(timeframe) {
     netProfit,
   };
 
+  return stats;
+}
+
+function getStatsFromTimeframe(timeframe) {
+  let exPairs = getExPairsFromTimeframe(timeframe);
+
+  let statsArr = exPairs.map(getStatsForExPair);
+
+  //todo: filter based on stats - here or snaruji
+
   //only one for now
-  return [stats];
+  return statsArr;
 }
 
 module.exports = { getStatsFromTimeframe };
