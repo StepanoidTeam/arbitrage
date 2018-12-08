@@ -166,6 +166,14 @@ function getSourceForPairs(globalPairs = []) {
         }
       }
 
+      if (orderbook.asks.size < 2) {
+        console.log("📕  low ask", new Date().toLocaleString(), orderbook);
+      }
+
+      if (orderbook.bids.size < 2) {
+        console.log("📗  low bid", new Date().toLocaleString(), orderbook);
+      }
+
       produceBook(orderbook, pair);
     }
 
