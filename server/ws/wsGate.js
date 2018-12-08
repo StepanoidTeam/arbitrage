@@ -1,8 +1,7 @@
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
-const pako = require("pako");
-const { last, head } = require("lodash");
+const { last } = require("lodash");
 
 //https://www.gate.io/api2#depth
 //https://github.com/gateio/WebSocket-API/blob/master/nodejs/ws.js

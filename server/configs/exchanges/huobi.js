@@ -378,7 +378,7 @@ const huobi = {
   },
   minOrder: {
     //todo: add min order volumes
-    // checking ...
+    // no limits
   },
   mappers: {
     orderbook: data => ({
