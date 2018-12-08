@@ -26,6 +26,7 @@ const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
 const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
+const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
 //to prevent node eventEmitter warning about memory leak. 11 used, 10 is default
 //upd: 17 used
 require("events").EventEmitter.defaultMaxListeners = 20;
@@ -72,7 +73,7 @@ function listenAllPairs({ pairs, wsex }) {
 }
 
 function getMiniStats({
-  timestamp,
+  datetime,
   pair,
   exMinAsk: {
     exName: minAskExName,
@@ -86,7 +87,7 @@ function getMiniStats({
   netProfit,
 }) {
   return {
-    date: new Date(timestamp).toISOString(),
+    datetime,
     pair,
     minAskExName,
     minAskPrice,
@@ -217,8 +218,8 @@ function debugPairs({ pairs, wsex }) {
 // });
 
 // debugPairs({
-//   pairs: [PAIRS.IOTA_BTC, PAIRS.IOTA_USDT, PAIRS.BTC_USDT],
-//   wsex: [wsBitfinex], // wsBitfinex, wsHuobi, wsOkex, wsGate
+//   pairs: [PAIRS.EOS_USDT, PAIRS.XRP_BTC],
+//   wsex: [wsBinance, wsHitbtc], // wsBitfinex, wsHuobi, wsOkex, wsGate
 // });
 
 // getPairsAggSource({
@@ -231,6 +232,6 @@ function debugPairs({ pairs, wsex }) {
 logAnalytics({
   pairs: pairs2use,
   //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi],
-  //wsex: [wsGate, wsOkex],
+  wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc],
+  //wsex: [wsBinance, wsOkex, wsHitbtc, wsHuobi],
 });
