@@ -24,6 +24,10 @@ function getStatsFromTimeframe(timeframe) {
   let availVolume = Math.min(exMinAsk.ask.volume, exMaxBid.bid.volume);
   let availProfit = availVolume * priceDiff;
 
+  let avgPrice = (exMaxBid.bid.price + exMinAsk.ask.price) / 2;
+
+  let mainAvailVolumeAvg = availVolume * avgPrice;
+
   if (exMinAsk.exName === exMaxBid.exName) {
     //same exchange
     //console.log("no profit", availProfit);
@@ -49,6 +53,7 @@ function getStatsFromTimeframe(timeframe) {
     priceDiff,
     priceDiffPt,
     availVolume,
+    mainAvailVolumeAvg,
     availProfit,
     netProfit,
   };

@@ -84,6 +84,7 @@ function getMiniStats({
     bid: { price: maxBidPrice },
   },
   availVolume,
+  mainAvailVolumeAvg,
   netProfit,
 }) {
   return {
@@ -94,6 +95,7 @@ function getMiniStats({
     maxBidExName,
     maxBidPrice,
     availVolume,
+    mainAvailVolumeAvg,
     netProfit,
   };
 }
