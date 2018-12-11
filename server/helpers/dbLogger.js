@@ -1,5 +1,5 @@
 const nosql = require("nosql");
-
+// viewer - https://nosql.totaljs.com/
 function dbLogger(logName) {
   var DB = nosql.load(`./logs/log.${logName}.nosql`);
 

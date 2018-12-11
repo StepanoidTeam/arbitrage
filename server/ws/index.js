@@ -13,7 +13,7 @@ const {
 } = require("rxjs/operators");
 const { toArray } = require("lodash");
 
-const { dbLogger } = require("../dbLogger");
+const { dbLogger } = require("../helpers/dbLogger");
 const { appendTextToFile, makeDir } = require("../helpers/file");
 const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
