@@ -73,36 +73,6 @@ function listenAllPairs({ pairs, wsex }) {
   return aggPairs;
 }
 
-function getMiniStats({
-  datetime,
-  pair,
-  exMinAsk: {
-    exName: minAskExName,
-    ask: { price: minAskPrice },
-  },
-  exMaxBid: {
-    exName: maxBidExName,
-    bid: { price: maxBidPrice },
-  },
-  priceDiffPt,
-  availVolume,
-  mainAvailVolumeAvg,
-  netProfit,
-}) {
-  return {
-    datetime,
-    pair,
-    minAskExName,
-    minAskPrice,
-    maxBidExName,
-    maxBidPrice,
-    priceDiffPt,
-    availVolume,
-    mainAvailVolumeAvg,
-    netProfit,
-  };
-}
-
 function sameMiniStats(ms1, ms2) {
   return (
     ms1.minAskExName === ms2.minAskExName &&
