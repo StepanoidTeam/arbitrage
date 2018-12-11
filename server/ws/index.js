@@ -13,6 +13,7 @@ const {
 } = require("rxjs/operators");
 const { toArray } = require("lodash");
 
+const { dbLogger } = require("../dbLogger");
 const { appendTextToFile, makeDir } = require("../helpers/file");
 const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
 const { getStatsFromTimeframe } = require("../analytics");
@@ -130,56 +131,18 @@ function logAnalytics({ pairs, wsex }) {
       tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
       filter(stats => stats.netProfit > 0),
-      // tap(() => progressSub.next({ key: ">0" })),
+      tap(() => progressSub.next({ key: ">0" })),
       //count profitable exchanges
       tap(({ exMinAsk: { exName: key } }) => progressSub.next({ key })),
       tap(({ exMaxBid: { exName: key } }) => progressSub.next({ key }))
     )
   );
 
-  const getMainCoin = pair => {
-    let [, mainCoin] = pair.split("_");
-    return mainCoin;
-  };
+  //todo: subscribe to aggstats and log to somewhere
 
-  const getLogName = (subdir, pair) =>
-    `./logs/${subdir}/${getMainCoin(pair)}/stats-${pair}-${+dateStarted}.csv`;
-
-  makeDir(`./logs/max`);
-  makeDir(`./logs/min`);
-
-  aggStats.forEach(aggPairSource => {
-    aggPairSource.pipe(first()).subscribe(stats => {
-      let mainCoin = getMainCoin(stats.pair);
-
-      makeDir(`./logs/max/${mainCoin}`);
-      makeDir(`./logs/min/${mainCoin}`);
-
-      appendTextToFile(getLogName("max", stats.pair), getCsvHeaders(stats));
-      appendTextToFile(
-        getLogName("min", stats.pair),
-        getCsvHeaders(getMiniStats(stats))
-      );
-    });
-
-    aggPairSource.subscribe(stats => {
-      appendTextToFile(getLogName("max", stats.pair), getCsvValues(stats));
-    });
-
-    aggPairSource
-      .pipe(
-        map(getMiniStats),
-        //log only diff mini stats
-        distinctUntilChanged(sameMiniStats)
-        //tap(() => progressSub.next({ key: "min" }))
-      )
-      .subscribe(minStats => {
-        appendTextToFile(
-          getLogName("min", minStats.pair),
-          getCsvValues(minStats)
-        );
-      });
-  });
+  //TODO: try to merge all sources into one?
+  //or group by main symbol?
+  merge(...aggStats).subscribe(dbLogger(Date.now()));
 
   progressSub
     .pipe(
