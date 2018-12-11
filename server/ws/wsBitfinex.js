@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const sortBy = require("lodash/sortBy");
 
 const { fromEvent, Subject } = require("rxjs");
-const { map, filter, tap } = require("rxjs/operators");
+const { map, filter, tap, bufferTime } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex: exConfig },
@@ -75,9 +75,18 @@ function getSourceForPairs(globalPairs = []) {
       map(data => JSON.parse(data))
     );
 
-    source
-      .pipe(filter(data => data.event === "error"))
-      .subscribe(err => console.log(`⭕️   ${exConfig.name} ws error`, err));
+    const ERROR_CODE = { SYMBOL_INVALID: 10300 };
+    source.pipe(filter(data => data.event === "error")).subscribe(err => {
+      switch (err.code) {
+        case ERROR_CODE.SYMBOL_INVALID:
+          invalidSymbolsSub.next(err.pair);
+        //break;
+
+        default:
+          console.log(`\n⭕️   ${exConfig.name} ws error`, err);
+          break;
+      }
+    });
 
     //save subscribed pairs/streams
     source
