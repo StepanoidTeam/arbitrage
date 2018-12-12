@@ -71,6 +71,12 @@ function getSourceForPairs(globalPairs = []) {
         return;
       }
 
+      if (data.bids === undefined || data.bids === undefined) {
+        console.log(`💩  ${exConfig.name} bid/ask lost! ${pair.globalPair}`);
+        console.log(data);
+        return;
+      }
+
       const arrToPriceVolume = ([price, volume]) => ({
         price,
         volume,
