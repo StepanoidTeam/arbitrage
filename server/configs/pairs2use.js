@@ -520,8 +520,10 @@ const pairs2use = [
   PAIRS.BITS_BTC,
   PAIRS.GNO_ETH,
   PAIRS.UKG_ETH,
-  PAIRS.BTC_EUR,
-  PAIRS.ETH_EUR,
+  //todo: EUR pairs used only on bitfinex and they often cause bid/ask lost errors
+  // so avoid to use these useless pairs
+  //PAIRS.BTC_EUR,
+  //PAIRS.ETH_EUR,
   PAIRS.ETP_USDT,
 ];
 
