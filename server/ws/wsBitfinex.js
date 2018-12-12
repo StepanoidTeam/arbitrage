@@ -79,7 +79,7 @@ function getSourceForPairs(globalPairs = []) {
     source.pipe(filter(data => data.event === "error")).subscribe(err => {
       switch (err.code) {
         case ERROR_CODE.SYMBOL_INVALID:
-          invalidSymbolsSub.next(err.pair);
+        // invalidSymbolsSub.next(err.pair);
         //break;
 
         default:
