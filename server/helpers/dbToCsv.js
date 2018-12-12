@@ -42,6 +42,10 @@ function dbToCsv(logName) {
   let count = 0;
   let statsStream = getFileLineStream(inputLogPath).pipe(
     map(raw => JSON.parse(raw)),
+    map(stats => ({
+      ...stats,
+      datetime: stats.timestamp.toLocaleString().replace(",", ""),
+    })),
     tap(() => consoleRewrite(`processed: ${++count} lines`))
   );
 
@@ -71,7 +75,8 @@ function sameMiniStats(ms1, ms2) {
 }
 
 function getMiniStats({
-  timestamp,
+  datetime,
+  mainCoin,
   pair,
   exMinAsk: {
     exName: minAskExName,
@@ -87,7 +92,8 @@ function getMiniStats({
   netProfit,
 }) {
   return {
-    timestamp,
+    datetime,
+    mainCoin,
     pair,
     minAskExName,
     minAskPrice,
@@ -101,4 +107,4 @@ function getMiniStats({
 }
 
 //todo: set log timeframe here
-dbToCsv("1544564969969");
+dbToCsv("1544645868673");
