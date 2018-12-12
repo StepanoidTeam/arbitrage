@@ -1,6 +1,6 @@
 //todo: optimize & refac, cause now it's main bottleneck for bot
 const { Subject } = require("rxjs");
-const { map, tap, first } = require("rxjs/operators");
+const { map, tap, first, distinctUntilChanged } = require("rxjs/operators");
 const nosql = require("nosql");
 const fs = require("fs");
 const readline = require("readline");
@@ -52,6 +52,9 @@ function dbToCsv(logName) {
 
   statsStream.subscribe(stats => {
     appendTextToFile(maxLogPath, getCsvValues(stats));
+  });
+
+  statsStream.pipe(distinctUntilChanged(sameMiniStats)).subscribe(stats => {
     appendTextToFile(minLogPath, getCsvValues(getMiniStats(stats)));
   });
 }
@@ -61,6 +64,17 @@ const getMainCoin = pair => {
   let [, mainCoin] = pair.split("_");
   return mainCoin;
 };
+
+function sameMiniStats(ms1, ms2) {
+  return (
+    ms1.minAskExName === ms2.minAskExName &&
+    ms1.minAskPrice === ms2.minAskPrice &&
+    ms1.maxBidExName === ms2.maxBidExName &&
+    ms1.maxBidPrice === ms2.maxBidPrice &&
+    ms1.availVolume === ms2.availVolume &&
+    ms1.netProfit === ms2.netProfit
+  );
+}
 
 function getMiniStats({
   datetime,

@@ -73,17 +73,6 @@ function listenAllPairs({ pairs, wsex }) {
   return aggPairs;
 }
 
-function sameMiniStats(ms1, ms2) {
-  return (
-    ms1.minAskExName === ms2.minAskExName &&
-    ms1.minAskPrice === ms2.minAskPrice &&
-    ms1.maxBidExName === ms2.maxBidExName &&
-    ms1.maxBidPrice === ms2.maxBidPrice &&
-    ms1.availVolume === ms2.availVolume &&
-    ms1.netProfit === ms2.netProfit
-  );
-}
-
 function logAnalytics({ pairs, wsex }) {
   const dateStarted = new Date();
 
