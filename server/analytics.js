@@ -1,21 +1,19 @@
-const { maxBy, minBy } = require("lodash");
-
 const { exchanges } = require("./configs");
 
-//timeframe is data about 1 pair, for all related exchanges, in 1 moment of time
+//timeframe is an array with data about 1 pair, for all related exchanges, in 1 moment of time
 //it contains top bid/ask for each exchange, for 1 pair
 
 /* 
   not our case - https://en.wikipedia.org/wiki/Triangular_number
 
   T = n*n-n
-  
 */
 
 function getExPairsFromTimeframe(timeframe) {
   let result = timeframe
     //filter when ask lost - ie bitfinex
     .filter(exAsk => exAsk.ask !== undefined)
+    //flatmap
     .reduce(
       (acc, exAsk) =>
         acc.concat(
@@ -29,9 +27,15 @@ function getExPairsFromTimeframe(timeframe) {
     )
     //filter same ex
     .filter(({ exAsk, exBid }) => exAsk.exName !== exBid.exName)
+    //filter negative deals
     .filter(({ exAsk, exBid }) => exAsk.ask.price < exBid.bid.price);
 
   return result;
+}
+
+function getMainCoin(pair) {
+  let [, mainCoin] = pair.split("_");
+  return mainCoin;
 }
 
 function getStatsForExPair({ exAsk, exBid }) {
@@ -58,8 +62,11 @@ function getStatsForExPair({ exAsk, exBid }) {
 
   let { pair } = exAsk;
 
+  let mainCoin = getMainCoin(pair);
+
   let stats = {
-    datetime: new Date().toLocaleString().replace(",", ""),
+    timestamp: Date.now(),
+    mainCoin,
     pair,
     exMinAsk: exAsk,
     exMaxBid: exBid,
@@ -79,9 +86,6 @@ function getStatsFromTimeframe(timeframe) {
 
   let statsArr = exPairs.map(getStatsForExPair);
 
-  //todo: filter based on stats - here or snaruji
-
-  //only one for now
   return statsArr;
 }
 
