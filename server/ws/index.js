@@ -14,8 +14,8 @@ const {
 const { toArray } = require("lodash");
 
 const { dbLogger } = require("../helpers/dbLogger");
-const { appendTextToFile, makeDir } = require("../helpers/file");
-const { getCsvHeaders, getCsvValues } = require("../helpers/csv");
+const { filterByProfit } = require("../helpers/filterByProfit");
+
 const { getStatsFromTimeframe } = require("../analytics");
 const { PAIRS, pairs2use } = require("../configs");
 const { consoleRewrite } = require("../helpers/cli-progress");
@@ -89,8 +89,8 @@ function logAnalytics({ pairs, wsex }) {
       filter(stats => stats !== null),
       tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
-      filter(stats => stats.netProfit > 0),
-      tap(() => progressSub.next({ key: ">0" })),
+      filter(filterByProfit),
+      tap(() => progressSub.next({ key: "profitable" })),
       //count profitable exchanges
       tap(({ exMinAsk: { exName: key } }) => progressSub.next({ key })),
       tap(({ exMaxBid: { exName: key } }) => progressSub.next({ key }))
