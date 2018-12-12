@@ -59,12 +59,6 @@ function dbToCsv(logName) {
   });
 }
 
-//do we need this?
-const getMainCoin = pair => {
-  let [, mainCoin] = pair.split("_");
-  return mainCoin;
-};
-
 function sameMiniStats(ms1, ms2) {
   return (
     ms1.minAskExName === ms2.minAskExName &&
@@ -77,7 +71,7 @@ function sameMiniStats(ms1, ms2) {
 }
 
 function getMiniStats({
-  datetime,
+  timestamp,
   pair,
   exMinAsk: {
     exName: minAskExName,
@@ -93,7 +87,7 @@ function getMiniStats({
   netProfit,
 }) {
   return {
-    datetime,
+    timestamp,
     pair,
     minAskExName,
     minAskPrice,
