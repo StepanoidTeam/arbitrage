@@ -31,8 +31,6 @@ function getFileLineStream(filepath) {
 }
 
 function dbToCsv(logName) {
-  //makeDir(`./logs/kek`);
-
   const inputLogPath = `./logs/log.${logName}.nosql`;
   const maxLogPath = `./logs/log.${logName}.max.csv`;
   const minLogPath = `./logs/log.${logName}.min.csv`;
