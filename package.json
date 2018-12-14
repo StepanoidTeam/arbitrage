@@ -21,7 +21,8 @@
   "scripts": {
     "start": "npm run bot",
     "bot": "server/ws",
-    "tocsv": "server/helpers/dbToCsv"
+    "tocsv": "server/helpers/dbToCsv",
+    "gsetup": "export PORT=8080 && npm install"
   },
   "repository": {
     "type": "git",
