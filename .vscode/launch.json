@@ -9,20 +9,6 @@
       "request": "launch",
       "name": "server",
       "program": "${workspaceFolder}/server/index.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "filterabils",
-      "program": "${workspaceFolder}/server/filterAbils.js",
-      "args": ["stats-btcusd-757.json.lines"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "stats-update",
-      "program": "${workspaceFolder}/server/readFile.js",
-      "args": ["stats-debug"]
     }
   ]
 }
