@@ -49,7 +49,7 @@ function getStatsForExPair({ exAsk, exBid }) {
 
   let avgPrice = (exBid.bid.price + exAsk.ask.price) / 2;
 
-  let mainAvailVolumeAvg = availVolume * avgPrice;
+  let availVolumeByAvgPrice = availVolume * avgPrice;
 
   //get net profit
   let buyFeePt = exchanges[exAsk.exName].fees.taker;
@@ -73,7 +73,7 @@ function getStatsForExPair({ exAsk, exBid }) {
     priceDiff,
     priceDiffPt,
     availVolume,
-    mainAvailVolumeAvg,
+    availVolumeByAvgPrice,
     availProfit,
     netProfit,
   };

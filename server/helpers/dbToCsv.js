@@ -86,7 +86,7 @@ function getMiniStats({
   },
   priceDiffPt,
   availVolume,
-  mainAvailVolumeAvg,
+  availVolumeByAvgPrice,
   netProfit,
 }) {
   return {
@@ -99,7 +99,7 @@ function getMiniStats({
     maxBidPrice,
     priceDiffPt,
     availVolume,
-    mainAvailVolumeAvg,
+    availVolumeByAvgPrice,
     netProfit,
   };
 }
