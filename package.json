@@ -19,9 +19,10 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "npm run bot",
-    "bot": "server/ws",
-    "tocsv": "server/helpers/dbToCsv",
+    "start": "npm run client",
+    "bot": "node server/ws",
+    "client": "node server",
+    "tocsv": "node server/helpers/dbToCsv",
     "gsetup": "export PORT=8080 && npm install"
   },
   "repository": {
