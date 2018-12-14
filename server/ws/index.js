@@ -16,8 +16,7 @@ const { dbLogger } = require("../helpers/dbLogger");
 const { filterByProfit } = require("../helpers/filterByProfit");
 
 const { getStatsFromTimeframe } = require("../analytics");
-const { PAIRS, pairs2use } = require("../configs");
-const { consoleRewrite } = require("../helpers/cli-progress");
+const { pairs2use } = require("../configs");
 
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
