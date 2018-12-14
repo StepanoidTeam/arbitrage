@@ -14,5 +14,5 @@ app.get("/api/all", async (req, res) => {
 
 //start server
 app.listen(port, () => {
-  console.log("[server] started");
+  console.log("🌐  [server] started");
 });
