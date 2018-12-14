@@ -10,6 +10,7 @@ const {
   scan, //reduce-like
 } = require("rxjs/operators");
 const { toArray } = require("lodash");
+const logUpdate = require("log-update");
 
 const { dbLogger } = require("../helpers/dbLogger");
 const { filterByProfit } = require("../helpers/filterByProfit");
@@ -30,11 +31,11 @@ const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
 //upd: 17 used
 require("events").EventEmitter.defaultMaxListeners = 20;
 
-function getPairsAggSource({ pairs, wsex }) {
+function getPairsAggSource({ pairs, wsExchanges }) {
   //activate all exchanges
-  let wsexSources = wsex.map(ex => ex(pairs));
+  let wsExchangeSources = wsExchanges.map(wsEx => wsEx(pairs));
   //merge all ex data into one source
-  let globalWsexSource = merge(...wsexSources);
+  let globalWsexSource = merge(...wsExchangeSources);
 
   let timeframeSubs = pairs.map(pair => {
     let pairTimeframeSub = new Subject();
@@ -55,14 +56,14 @@ function getPairsAggSource({ pairs, wsex }) {
   return timeframeSubs;
 }
 
-function logAnalytics({ pairs, wsex }) {
+function logAnalytics({ pairs, wsExchanges }) {
   const dateStarted = new Date();
 
   console.log(`🤖  bot started at: ${dateStarted.toLocaleString()}`);
 
   const progressSub = new Subject();
 
-  let aggPairSources = getPairsAggSource({ pairs, wsex });
+  let aggPairSources = getPairsAggSource({ pairs, wsExchanges });
 
   const aggStats = aggPairSources.map(aggPairSrc =>
     aggPairSrc.pipe(
@@ -94,8 +95,12 @@ function logAnalytics({ pairs, wsex }) {
       }, {}),
       throttleTime(1000)
     )
-    .subscribe(value => {
-      consoleRewrite(`log stats: ${JSON.stringify(value)}`);
+    .subscribe(stats => {
+      let value = Object.entries(stats)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+
+      logUpdate(`log stats:\n`, value);
     });
 }
 
@@ -103,6 +108,6 @@ function logAnalytics({ pairs, wsex }) {
 logAnalytics({
   pairs: pairs2use,
   //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsex: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc],
-  //wsex: [wsBinance, wsOkex, wsHitbtc, wsHuobi],
+  wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc],
+  //wsExchanges: [wsBinance, wsOkex, wsHitbtc, wsHuobi],
 });
