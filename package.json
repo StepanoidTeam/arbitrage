@@ -19,7 +19,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run bot",
+    "bot": "server/ws",
+    "tocsv": "server/helpers/dbToCsv"
   },
   "repository": {
     "type": "git",
