@@ -8,9 +8,9 @@ const { last, head } = require("lodash");
 
 const {
   exchanges: { okex: exConfig },
-  getLocalPairs,
   logger,
 } = require("../configs");
+const { getLocalPairs } = require("../helpers/getLocalPairs");
 
 function getSourceForPairs(globalPairs = []) {
   let pairs = getLocalPairs(globalPairs, exConfig);

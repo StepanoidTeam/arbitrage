@@ -6,9 +6,9 @@ const { map, filter, tap, bufferTime } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex: exConfig },
-  getLocalPairs,
   logger,
 } = require("../configs");
+const { getLocalPairs } = require("../helpers/getLocalPairs");
 
 function getSourceForPairs(globalPairs = []) {
   const pairs = getLocalPairs(globalPairs, exConfig);

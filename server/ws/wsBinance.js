@@ -4,9 +4,9 @@ const { map } = require("rxjs/operators");
 
 const {
   exchanges: { binance: exConfig },
-  getLocalPairs,
   logger,
 } = require("../configs");
+const { getLocalPairs } = require("../helpers/getLocalPairs");
 
 const depth = 5; // 5, 10
 

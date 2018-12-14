@@ -8,9 +8,9 @@ const sortBy = require("lodash/sortBy");
 
 const {
   exchanges: { bittrex: exConfig },
-  getLocalPairs,
   logger,
 } = require("../configs");
+const { getLocalPairs } = require("../helpers/getLocalPairs");
 
 function getSourceForPairs(globalPairs = []) {
   //todo: make some common apporoach for that cases
