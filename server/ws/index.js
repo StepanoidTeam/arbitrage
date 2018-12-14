@@ -35,17 +35,17 @@ require("events").EventEmitter.defaultMaxListeners = 20;
 function getPairsAggSource({ pairs, wsex }) {
   //activate all exchanges
   let wsexSources = wsex.map(ex => ex(pairs));
+  //merge all ex data into one source
   let globalWsexSource = merge(...wsexSources);
 
   let timeframeSubs = pairs.map(pair => {
     let timeframeSub = new Subject();
     let timeframe = {};
 
-    //group by pair
+    //sub for particular pair to make tf
     globalWsexSource
       .pipe(filter(exData => exData.pair === pair))
       .subscribe(exData => {
-        //timeframe.pair = pair;
         timeframe[exData.exName] = exData;
 
         timeframeSub.next(toArray(timeframe));
@@ -86,7 +86,6 @@ function logAnalytics({ pairs, wsex }) {
     aggPairSrc.pipe(
       map(timeframe => getStatsFromTimeframe(timeframe)),
       mergeMap(stats => of(...stats)),
-      filter(stats => stats !== null),
       tap(() => progressSub.next({ key: "all" })),
       //skip shit deals
       filter(filterByProfit),
