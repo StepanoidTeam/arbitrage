@@ -81,6 +81,7 @@ function logAnalytics({ pairs, wsExchanges }) {
     aggPairSrc.pipe(
       map(timeframe => getStatsFromTimeframe(timeframe)),
       mergeMap(stats => of(...stats)),
+      //todo: agg similar stats
       tap(() =>
         progressStateSub.next({
           TYPE: "TICK",
@@ -89,13 +90,13 @@ function logAnalytics({ pairs, wsExchanges }) {
       ),
       //skip non-profit deals
       filter(filterByProfit),
+      //count profitable exchanges
       tap(() =>
         progressStateSub.next({
           TYPE: "TICK",
           PAYLOAD: { key: "Profitable" },
         })
       ),
-      //count profitable exchanges
       tap(({ exMinAsk: { exName: key } }) =>
         progressStateSub.next({
           TYPE: "TICK",
