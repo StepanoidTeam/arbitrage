@@ -101,10 +101,12 @@ function getSourceForPairs(globalPairs = []) {
   client.serviceHandlers.disconnected = function() {
     //todo: reconnect!
     logger.disconnected(exConfig);
+    subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
   };
 
   client.serviceHandlers.connected = function(connection) {
     logger.connected(exConfig);
+    subject.next({ exName: exConfig.name, isSystem: true, isOnline: true });
 
     pairs.forEach(pair => {
       //get initial orderbook

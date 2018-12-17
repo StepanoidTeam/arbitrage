@@ -67,11 +67,13 @@ function getSourceForPairs(globalPairs = []) {
 
     ws.on("open", () => {
       logger.connected(exConfig);
+      subject.next({ exName: exConfig.name, isSystem: true, isOnline: true });
       subscribe(ws);
     });
 
     ws.onclose = () => {
       logger.disconnected(exConfig);
+      subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
       //todo: reconnect!
 
       setTimeout(() => connect(), 3000);

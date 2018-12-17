@@ -18,13 +18,13 @@ function getSourceForPairs(globalPairs = []) {
     throw new Error(`${exConfig.name} ws works with 2 pairs minimum, sorry`);
 
   const subject = new Subject();
-  const depth = 5;
 
   function connect() {
     const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
     ws.on("close", () => {
       logger.disconnected(exConfig);
+      subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
     });
@@ -35,6 +35,7 @@ function getSourceForPairs(globalPairs = []) {
 
     ws.on("open", () => {
       logger.connected(exConfig);
+      subject.next({ exName: exConfig.name, isSystem: true, isOnline: true });
 
       let pairsSubscribed = [];
       pairs
