@@ -30,37 +30,50 @@ const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
 //upd: 17 used
 require("events").EventEmitter.defaultMaxListeners = 20;
 
-function getPairsAggSource({ pairs, wsExchanges }) {
-  //activate all exchanges
-  let wsExchangeSources = wsExchanges.map(wsEx => wsEx(pairs));
-  //merge all ex data into one source
-  let globalWsexSource = merge(...wsExchangeSources);
-
-  let timeframeSubs = pairs.map(pair => {
-    let pairTimeframeSub = new Subject();
-    let pairTimeframe = {};
-
-    //sub for particular pair to make tf
-    globalWsexSource
-      .pipe(filter(exData => exData.pair === pair))
-      .subscribe(exData => {
-        pairTimeframe[exData.exName] = exData;
-
-        pairTimeframeSub.next(toArray(pairTimeframe));
-      });
-
-    return pairTimeframeSub;
-  });
-
-  return timeframeSubs;
-}
-
 function logAnalytics({ pairs, wsExchanges }) {
   const dateStarted = new Date();
 
   console.log(`🤖  bot started at: ${dateStarted.toLocaleString()}`);
 
-  const progressSub = new Subject();
+  const progressStateSub = new Subject();
+
+  function getPairsAggSource({ pairs, wsExchanges }) {
+    //activate all exchanges
+    let wsExchangeSources = wsExchanges.map(wsEx => wsEx(pairs));
+    //merge all ex data into one source
+    let globalWsexSource = merge(...wsExchangeSources);
+
+    let timeframeSubs = pairs.map(pair => {
+      let pairTimeframeSub = new Subject();
+      let pairTimeframe = new Map();
+
+      //sub for particular pair to make tf
+      globalWsexSource
+        .pipe(filter(({ isSystem }) => isSystem))
+        .subscribe(exData => {
+          progressStateSub.next({
+            TYPE: "TOGGLE_STATE",
+            PAYLOAD: { key: exData.exName, status: exData.isOnline },
+          });
+
+          if (!exData.isOnline) {
+            pairTimeframe.delete(exData.exName);
+          }
+        });
+
+      globalWsexSource
+        .pipe(filter(exData => exData.pair === pair))
+        .subscribe(exData => {
+          pairTimeframe.set(exData.exName, exData);
+
+          pairTimeframeSub.next(Array.from(pairTimeframe.values()));
+        });
+
+      return pairTimeframeSub;
+    });
+
+    return timeframeSubs;
+  }
 
   let aggPairSources = getPairsAggSource({ pairs, wsExchanges });
 
@@ -68,13 +81,33 @@ function logAnalytics({ pairs, wsExchanges }) {
     aggPairSrc.pipe(
       map(timeframe => getStatsFromTimeframe(timeframe)),
       mergeMap(stats => of(...stats)),
-      tap(() => progressSub.next({ key: "all" })),
+      tap(() =>
+        progressStateSub.next({
+          TYPE: "TICK",
+          PAYLOAD: { key: "All" },
+        })
+      ),
       //skip non-profit deals
       filter(filterByProfit),
-      tap(() => progressSub.next({ key: "profitable" })),
+      tap(() =>
+        progressStateSub.next({
+          TYPE: "TICK",
+          PAYLOAD: { key: "Profitable" },
+        })
+      ),
       //count profitable exchanges
-      tap(({ exMinAsk: { exName: key } }) => progressSub.next({ key })),
-      tap(({ exMaxBid: { exName: key } }) => progressSub.next({ key }))
+      tap(({ exMinAsk: { exName: key } }) =>
+        progressStateSub.next({
+          TYPE: "TICK",
+          PAYLOAD: { key },
+        })
+      ),
+      tap(({ exMaxBid: { exName: key } }) =>
+        progressStateSub.next({
+          TYPE: "TICK",
+          PAYLOAD: { key },
+        })
+      )
     )
   );
 
@@ -82,24 +115,37 @@ function logAnalytics({ pairs, wsExchanges }) {
   merge(...aggStats).subscribe(dbLogger(Date.now()));
 
   //just for logging
-  progressSub
+  progressStateSub
     .pipe(
-      scan((acc, { key }) => {
-        if (acc[key]) {
-          acc[key]++;
-        } else {
-          acc[key] = 1;
+      scan((state, { TYPE, PAYLOAD }) => {
+        //basic init
+        if (!state[PAYLOAD.key]) {
+          state[PAYLOAD.key] = { value: 0, status: false };
         }
-        return acc;
+        //reducer
+        switch (TYPE) {
+          case "TICK":
+            state[PAYLOAD.key].value++;
+            break;
+          case "TOGGLE_STATE":
+            state[PAYLOAD.key].status = PAYLOAD.status;
+            break;
+        }
+        return state;
       }, {}),
       throttleTime(1000)
     )
-    .subscribe(stats => {
-      let value = Object.entries(stats)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join("\n");
+    .subscribe(state => {
+      let value = Object.entries(state)
+        .map(
+          ([key, { value, status }]) =>
+            `${status ? "🌝" : "🌚"} ${key}: ${value}`
+        )
+        .sort()
+        .join("\n")
+        .trim();
 
-      logUpdate(`log stats:\n`, value);
+      logUpdate(`log stats:\n${value}`);
     });
 }
 
