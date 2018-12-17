@@ -38,7 +38,30 @@ Analytics:
     - запускаем основной скрипт аналитики, без учета ранее упомянутых пар
 
 
-====
+====BINANCE====
+https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#account-information-user_data // - судя по всему есть только вариант через API key + signature
+Еще есть отдельный Withdrawal API (WAPI), но ничего интересного
+https://github.com/binance-exchange/binance-official-api-docs/blob/master/wapi-api.md
+====HUOBI====
+https://github.com/huobiapi/API_Docs_en/wiki/REST_Reference#withdraw-api
+====OKex====
+https://github.com/okcoin-okex/API-docs-OKEx.com/blob/master/API-For-Spot-EN/REST%20API%20for%20SPOT.md // - пункт №8
+https://github.com/okcoin-okex/API-docs-OKEx.com/blob/master/API-For-Spot-EN/Error%20Code%20For%20Spot.md // - список error-кодов, наш видимо 10052
+====HitBTC====
+https://api.hitbtc.com/#rest-api-reference 
+https://api.hitbtc.com/api/2/public/currency //весь список, интересует параметр payoutEnabled
+https://api.hitbtc.com/api/2/public/currency/btc 
+====GATE====
+https://www.gate.io/api2#coininfo
+https://data.gateio.io/api2/1/coininfo // весь список
+====Binfinex====
+https://docs.bitfinex.com/v2/reference#movements // не очень понял, получится ли получить инфу о выводе через API v2
+https://docs.bitfinex.com/v1/reference#rest-auth-withdrawal
+
+
+
+
+========Minimum orders and trading rules=========
 https://support.binance.com/hc/en-us/articles/115000594711-Trading-Rule
 
 https://support.bitfinex.com/hc/en-us/articles/115003283709-What-is-the-minimum-order-size-
