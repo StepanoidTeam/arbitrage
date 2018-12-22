@@ -1,12 +1,15 @@
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
+const { intersection } = require("lodash");
 
 const {
   exchanges: { binance: exConfig },
   logger,
-} = require("../configs");
-const { getLocalPairs } = require("../helpers/getLocalPairs");
+} = require("../../configs");
+const { getLocalPairs } = require("../../helpers/getLocalPairs");
+
+const { getAllowedPairsAsync } = require("./assets");
 
 const depth = 5; // 5, 10
 
@@ -20,15 +23,24 @@ function getStreamName({ globalPair, localPair }) {
 }
 
 function getSourceForPairs(globalPairs = []) {
-  let pairStreams = getLocalPairs(globalPairs, exConfig).map(getStreamName);
-
-  let wsUrl = `wss://stream.binance.com:9443/stream?streams=${pairStreams
-    .map(ps => ps.stream)
-    .join("/")}`;
-
   const subject = new Subject();
 
-  function connect() {
+  async function connect() {
+    //todo: sub only for pairs where coins charge/withdraw enabled
+
+    const pairs = getLocalPairs(globalPairs, exConfig);
+    const allowedPairs = await getAllowedPairsAsync();
+    //remove not allowed pairs
+    const pairsToSubscribe = intersection(pairs, allowedPairs);
+
+    let pairStreams = pairsToSubscribe.map(getStreamName);
+
+    //todo: intersect with allowed pairs
+
+    let wsUrl = `wss://stream.binance.com:9443/stream?streams=${pairStreams
+      .map(ps => ps.stream)
+      .join("/")}`;
+
     const ws = new WebSocket(wsUrl);
 
     ws.onclose = () => {

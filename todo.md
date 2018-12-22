@@ -37,13 +37,12 @@ couchDB - http://docs.couchdb.org/en/stable/index.html
    - записываем куда-то список задезейбленных пар для ручной проверки,
    - запускаем основной скрипт аналитики, без учета ранее упомянутых пар
 
-# Exchange TODOs
+# Exchange Withdrawal API
 
 ## BINANCE
 
-https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#account-information-user_data // - судя по всему есть только вариант через API key + signature
-Еще есть отдельный Withdrawal API (WAPI), но ничего интересного
-https://github.com/binance-exchange/binance-official-api-docs/blob/master/wapi-api.md
+https://api.binance.com/api/v1/exchangeInfo - pairs info
+https://www.binance.com/assetWithdraw/getAllAsset.html - coins info
 
 ## HUOBI
 
