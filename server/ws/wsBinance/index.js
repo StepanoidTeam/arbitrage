@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
-const { intersection } = require("lodash");
+const { intersectionBy } = require("lodash");
 
 const {
   exchanges: { binance: exConfig },
@@ -30,8 +30,9 @@ function getSourceForPairs(globalPairs = []) {
 
     const pairs = getLocalPairs(globalPairs, exConfig);
     const allowedPairs = await getAllowedPairsAsync();
+
     //remove not allowed pairs
-    const pairsToSubscribe = intersection(pairs, allowedPairs);
+    const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
 
     let pairStreams = pairsToSubscribe.map(getStreamName);
 

@@ -4,6 +4,7 @@
   "description": "",
   "main": "server/index.js",
   "dependencies": {
+    "crypto-js": "^3.1.9-1",
     "express": "^4.16.4",
     "flat": "^4.1.0",
     "jsonic": "^0.3.1",

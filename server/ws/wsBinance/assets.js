@@ -34,7 +34,7 @@ async function getAllowedPairsAsync() {
     .filter(({ status }) => status === "TRADING")
     //no suspended coins
     .filter(({ baseAsset }) => !suspendedCoinCodes.includes(baseAsset))
-    .map(({ symbol }) => symbol);
+    .map(({ symbol: localPair }) => ({ localPair }));
 
   return allowedPairs;
 }

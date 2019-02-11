@@ -1,4 +1,5 @@
 const { PAIRS } = require("../globalPairs");
+const { secret } = require("./okex.secret");
 
 //https://www.okex.com/docs/en/#spot-data
 //GET /api/spot/v3/instruments/<instrument-id>/book
@@ -7,6 +8,7 @@ const { PAIRS } = require("../globalPairs");
 const okex = {
   name: "okex",
   url: "https://www.okex.com/api",
+  ...secret,
   getOrderBook(pairIndex) {
     return `${this.url}/spot/v3/instruments/${
       this.pairs[pairIndex]

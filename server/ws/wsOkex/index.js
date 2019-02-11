@@ -2,18 +2,25 @@ const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
 const pako = require("pako");
-const { last, head } = require("lodash");
+const { last, head, intersectionBy } = require("lodash");
 
 //https://github.com/okcoin-okex/API-docs-OKEx.com/blob/master/API-For-Spot-EN/WEBSOCKET%20API%20for%20SPOT.md
 
 const {
   exchanges: { okex: exConfig },
   logger,
-} = require("../configs");
-const { getLocalPairs } = require("../helpers/getLocalPairs");
+} = require("../../configs");
+const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
-function getSourceForPairs(globalPairs = []) {
+const { getAllowedPairsAsync } = require("./assets");
+
+async function getSourceForPairs(globalPairs = []) {
   let pairs = getLocalPairs(globalPairs, exConfig);
+  const allowedPairs = await getAllowedPairsAsync();
+
+  //remove not allowed pairs
+  const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
+
   const subject = new Subject();
 
   const wsUrl = "wss://real.okex.com:10441/websocket?compress=true";
@@ -40,7 +47,7 @@ function getSourceForPairs(globalPairs = []) {
     let stopPing = noop;
 
     function subscribe(ws) {
-      for (let pair of pairs) {
+      for (let pair of pairsToSubscribe) {
         let channel = `ok_sub_spot_${pair.localPair}_depth_5`;
 
         channel2pairMapping[channel] = pair;
