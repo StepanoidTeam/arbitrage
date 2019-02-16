@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map } = require("rxjs/operators");
-const { last, head } = require("lodash");
+const { last, head, intersectionBy } = require("lodash");
 
 //https://api.hitbtc.com/#subscribe-to-orderbook
 
