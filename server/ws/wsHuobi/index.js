@@ -8,8 +8,8 @@ const { head } = require("lodash");
 const {
   exchanges: { huobi: exConfig },
   logger,
-} = require("../configs");
-const { getLocalPairs } = require("../helpers/getLocalPairs");
+} = require("../../configs");
+const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
 function getSourceForPairs(globalPairs = []) {
   const pairs = getLocalPairs(globalPairs, exConfig);

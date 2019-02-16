@@ -1,13 +1,15 @@
 const { PAIRS } = require("../globalPairs");
+const { secret } = require("./huobi.secret");
 
 //https://github.com/huobiapi/API_Docs_en/wiki/REST_Reference#get-marketdepth---market-depth
 const huobi = {
   name: "huobi",
   url: "https://api.huobi.pro",
+  ...secret,
   getOrderBook(pairIndex) {
     return `${this.url}/market/depth?type=step1&symbol=${
       this.pairs[pairIndex]
-      }`;
+    }`;
   },
   pairs: {
     //[PAIRS.BTC_USDT]: "btcusdt"
@@ -222,7 +224,7 @@ const huobi = {
     [PAIRS.UTK_BTC]: "utkbtc",
     [PAIRS.BIX_BTC]: "bixbtc",
     [PAIRS.PAY_BTC]: "paybtc",
-    //[PAIRS.BCD_BTC]: "bcdbtc", - 
+    //[PAIRS.BCD_BTC]: "bcdbtc", -
     [PAIRS.LINK_BTC]: "linkbtc",
     [PAIRS.BCX_BTC]: "bcxbtc",
     [PAIRS.GAS_BTC]: "gasbtc",
