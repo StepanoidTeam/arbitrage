@@ -9,17 +9,23 @@ const {
   exchanges: { hitbtc: exConfig },
 
   logger,
-} = require("../configs");
-const { getLocalPairs } = require("../helpers/getLocalPairs");
+} = require("../../configs");
+const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
-function getSourceForPairs(globalPairs = []) {
+const { getAllowedPairsAsync } = require("./assets");
+
+async function getSourceForPairs(globalPairs = []) {
   let pairs = getLocalPairs(globalPairs, exConfig);
+  const allowedPairs = await getAllowedPairsAsync();
+
+  //remove not allowed pairs
+  const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
 
   const subject = new Subject();
   const wsUrl = "wss://api.hitbtc.com/api/2/ws";
 
   function subscribe(ws) {
-    pairs.forEach(({ localPair }) => {
+    pairsToSubscribe.forEach(({ localPair }) => {
       let msg = {
         id: localPair, //random?
         method: "subscribeOrderbook",
@@ -31,7 +37,7 @@ function getSourceForPairs(globalPairs = []) {
       ws.send(JSON.stringify(msg));
     });
 
-    let subscribedPairs = pairs.map(p => p.localPair);
+    let subscribedPairs = pairsToSubscribe.map(p => p.localPair);
 
     console.log(
       `✅  ${exConfig.name} - subscribed (tried) to ${
@@ -98,7 +104,7 @@ function getSourceForPairs(globalPairs = []) {
     function produceBookTop(symbol) {
       const orderbook = orderBooks.get(symbol);
 
-      let { globalPair } = pairs.find(p => p.localPair === symbol);
+      let { globalPair } = pairsToSubscribe.find(p => p.localPair === symbol);
 
       let maxBidPrice = Math.max(...orderbook.bids.keys());
       let minAskPrice = Math.min(...orderbook.asks.keys());
