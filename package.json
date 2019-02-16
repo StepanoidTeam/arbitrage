@@ -21,7 +21,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "npm run client",
+    "start": "npm run bot",
     "bot": "node server/ws",
     "client": "node server",
     "tocsv": "node server/helpers/dbToCsv",
