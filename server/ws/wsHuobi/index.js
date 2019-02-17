@@ -3,7 +3,7 @@ const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map, bufferTime } = require("rxjs/operators");
 const pako = require("pako");
-const { head } = require("lodash");
+const { head, intersectionBy } = require("lodash");
 
 const {
   exchanges: { huobi: exConfig },
@@ -11,8 +11,15 @@ const {
 } = require("../../configs");
 const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
-function getSourceForPairs(globalPairs = []) {
+const { getAllowedPairsAsync } = require("./assets");
+
+async function getSourceForPairs(globalPairs = []) {
   const pairs = getLocalPairs(globalPairs, exConfig);
+  const allowedPairs = await getAllowedPairsAsync();
+
+  //remove not allowed pairs
+  const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
+
   const wsUrl = "wss://api.huobi.pro/ws";
   const subject = new Subject();
 
@@ -21,7 +28,7 @@ function getSourceForPairs(globalPairs = []) {
 
     function subscribe(ws) {
       let pairsSubscribed = [];
-      for (let pair of pairs) {
+      for (let pair of pairsToSubscribe) {
         ws.send(
           JSON.stringify({
             sub: `market.${pair.localPair}.depth.step0`,
@@ -41,7 +48,9 @@ function getSourceForPairs(globalPairs = []) {
     function handle(data) {
       let [, localPair, channel] = data.ch.split(".");
 
-      let { globalPair } = pairs.find(p => p.localPair === localPair);
+      let { globalPair } = pairsToSubscribe.find(
+        p => p.localPair === localPair
+      );
 
       const arrToPriceVolume = ([price, volume]) => ({
         price,
