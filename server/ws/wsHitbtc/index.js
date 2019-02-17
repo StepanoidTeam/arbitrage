@@ -129,9 +129,16 @@ async function getSourceForPairs(globalPairs = []) {
         case "updateOrderbook":
           updateBook(msg.params);
           break;
+        case undefined:
+          break;
         default:
           console.log(`❓   ${exConfig.name}`, msg);
           break;
+      }
+
+      // subscribed?
+      if ((msg.jsonrpc = "2.0" && msg.result === true && msg.id)) {
+        console.log("*️⃣subscribed?", msg);
       }
     });
   }
