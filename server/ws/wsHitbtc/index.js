@@ -138,7 +138,8 @@ async function getSourceForPairs(globalPairs = []) {
 
       // subscribed?
       if ((msg.jsonrpc = "2.0" && msg.result === true && msg.id)) {
-        console.log("*️⃣subscribed?", msg);
+        //TODO: calc these
+        console.log("*️⃣ hitbtc subscribed?", msg);
       }
     });
   }

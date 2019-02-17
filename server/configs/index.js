@@ -8,10 +8,12 @@ module.exports = {
   pairs2use,
   logger: {
     connected: ({ name }) => {
-      console.log(`🌝  ${name} connected at ${new Date().toLocaleString()}`);
+      console.log(`🌐 🌝  ${name} connected at ${new Date().toLocaleString()}`);
     },
     disconnected: ({ name }) => {
-      console.log(`🌚  ${name} disconnected at ${new Date().toLocaleString()}`);
+      console.log(
+        `🌐 🌚  ${name} disconnected at ${new Date().toLocaleString()}`
+      );
     },
   },
 };
