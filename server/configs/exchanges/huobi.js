@@ -9,10 +9,10 @@ const huobi = {
   getOrderBook(pairIndex) {
     return `${this.url}/market/depth?type=step1&symbol=${
       this.pairs[pairIndex]
-    }`;
+      }`;
   },
   pairs: {
-    //[PAIRS.BTC_USDT]: "btcusdt"
+    //[PAIRS.BTC_USDT]: "btcusdt",
     [PAIRS.EOS_ETH]: "eoseth",
     [PAIRS.OMG_ETH]: "omgeth",
     [PAIRS.MTN_ETH]: "mtneth",
@@ -224,7 +224,7 @@ const huobi = {
     [PAIRS.UTK_BTC]: "utkbtc",
     [PAIRS.BIX_BTC]: "bixbtc",
     [PAIRS.PAY_BTC]: "paybtc",
-    //[PAIRS.BCD_BTC]: "bcdbtc", -
+    [PAIRS.BCD_BTC]: "bcdbtc",
     [PAIRS.LINK_BTC]: "linkbtc",
     [PAIRS.BCX_BTC]: "bcxbtc",
     [PAIRS.GAS_BTC]: "gasbtc",
