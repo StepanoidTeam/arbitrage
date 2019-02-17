@@ -14,13 +14,7 @@ const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
 const { getAllowedPairsAsync } = require("./assets");
 
-async function getSourceForPairs(globalPairs = []) {
-  let pairs = getLocalPairs(globalPairs, exConfig);
-  const allowedPairs = await getAllowedPairsAsync();
-
-  //remove not allowed pairs
-  const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
-
+function getSourceForPairs(globalPairs = []) {
   const subject = new Subject();
 
   const wsUrl = "wss://real.okex.com:10441/websocket?compress=true";
@@ -39,7 +33,11 @@ async function getSourceForPairs(globalPairs = []) {
     return () => clearInterval(timerId);
   }
 
-  function connect() {
+  async function connect() {
+    const pairs = getLocalPairs(globalPairs, exConfig);
+    const allowedPairs = await getAllowedPairsAsync();
+    const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
+
     const ws = new WebSocket(wsUrl);
 
     const channel2pairMapping = {};
@@ -108,13 +106,13 @@ async function getSourceForPairs(globalPairs = []) {
       subscribe(ws);
     });
 
-    ws.onclose = () => {
+    ws.on("close", () => {
       logger.disconnected(exConfig);
       subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
       stopPing();
       //todo: reconnect!
       setTimeout(() => connect(), 10 * 1000);
-    };
+    });
 
     ws.onerror = err => {
       console.log(`⛔️   ${exConfig.name} error`, err);
