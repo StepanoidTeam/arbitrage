@@ -14,40 +14,38 @@ const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
 const { getAllowedPairsAsync } = require("./assets");
 
-async function getSourceForPairs(globalPairs = []) {
-  let pairs = getLocalPairs(globalPairs, exConfig);
-  const allowedPairs = await getAllowedPairsAsync();
-
-  //remove not allowed pairs
-  const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
-
+function getSourceForPairs(globalPairs = []) {
   const subject = new Subject();
   const wsUrl = "wss://api.hitbtc.com/api/2/ws";
 
-  function subscribe(ws) {
-    pairsToSubscribe.forEach(({ localPair }) => {
-      let msg = {
-        id: localPair, //random?
-        method: "subscribeOrderbook",
-        params: {
-          symbol: localPair,
-        },
-      };
+  async function connect() {
+    const pairs = getLocalPairs(globalPairs, exConfig);
+    const allowedPairs = await getAllowedPairsAsync();
+    const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
 
-      ws.send(JSON.stringify(msg));
-    });
-
-    let subscribedPairs = pairsToSubscribe.map(p => p.localPair);
-
-    console.log(
-      `✅  ${exConfig.name} - subscribed (tried) to ${
-        subscribedPairs.length
-      } pairs: ${subscribedPairs.join(", ").substr(0, 100)}`
-    );
-  }
-
-  function connect() {
     const ws = new WebSocket(wsUrl);
+
+    function subscribe(ws) {
+      pairsToSubscribe.forEach(({ localPair }) => {
+        let msg = {
+          id: localPair, //random?
+          method: "subscribeOrderbook",
+          params: {
+            symbol: localPair,
+          },
+        };
+
+        ws.send(JSON.stringify(msg));
+      });
+
+      let subscribedPairs = pairsToSubscribe.map(p => p.localPair);
+
+      console.log(
+        `✅  ${exConfig.name} - subscribed (tried) to ${
+          subscribedPairs.length
+        } pairs: ${subscribedPairs.join(", ").substr(0, 100)}`
+      );
+    }
 
     ws.on("open", () => {
       logger.connected(exConfig);
