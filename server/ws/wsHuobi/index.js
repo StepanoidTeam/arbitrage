@@ -14,16 +14,14 @@ const { getLocalPairs } = require("../../helpers/getLocalPairs");
 const { getAllowedPairsAsync } = require("./assets");
 
 async function getSourceForPairs(globalPairs = []) {
-  const pairs = getLocalPairs(globalPairs, exConfig);
-  const allowedPairs = await getAllowedPairsAsync();
-
-  //remove not allowed pairs
-  const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
-
   const wsUrl = "wss://api.huobi.pro/ws";
   const subject = new Subject();
 
-  function connect() {
+  async function connect() {
+    const pairs = getLocalPairs(globalPairs, exConfig);
+    const allowedPairs = await getAllowedPairsAsync();
+    const pairsToSubscribe = intersectionBy(pairs, allowedPairs, "localPair");
+
     const ws = new WebSocket(wsUrl);
 
     function subscribe(ws) {
@@ -80,17 +78,19 @@ async function getSourceForPairs(globalPairs = []) {
       subscribe(ws);
     });
 
-    ws.onclose = () => {
+    ws.on("close", () => {
       logger.disconnected(exConfig);
       subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
-      //todo: reconnect!
 
-      setTimeout(() => connect(), 3000);
-    };
+      //todo: reconnect!
+      setTimeout(() => connect(), 10 * 1000);
+    });
 
     ws.onerror = err => {
       console.log(`⛔️   ${exConfig.name} error`, err);
     };
+
+    let subbedcount = 0;
 
     ws.on("message", data => {
       let text = pako.inflate(data, {
@@ -108,6 +108,7 @@ async function getSourceForPairs(globalPairs = []) {
         handle(msg);
       } else if (msg.subbed) {
         //todo: do real subscribed log here + buffer it
+        //console.log("huobi sub:", ++subbedcount);
       } else {
         console.log(`❓   ${exConfig.name}`, text);
       }
