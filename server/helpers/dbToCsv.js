@@ -104,6 +104,5 @@ function getMiniStats({
   };
 }
 
-//todo: set log timeframe here
-
+// timeframe gets from 1st argument
 dbToCsv(process.argv[2]);
