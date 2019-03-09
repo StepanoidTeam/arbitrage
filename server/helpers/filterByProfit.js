@@ -1,6 +1,6 @@
 //todo: update prices here
-const BTCUSDT = 3400;
-const ETHUSDT = 90;
+const BTCUSDT = 3800;
+const ETHUSDT = 130;
 //todo: minimal limit in usd set here
 const USDT = 0.05;
 
