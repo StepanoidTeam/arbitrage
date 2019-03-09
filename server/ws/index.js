@@ -52,10 +52,14 @@ function logAnalytics({ pairs, wsExchanges }) {
         .pipe(filter(({ isSystem }) => isSystem))
         .subscribe(exData => {
           progressStateSub.next({
-            TYPE: "TOGGLE_STATE",
-            PAYLOAD: { key: exData.exName, status: exData.isOnline },
+            TYPE: "EXCHANGES",
+            PAYLOAD: {
+              name: exData.exName,
+              PAYLOAD: { TYPE: "ONLINE", PAYLOAD: exData.isOnline },
+            },
           });
 
+          // todo: check whether we need to add exchange again(?)
           if (!exData.isOnline) {
             pairTimeframe.delete(exData.exName);
           }
@@ -84,69 +88,136 @@ function logAnalytics({ pairs, wsExchanges }) {
       //todo: agg similar stats
       tap(() =>
         progressStateSub.next({
-          TYPE: "TICK",
-          PAYLOAD: { key: "All" },
+          TYPE: "DEALS.ALL",
+          PAYLOAD: null,
         })
       ),
       //skip non-profit deals
       filter(filterByProfit),
       //count profitable exchanges
-      tap(() =>
+      tap(() => {
         progressStateSub.next({
-          TYPE: "TICK",
-          PAYLOAD: { key: "Profitable" },
-        })
-      ),
+          TYPE: "DEALS.PROFITABLE",
+          PAYLOAD: null,
+        });
+      }),
       tap(({ exMinAsk: { exName: key } }) =>
         progressStateSub.next({
-          TYPE: "TICK",
-          PAYLOAD: { key },
+          TYPE: "EXCHANGES",
+          PAYLOAD: { name: key, PAYLOAD: { TYPE: "DEALS", PAYLOAD: null } },
         })
       ),
       tap(({ exMaxBid: { exName: key } }) =>
         progressStateSub.next({
-          TYPE: "TICK",
-          PAYLOAD: { key },
+          TYPE: "EXCHANGES",
+          PAYLOAD: { name: key, PAYLOAD: { TYPE: "DEALS", PAYLOAD: null } },
         })
       )
     )
   );
-
   //save each Stat into db
   merge(...aggStats).subscribe(dbLogger(Date.now()));
 
-  //just for logging
+  //todo: get from those subscribed/config
+  const exchanges = [
+    "Binance",
+    "Bitfinex",
+    "Gate",
+    "Okex",
+    "Huobi",
+    "Hitbtc",
+  ].map(name => ({
+    name,
+    online: false,
+    deals: 0,
+    pairs: {
+      config: 0,
+      allowed: 0,
+      connected: 0,
+    },
+  }));
+
+  const basicState = {
+    deals: {
+      all: 0,
+      profitable: 0,
+    },
+    exchanges,
+  };
+
+  function exchangeReducer(state, { TYPE, PAYLOAD }) {
+    switch (TYPE) {
+      case "ONLINE":
+        state.online = PAYLOAD;
+        break;
+      case "DEALS":
+        state.deals++;
+        break;
+
+      case "PAIRS.CONFIG":
+        state.pairs.config = PAYLOAD;
+        break;
+      case "PAIRS.ALLOWED":
+        state.pairs.allowed = PAYLOAD;
+        break;
+      case "PAIRS.CONNECTED":
+        state.pairs.connected = PAYLOAD;
+        break;
+    }
+
+    return state;
+  }
+
+  //just for logging - kinda reducer
   progressStateSub
     .pipe(
       scan((state, { TYPE, PAYLOAD }) => {
-        //basic init
-        if (!state[PAYLOAD.key]) {
-          state[PAYLOAD.key] = { value: 0, status: false };
-        }
         //reducer
         switch (TYPE) {
-          case "TICK":
-            state[PAYLOAD.key].value++;
+          case "DEALS.ALL":
+            state.deals.all++;
             break;
-          case "TOGGLE_STATE":
-            state[PAYLOAD.key].status = PAYLOAD.status;
+          case "DEALS.PROFITABLE":
+            state.deals.profitable++;
+            break;
+          case "EXCHANGES":
+            const ex = state.exchanges.find(
+              x => x.name.toLowerCase() === PAYLOAD.name.toLowerCase()
+            );
+
+            exchangeReducer(ex, PAYLOAD.PAYLOAD);
             break;
         }
+
         return state;
-      }, {}),
+      }, basicState),
       throttleTime(1000)
     )
     .subscribe(state => {
-      let value = Object.entries(state)
-        .map(
-          ([key, { value, status }]) =>
-            `${status ? "🌝" : "🌚"} ${key}: ${value}`
+      const exMessage = state.exchanges
+        .map(ex =>
+          [
+            `${ex.online ? "🌝" : "🌚"} ${ex.name.padEnd(
+              10
+            )} [${ex.deals.toString().padEnd(10)}]`,
+            `pairs: ${[
+              ex.pairs.config,
+              ex.pairs.allowed,
+              ex.pairs.connected,
+            ].join(" : ")}`,
+          ].join("")
         )
-        .sort()
-        .join("\n")
-        .trim();
+        .join("\n");
 
-      logUpdate(`log stats:\n${value}`);
+      const message = [
+        `STATS`,
+        `⏺ All: ${state.deals.all}`,
+        `❇️ Profitable: ${state.deals.profitable}`,
+        `Exchanges:`,
+        `${exMessage}`,
+      ].join("\n");
+
+      logUpdate(message);
     });
 }
 
@@ -154,6 +225,7 @@ function logAnalytics({ pairs, wsExchanges }) {
 logAnalytics({
   pairs: pairs2use,
   //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc],
-  //wsExchanges: [wsBinance, wsOkex, wsHitbtc, wsHuobi],
+  wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi], //wsHitbtc
+
+  //wsExchanges: [wsHuobi],
 });
