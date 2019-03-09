@@ -197,9 +197,8 @@ function logAnalytics({ pairs, wsExchanges }) {
       const exMessage = state.exchanges
         .map(ex =>
           [
-            `${ex.online ? "🌝" : "🌚"} ${ex.name.padEnd(
-              10
-            )} [${ex.deals.toString().padEnd(10)}]`,
+            `${ex.online ? "🌝" : "🌚"} ${ex.name.padEnd(10) +
+              `[${ex.deals}]`.padEnd(10)}`,
             `pairs: ${[
               ex.pairs.config,
               ex.pairs.allowed,
@@ -225,7 +224,7 @@ function logAnalytics({ pairs, wsExchanges }) {
 logAnalytics({
   pairs: pairs2use,
   //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi], //wsHitbtc
+  wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc], //
 
-  //wsExchanges: [wsHuobi],
+  //wsExchanges: [wsBinance, wsHitbtc],
 });
