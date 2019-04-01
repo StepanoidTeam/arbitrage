@@ -1,3 +1,6 @@
+// https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
+// https://github.com/binance-exchange/binance-api-node/blob/master/src/http.js
+
 const fetch = require("node-fetch");
 const CryptoJS = require("crypto-js");
 
