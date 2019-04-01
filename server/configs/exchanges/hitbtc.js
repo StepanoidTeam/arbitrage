@@ -1,8 +1,10 @@
 const { PAIRS } = require("../globalPairs");
+const { secret } = require("./hitbtc.secret");
 
 const hitbtc = {
   name: "hitbtc",
   url: "https://api.hitbtc.com",
+  ...secret,
   getOrderBook(pairIndex) {
     return `${this.url}/api/2/public/orderbook/${this.pairs[pairIndex]}`;
   },
@@ -18,7 +20,6 @@ const hitbtc = {
     [PAIRS.BNB_USDT]: "BNBUSD",
     [PAIRS.BNB_BTC]: "BNBBTC",
     [PAIRS.BNB_ETH]: "BNBETH",
-
 
     //[PAIRS.BCH_BTC]: "BCHBTC", - 90% spread for days
     // [PAIRS.BCH_USDT]: "BCHUSD",
