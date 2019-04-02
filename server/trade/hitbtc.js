@@ -34,14 +34,27 @@ function setOrder() {
     //...{ currencyPair: "usdt_cnyx", orderNumber: 1 },
   };
 
-  const signature = CryptoJS.enc.Hex.stringify(
+  let signature = CryptoJS.enc.Base64.stringify(
     CryptoJS.HmacSHA512(
-      `${BALANCE_URL}?${new URLSearchParams(requestBody)}`,
+      `${BALANCE_URL}`, //?${new URLSearchParams(requestBody)}`,
       secretKey
     )
   );
 
-  const fetchUrl = `${orderUrl}?${new URLSearchParams(authParams)}`;
+  console.log(BALANCE_URL);
+
+  var btoa = function(authKeySecret) {
+    // return (authKeySecret instanceof e
+    //   ? authKeySecret
+    //   : new e(authKeySecret.toString(), "utf-8")
+    // ).toString("base64");
+
+    return Buffer.from(authKeySecret).toString("base64");
+  };
+
+  const fetchUrl = `${orderUrl}`; //?${new URLSearchParams(authParams)}`;
+
+  signature = btoa(`${apiKey}:${secretKey}`);
 
   console.log(signature);
   console.log(fetchUrl);
@@ -51,7 +64,7 @@ function setOrder() {
     method: "GET",
     json: true,
     headers: {
-      "X-Signature": signature,
+      authorization: `Basic ${signature}`,
     },
     //body: new URLSearchParams(requestBody),
     //form: requestBody,
