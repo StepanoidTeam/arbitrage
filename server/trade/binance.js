@@ -13,39 +13,27 @@ const {
 
 const { apiKey, secretKey } = exConfig;
 
-function setOrder() {
-  const orderPath = "/api/v3/order";
-  const orderUrl = `https://api.binance.com${orderPath}`;
-
+function processRequest(endpoint, body = {}) {
+  const requestUrl = `https://api.binance.com${endpoint.uri}`;
   const timestamp = Date.now();
 
-  const requestBody = {
-    symbol: "BNBBTC",
-    side: "BUY", //SELL
-    type: "LIMIT",
-    timeInForce: "GTC", // IOC GTC - https://www.reddit.com/r/BinanceExchange/comments/8odvs4/question_about_time_in_force_binance_api/
-    quantity: 1,
-    price: 0.004,
-    timestamp,
-    //recvWindow: 5000,
-    //signature,
-  };
-  //CryptoJS.enc.Base64.stringify(
   const signature = CryptoJS.enc.Hex.stringify(
-    CryptoJS.HmacSHA256(`${new URLSearchParams(requestBody)}`, secretKey)
+    CryptoJS.HmacSHA256(
+      `${new URLSearchParams({ ...body, timestamp })}`,
+      secretKey
+    )
   );
-  //);
 
-  const fetchUrl = `${orderUrl}?${new URLSearchParams({
-    ...requestBody,
+  const fetchUrl = `${requestUrl}?${new URLSearchParams({
+    ...body,
     timestamp,
     signature,
   })}`;
 
-  console.log(signature, fetchUrl);
+  console.log(fetchUrl);
 
   return fetch(fetchUrl, {
-    method: "POST",
+    method: endpoint.method,
     json: true,
     headers: {
       //"Content-Type": "application/json",
@@ -55,6 +43,36 @@ function setOrder() {
   }).then(data => data.json());
 }
 
-setOrder().then(data => console.log(data));
+function setOrder() {
+  const endpoint = { method: "POST", uri: "/api/v3/order" };
 
-//module.exports = {};
+  const requestBody = {
+    symbol: "BNBBTC",
+    side: "BUY", //SELL
+    type: "LIMIT",
+    timeInForce: "GTC", // IOC GTC - https://www.reddit.com/r/BinanceExchange/comments/8odvs4/question_about_time_in_force_binance_api/
+    quantity: 1,
+    price: 0.004,
+  };
+}
+
+function getAccountInfo() {
+  const endpoint = { method: "GET", uri: "/api/v3/account" };
+
+  return processRequest(endpoint);
+}
+
+function mapBalances(balances) {
+  return balances.filter(a => +a.free > 0);
+}
+
+function getBalances() {
+  return getAccountInfo().then(mapBalances);
+}
+
+//setOrder().then(data => console.log(data));
+
+module.exports = {
+  setOrder,
+  getBalances,
+};

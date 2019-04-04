@@ -10,7 +10,6 @@
 //
 
 const fetch = require("node-fetch");
-const CryptoJS = require("crypto-js");
 
 const {
   exchanges: { hitbtc: exConfig },
@@ -18,22 +17,37 @@ const {
 
 const { apiKey, secretKey } = exConfig;
 
-function setOrder() {
-  const API_TRADE_URL = "https://api.hitbtc.com";
+const API_TRADE_URL = "https://api.hitbtc.com";
 
-  const orderPath = "/api/2/order";
-  const BALANCE_URL = "/api/2/trading/balance";
-
-  const orderUrl = `${API_TRADE_URL}${BALANCE_URL}`;
+function processRequest(endpoint, body = {}) {
+  const requestUrl = `${API_TRADE_URL}${endpoint.uri}`;
 
   const timestamp = Date.now();
 
-  const authParams = {
-    apikey: apiKey,
-    nonce: timestamp,
-  };
+  // const authParams = {
+  //   apikey: apiKey,
+  //   nonce: timestamp,
+  // };
 
-  const requestBody = {
+  const fetchUrl = `${requestUrl}`; //?${new URLSearchParams(authParams)}`;
+
+  signature = Buffer.from(`${apiKey}:${secretKey}`).toString("base64");
+
+  return fetch(fetchUrl, {
+    method: endpoint.method,
+    json: true,
+    headers: {
+      authorization: `Basic ${signature}`,
+    },
+    //body: new URLSearchParams(requestBody),
+    //form: requestBody,
+  }).then(data => data.json());
+}
+
+function setOrder() {
+  const endpoint = { method: "POST", uri: "/api/2/order" };
+
+  const body = {
     currencyPair: "btc_usdt",
     amount: 0.1,
     rate: 3000, // price
@@ -42,43 +56,23 @@ function setOrder() {
     //...{ currencyPair: "usdt_cnyx", orderNumber: 1 },
   };
 
-  let signature = CryptoJS.enc.Base64.stringify(
-    CryptoJS.HmacSHA512(
-      `${BALANCE_URL}`, //?${new URLSearchParams(requestBody)}`,
-      secretKey
-    )
-  );
-
-  console.log(BALANCE_URL);
-
-  var btoa = function(authKeySecret) {
-    // return (authKeySecret instanceof e
-    //   ? authKeySecret
-    //   : new e(authKeySecret.toString(), "utf-8")
-    // ).toString("base64");
-
-    return Buffer.from(authKeySecret).toString("base64");
-  };
-
-  const fetchUrl = `${orderUrl}`; //?${new URLSearchParams(authParams)}`;
-
-  signature = btoa(`${apiKey}:${secretKey}`);
-
-  console.log(signature);
-  console.log(fetchUrl);
-  console.log(requestBody);
-
-  return fetch(fetchUrl, {
-    method: "GET",
-    json: true,
-    headers: {
-      authorization: `Basic ${signature}`,
-    },
-    //body: new URLSearchParams(requestBody),
-    //form: requestBody,
-  }).then(data => data.text());
+  return processRequest(endpoint, body);
 }
 
-setOrder().then(data => console.log(`>${data}<`));
+function mapBalances(balances) {
+  return balances.filter(a => +a.available > 0);
+}
 
-//module.exports = {};
+function getBalances() {
+  const BALANCE_URL = "/api/2/trading/balance";
+  const endpoint = { method: "GET", uri: BALANCE_URL };
+
+  return processRequest(endpoint).then(mapBalances);
+}
+
+//setOrder().then(data => console.log(`>${data}<`));
+
+module.exports = {
+  setOrder,
+  getBalances,
+};
