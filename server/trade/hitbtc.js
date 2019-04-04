@@ -60,7 +60,12 @@ function setOrder() {
 }
 
 function mapBalances(balances) {
-  return balances.filter(a => +a.available > 0);
+  return balances
+    .map(({ currency, available }) => ({
+      name: currency,
+      value: available,
+    }))
+    .filter(coin => +coin.value > 0);
 }
 
 function getBalances() {
@@ -69,8 +74,6 @@ function getBalances() {
 
   return processRequest(endpoint).then(mapBalances);
 }
-
-//setOrder().then(data => console.log(`>${data}<`));
 
 module.exports = {
   setOrder,

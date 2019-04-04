@@ -50,16 +50,25 @@ function setOrder() {
   return processRequest(endpoint, body);
 }
 
+function mapBalances(balances) {
+  return Object.entries(balances)
+    .map(([asset, value]) => ({
+      name: asset,
+      value,
+    }))
+    .filter(coin => +coin.value > 0);
+}
+
 function getBalances() {
   const BALANCE_URL = "api2/1/private/balances";
 
   const endpoint = { method: "GET", uri: BALANCE_URL };
   const body = {};
 
-  return processRequest(endpoint, body).then(data => data.available);
+  return processRequest(endpoint, body)
+    .then(data => data.available)
+    .then(mapBalances);
 }
-
-//setOrder().then(data => console.log(`>${data}<`));
 
 module.exports = {
   setOrder,

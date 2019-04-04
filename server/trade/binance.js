@@ -63,11 +63,18 @@ function getAccountInfo() {
 }
 
 function mapBalances(balances) {
-  return balances.filter(a => +a.free > 0);
+  return balances
+    .map(({ asset, free }) => ({
+      name: asset,
+      value: free,
+    }))
+    .filter(coin => +coin.value > 0);
 }
 
 function getBalances() {
-  return getAccountInfo().then(mapBalances);
+  return getAccountInfo()
+    .then(data => data.balances)
+    .then(mapBalances);
 }
 
 //setOrder().then(data => console.log(data));
