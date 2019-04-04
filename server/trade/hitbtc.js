@@ -1,5 +1,13 @@
+// APIv1
 // https://github.com/mjesuele/hitbtc-api-node/blob/master/src/index.js
+// Off shitty docs
 // https://github.com/hitbtc-com/hitbtc-api/blob/master/APIv2.md#authentication-session
+// swagger
+// https://api.hitbtc.com/api/2/explore/
+// ccxt
+// https://github.com/ccxt/ccxt/blob/master/js/hitbtc2.js
+// https://github.com/ccxt/ccxt/blob/master/js/hitbtc.js
+//
 
 const fetch = require("node-fetch");
 const CryptoJS = require("crypto-js");
