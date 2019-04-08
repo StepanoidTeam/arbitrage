@@ -1,14 +1,20 @@
 //todo: update prices here
-const BTCUSDT = 3800;
-const ETHUSDT = 130;
+const BTC_USDT = 5000;
+const ETH_USDT = 165;
+
+// TODO: fetch last avg prices from exchange
+
+//await getAvgPrice(PAIRS.ETH_USDT).then(data => data.price);
+//await getAvgPrice(PAIRS.BTC_USDT).then(data => data.price);
+
 //todo: minimal limit in usd set here
 const USDT = 0.05;
 
 // minimal profit calculated to coins equivalent
 const minProfit = {
   USDT,
-  BTC: USDT / BTCUSDT,
-  ETH: USDT / ETHUSDT,
+  BTC: USDT / BTC_USDT,
+  ETH: USDT / ETH_USDT,
 };
 
 function filterByProfit({ netProfit, mainCoin }) {
