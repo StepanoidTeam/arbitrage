@@ -63,7 +63,7 @@ function mapBalances(balances) {
   return balances
     .map(({ currency, available }) => ({
       name: currency,
-      value: available,
+      value: +available,
     }))
     .filter(coin => +coin.value > 0);
 }

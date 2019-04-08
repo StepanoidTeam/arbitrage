@@ -54,7 +54,7 @@ function mapBalances(balances) {
   return Object.entries(balances)
     .map(([asset, value]) => ({
       name: asset,
-      value,
+      value: +value,
     }))
     .filter(coin => +coin.value > 0);
 }
