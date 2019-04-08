@@ -24,11 +24,11 @@ function processRequest(endpoint, body = {}) {
     )
   );
 
-  const fetchUrl = `${requestUrl}?${new URLSearchParams({
-    ...body,
-    timestamp,
-    signature,
-  })}`;
+  const requestParams = endpoint.isPublic
+    ? new URLSearchParams(body)
+    : new URLSearchParams({ ...body, timestamp, signature });
+
+  const fetchUrl = `${requestUrl}?${new URLSearchParams(requestParams)}`;
 
   console.log(fetchUrl);
 
@@ -54,6 +54,8 @@ function setOrder() {
     quantity: 1,
     price: 0.004,
   };
+
+  return processRequest(endpoint, requestBody);
 }
 
 function getAccountInfo() {
@@ -66,7 +68,7 @@ function mapBalances(balances) {
   return balances
     .map(({ asset, free }) => ({
       name: asset,
-      value: free,
+      value: +free,
     }))
     .filter(coin => +coin.value > 0);
 }
@@ -77,9 +79,21 @@ function getBalances() {
     .then(mapBalances);
 }
 
-//setOrder().then(data => console.log(data));
+function getAvgPrice(symbol) {
+  const endpoint = { method: "GET", uri: "/api/v3/avgPrice", isPublic: true };
+
+  const body = {
+    symbol: exConfig.pairs[symbol],
+  };
+
+  return processRequest(endpoint, body).then(data => ({
+    symbol,
+    price: +data.price,
+  }));
+}
 
 module.exports = {
   setOrder,
   getBalances,
+  getAvgPrice,
 };
