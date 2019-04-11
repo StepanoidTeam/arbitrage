@@ -1,4 +1,3 @@
-"use strict";
 const WebSocket = require("ws");
 const { fromEvent, Subject } = require("rxjs");
 const { map, bufferTime } = require("rxjs/operators");

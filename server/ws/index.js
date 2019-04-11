@@ -1,4 +1,3 @@
-"use strict";
 const { combineLatest, merge, Subject, of } = require("rxjs");
 const {
   map,
