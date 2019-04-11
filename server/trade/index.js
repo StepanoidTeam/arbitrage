@@ -8,12 +8,21 @@ const {
   minProfitPtNormal,
   minProfitPtLow,
   lowBalanceUSD,
-  basicState,
 } = require("./config");
 
 const binance = require("./binance");
 const gate = require("./gate");
 const hitbtc = require("./hitbtc");
+
+const balancesBasicState = activeExchanges.reduce((state, exName) => {
+  state[exName] = {
+    ...activeCoins.reduce((set, coin) => {
+      set[coin] = 0;
+      return set;
+    }, {}),
+  };
+  return state;
+}, {});
 
 const balancesReducer = new Subject();
 
@@ -41,7 +50,7 @@ balancesReducer
       }
 
       return state;
-    }, basicState)
+    }, balancesBasicState)
     //throttleTime(1000)
   )
   .subscribe(state => {
