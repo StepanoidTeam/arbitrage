@@ -17,8 +17,6 @@ const hitbtc = require("./hitbtc");
 
 const balancesReducer = new Subject();
 
-console.log(basicState);
-
 balancesReducer
   .pipe(
     scan((state, { TYPE, PAYLOAD }) => {
@@ -85,8 +83,6 @@ function init() {
       state[name] = value;
       return state;
     }, {});
-
-    //console.log(exName, activeBalances, exBalanceSet);
 
     balancesReducer.next({
       TYPE: "UPDATE_EXCHANGE",
