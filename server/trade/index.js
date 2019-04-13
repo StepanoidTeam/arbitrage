@@ -14,6 +14,8 @@ const binance = require("./binance");
 const gate = require("./gate");
 const hitbtc = require("./hitbtc");
 
+const USDT = "USDT";
+
 const balancesBasicState = activeExchanges.reduce((state, exName) => {
   state[exName] = {
     ...activeCoins.reduce((set, coin) => {
@@ -64,24 +66,39 @@ balancesReducer
     const message = [`⭕️  BALANCES`, ...exMessages.flat()].join("\n");
     logUpdate(message);
   });
-/**
- * после каждой произведенной сделки
- * сравниваем баланс монеты на бирже
- * (переменная balanceAmount) с lowBalanceXXX.
- * Если баланс на бирже ниже $600, //?
- * то меняем minProfitPt до 0.2%
- * или вообще до 0.001% каких-нибудь
- * до 0% короч
- */
 
-function init() {
+async function init() {
   const tradeExchanges = {
     binance,
     gate,
     hitbtc,
   };
 
-  activeExchanges.map(async exName => {
+  /**
+   * Ну и ещё нужно в трейд боте сделать запросы цен
+   * на торгуемые монеты,
+   * чтобы мочь считать Лоу баланс фильтр
+   */
+
+  const mainExchange = binance;
+
+  const activeCoinPrices = [{ name: USDT, price: 1 }];
+
+  await Promise.all(
+    activeCoins
+      .filter(coin => coin !== USDT)
+      .map(coin => {
+        return mainExchange
+          .getAvgPrice(`${coin}_${USDT}`)
+          .then(({ price }) => activeCoinPrices.push({ name: coin, price }));
+      })
+  );
+
+  console.log(activeCoinPrices);
+
+  return;
+
+  activeExchanges.forEach(async exName => {
     const availableBalances = await tradeExchanges[exName].getBalances();
 
     const activeBalances = availableBalances.filter(balance =>
