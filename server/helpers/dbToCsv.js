@@ -74,6 +74,7 @@ function sameMiniStats(ms1, ms2) {
 
 function getMiniStats({
   datetime,
+  altCoin,
   mainCoin,
   pair,
   exMinAsk: {
@@ -91,6 +92,7 @@ function getMiniStats({
 }) {
   return {
     datetime,
+    altCoin,
     mainCoin,
     pair,
     minAskExName,

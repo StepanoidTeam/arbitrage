@@ -33,11 +33,6 @@ function getExPairsFromTimeframe(timeframe) {
   return result;
 }
 
-function getMainCoin(pair) {
-  let [, mainCoin] = pair.split("_");
-  return mainCoin;
-}
-
 function getStatsForExPair({ exAsk, exBid }) {
   let priceDiff = exBid.bid.price - exAsk.ask.price;
   let priceDiffPt = (priceDiff / exAsk.ask.price) * 100;
@@ -62,10 +57,11 @@ function getStatsForExPair({ exAsk, exBid }) {
 
   let { pair } = exAsk;
 
-  let mainCoin = getMainCoin(pair);
+  let [altCoin, mainCoin] = pair.split("_");
 
   let stats = {
     timestamp: Date.now(),
+    altCoin,
     mainCoin,
     pair,
     exMinAsk: exAsk,
