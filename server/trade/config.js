@@ -5,27 +5,27 @@ const activeExchanges = ["binance", "gate", "hitbtc"]; // TODO: set names from e
 
 /**
  * min profits
- * set in pt(%)
- * if Deal net profit pt >= minProfitPtNormal
- * then Deal will be executed by trading bot
+ * set in USDT
+ * IF Deal netProfit >= minProfitNormalUSDT
+ * THEN Deal will be executed by trading bot
  */
-const minProfitPtNormal = 1; // %
+const minProfitNormalUSDT = 0.05; // $
 /**
- * if Deal coin balance is low
- * and Deal net profit pt >= minProfitPtLow
- * then Deal will be executed by trading bot
+ * IF Deal coin balance is low
+ * AND Deal netProfit >= minProfitLowUSDT
+ * THEN Deal will be executed by trading bot
  */
-const minProfitPtLow = 0.1; // %
+const minProfitLowUSDT = 0; // $
 /**
- * if Deal coin balance <= lowBalanceUSD
- * then activate 'minProfitPtLow' rule protocol
+ * IF Deal coin balance <= lowBalanceLimitUSDT
+ * THEN activate 'minProfitLowUSDT' rule protocol
  */
-const lowBalanceUSD = 100; // $
+const lowBalanceLimitUSDT = 100; // $
 
 module.exports = {
   activeCoins,
   activeExchanges,
-  minProfitPtNormal,
-  minProfitPtLow,
-  lowBalanceUSD,
+  minProfitNormalUSDT,
+  minProfitLowUSDT,
+  lowBalanceLimitUSDT,
 };
