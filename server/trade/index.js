@@ -5,9 +5,9 @@ const logUpdate = require("log-update");
 const {
   activeCoins,
   activeExchanges,
-  minProfitPtNormal,
-  minProfitPtLow,
-  lowBalanceUSD,
+  minProfitNormalUSDT,
+  minProfitLowUSDT,
+  lowBalanceLimitUSDT,
 } = require("./config");
 
 const binance = require("./binance");
@@ -16,15 +16,31 @@ const hitbtc = require("./hitbtc");
 
 const USDT = "USDT";
 
-const balancesBasicState = activeExchanges.reduce((state, exName) => {
-  state[exName] = {
-    ...activeCoins.reduce((set, coin) => {
-      set[coin] = 0;
-      return set;
-    }, {}),
-  };
-  return state;
-}, {});
+const activeCoinPrices = [
+  { name: USDT, price: 1 },
+  // { name: "EOS", price: 5.26276307 },
+  // { name: "BTC", price: 5038.75649181 },
+  // { name: "ETH", price: 162.14361024 },
+];
+
+function toUSDT(coinName, coinValue) {
+  const coin = activeCoinPrices.find(({ name }) => name === coinName);
+
+  return coinValue * coin.price;
+}
+
+const balancesBasicState = activeExchanges.reduce(
+  (state, exName) => {
+    state[exName] = {
+      ...activeCoins.reduce((set, coin) => {
+        set[coin] = 0;
+        return set;
+      }, {}),
+    };
+    return state;
+  },
+  { _deals: { lowProfit: 0, placedOrders: 0 } }
+);
 
 const balancesReducer = new Subject();
 
@@ -34,11 +50,8 @@ balancesReducer
       //reducer
       switch (TYPE) {
         // TODO: add events:
-        // basic init structure
-        // update balances for 1 exchange?
         // make deal?
-        // update trade limits?
-        // request balance updates?nf
+        // request balance updates?
         case "UPDATE_BALANCE": {
           const { exName, coin, balance } = PAYLOAD;
           state[exName][coin] = balance;
@@ -48,6 +61,76 @@ balancesReducer
           const { exName, exBalanceSet } = PAYLOAD;
           Object.assign(state[exName], exBalanceSet);
           break;
+        }
+        case "PROFITABLE_DEAL": {
+          const {
+            timestamp,
+            altCoin,
+            mainCoin,
+            pair,
+            exMinAsk,
+            exMaxBid,
+            priceDiff,
+            priceDiffPt,
+            availVolume,
+            availVolumeByAvgPrice,
+            availProfit,
+            netProfit,
+          } = PAYLOAD;
+          const deal = PAYLOAD;
+
+          const netProfitUSDT = toUSDT(deal.mainCoin, deal.netProfit);
+
+          // skip unprofitable
+          if (netProfitUSDT < 0) return;
+          //skip low profit
+          if (netProfitUSDT < minProfitNormalUSDT) {
+            //todo: log low
+            return;
+          }
+
+          const exMaxBidBalances = state[deal.exMaxBid.exName];
+          const exMinAskBalances = state[deal.exMinAsk.exName];
+
+          {
+            //main coin polu4aem (+USDT) tratim alt (-BTC)
+            const exMaxBidCoinBalanceUSDT = toUSDT(
+              deal.mainCoin,
+              exMaxBidBalances[deal.mainCoin]
+            );
+            //main coin tratim (-USDT) poluchaem alt (+BTC)
+            const exMinAskCoinBalanceUSDT = toUSDT(
+              deal.altCoin,
+              exMinAskBalances[deal.altCoin]
+            );
+
+            //TODO: discuss this part, all 4 balances should be checked
+            const isLowBalance =
+              exMaxBidCoinBalanceUSDT < lowBalanceLimitUSDT ||
+              exMinAskCoinBalanceUSDT < lowBalanceLimitUSDT;
+          }
+          /**
+           * - далее сверяем объемы сделки с текущими балансами,
+           * можем ли мы ее провести (хватает ли балансов на обеих биржах)
+           * - если нет, то возможно есть смысл откусить кусок
+           * - провести сделку на доступный объем
+           */
+
+          //bid sells alt
+          const exMaxBidBalanceSufficient =
+            exMaxBidBalances[deal.altCoin] > deal.availVolume;
+
+          //ask sells main
+          const exMinAskBalanceSufficient =
+            exMinAskBalances[deal.mainCoin] >
+            deal.exMinAsk.ask.price * deal.availVolume;
+
+          const canTrade =
+            exMaxBidBalanceSufficient && exMinAskBalanceSufficient;
+
+          if (canTrade) {
+            //todo: trade - place orders
+          }
         }
       }
 
@@ -82,8 +165,6 @@ async function init() {
 
   const mainExchange = binance;
 
-  const activeCoinPrices = [{ name: USDT, price: 1 }];
-
   await Promise.all(
     activeCoins
       .filter(coin => coin !== USDT)
@@ -95,8 +176,6 @@ async function init() {
   );
 
   console.log(activeCoinPrices);
-
-  return;
 
   activeExchanges.forEach(async exName => {
     const availableBalances = await tradeExchanges[exName].getBalances();
@@ -118,6 +197,8 @@ async function init() {
       },
     });
   });
+
+  return balancesReducer;
 }
 
 init();
