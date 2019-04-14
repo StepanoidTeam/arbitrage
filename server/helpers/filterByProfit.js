@@ -8,7 +8,7 @@ const ETH_USDT = 165;
 //await getAvgPrice(PAIRS.BTC_USDT).then(data => data.price);
 
 //todo: minimal limit in usd set here
-const USDT = 0.05;
+const USDT = 0.0;
 
 // minimal profit calculated to coins equivalent
 const minProfit = {
