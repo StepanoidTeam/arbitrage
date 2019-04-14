@@ -41,7 +41,13 @@ function dbToCsv(logName) {
   let statsStream = getFileLineStream(inputLogPath).pipe(
     map(raw => JSON.parse(raw)),
     map(stats => ({
-      datetime: new Date(stats.timestamp).toLocaleString().replace(",", ""),
+      // local time
+      //datetime: new Date(stats.timestamp).toLocaleString().replace(",", ""),
+      // local time with ms
+      datetime:
+        new Date(stats.timestamp).toLocaleString().replace(",", "") +
+        ` ${stats.timestamp.toString().slice(-3)}ms`,
+
       ...stats,
     })),
     tap(() => consoleRewrite(`processed: ${++count} lines`))
