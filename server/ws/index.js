@@ -12,7 +12,7 @@ const { toArray } = require("lodash");
 const logUpdate = require("log-update");
 
 const { dbLogger } = require("../helpers/dbLogger");
-const { filterByProfit } = require("../helpers/filterByProfit");
+const { filterByProfit, filterByRoi } = require("../helpers/filters");
 
 const { getStatsFromTimeframe } = require("../analytics");
 const { pairs2use } = require("../configs");
@@ -93,6 +93,8 @@ function logAnalytics({ pairs, wsExchanges }) {
       ),
       //skip non-profit deals
       filter(filterByProfit),
+      //skip low-roi deals
+      filter(filterByRoi),
       //count profitable exchanges
       tap(() => {
         progressStateSub.next({

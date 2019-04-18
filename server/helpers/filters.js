@@ -21,4 +21,10 @@ function filterByProfit({ netProfit, mainCoin }) {
   return netProfit > minProfit[mainCoin];
 }
 
-module.exports = { filterByProfit };
+const minRoi = 0; //pt %
+
+function filterByRoi({ roi }) {
+  return roi > minRoi;
+}
+
+module.exports = { filterByProfit, filterByRoi };
