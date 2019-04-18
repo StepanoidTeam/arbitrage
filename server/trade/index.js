@@ -76,6 +76,7 @@ balancesReducer
             availVolumeByAvgPrice,
             availProfit,
             netProfit,
+            roi,
           } = PAYLOAD;
           const deal = PAYLOAD;
 

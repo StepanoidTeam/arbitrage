@@ -55,6 +55,8 @@ function getStatsForExPair({ exAsk, exBid }) {
 
   let netProfit = availProfit - buyFee - sellFee;
 
+  let roi = netProfit / availVolumeByAvgPrice;
+
   let { pair } = exAsk;
 
   let [altCoin, mainCoin] = pair.split("_");
@@ -72,6 +74,7 @@ function getStatsForExPair({ exAsk, exBid }) {
     availVolumeByAvgPrice,
     availProfit,
     netProfit,
+    roi,
   };
 
   return stats;

@@ -74,7 +74,8 @@ function sameMiniStats(ms1, ms2) {
     ms1.maxBidExName === ms2.maxBidExName &&
     ms1.maxBidPrice === ms2.maxBidPrice &&
     ms1.availVolume === ms2.availVolume &&
-    ms1.netProfit === ms2.netProfit
+    ms1.netProfit === ms2.netProfit &&
+    ms1.roi === ms2.roi
   );
 }
 
@@ -95,6 +96,7 @@ function getMiniStats({
   availVolume,
   availVolumeByAvgPrice,
   netProfit,
+  roi,
 }) {
   return {
     datetime,
@@ -109,6 +111,7 @@ function getMiniStats({
     availVolume,
     availVolumeByAvgPrice,
     netProfit,
+    roi,
   };
 }
 
