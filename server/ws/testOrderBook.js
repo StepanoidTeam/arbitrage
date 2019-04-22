@@ -14,9 +14,20 @@ const { PAIRS } = require("../configs/globalPairs");
 wsBittrex([PAIRS.ZEC_BTC]).subscribe(data => {
   if (data.exName) {
     logUpdate(
-      `${data.exName} [${data.pair}]`,
-      data.bid && `\n💹  bid: ${data.bid.price} \t|🅰️  ask: ${data.ask.price}`,
-      data.ask && `\n    v: ${data.bid.volume} \t| v: ${data.ask.volume}`
+      data.exName,
+      `[${data.pair}]\n`,
+      "💹".padEnd(3),
+      ` bid: `,
+      data.bid && data.bid.price.toString().padEnd(10),
+      ` |`,
+      `🅰️  ask: `,
+      data.ask && data.ask.price,
+      "\n",
+      "    vol: ",
+      data.bid && data.bid.volume.toString().padEnd(10),
+      `|`,
+      "   vol: ",
+      data.ask && data.ask.volume
     );
   } else {
     //console.log(data);
