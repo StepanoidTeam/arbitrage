@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "server",
-      "program": "${workspaceFolder}/server/index.js"
+      "program": "${workspaceFolder}/server/ws/index.js"
     }
   ]
 }
