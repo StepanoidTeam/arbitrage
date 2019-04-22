@@ -16,6 +16,7 @@ const { filterByProfit, filterByRoi } = require("../helpers/filters");
 
 const { getStatsFromTimeframe } = require("../analytics");
 const { pairs2use } = require("../configs");
+const { PAIRS } = require("../configs/globalPairs");
 
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
@@ -127,6 +128,7 @@ function logAnalytics({ pairs, wsExchanges }) {
     "Okex",
     "Huobi",
     "Hitbtc",
+    "Bittrex",
   ].map(name => ({
     name,
     online: false,
@@ -225,7 +227,10 @@ function logAnalytics({ pairs, wsExchanges }) {
 logAnalytics({
   pairs: pairs2use,
   //pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc], //
+  //wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc], //
+
+  // pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
+  wsExchanges: [wsBinance, wsBittrex], //
 
   //wsExchanges: [wsBinance, wsHitbtc],
 });
