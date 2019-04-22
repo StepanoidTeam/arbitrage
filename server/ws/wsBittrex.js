@@ -166,14 +166,20 @@ function getSourceForPairs(globalPairs = []) {
             zlib.inflateRaw(raw, function(err, inflated) {
               if (!err) {
                 let json = JSON.parse(inflated.toString("utf8"));
-                console.log("@", json);
+                //
+
+                if (!json.M) return; // no pair name
 
                 let localPair = json.M;
                 let { globalPair } = pairs.find(p => p.localPair === localPair);
 
-                updateBook(json, globalPair);
-
-                produceBook(globalPair);
+                //bid or ask exists
+                if (json.S || json.Z) {
+                  updateBook(json, globalPair);
+                  produceBook(globalPair);
+                } else {
+                  console.log("@", exConfig.name, json);
+                }
               }
             });
           }
