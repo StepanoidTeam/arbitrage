@@ -17,15 +17,99 @@ const binance = {
     [PAIRS.EOS_USDT]: "EOSUSDT",
     [PAIRS.EOS_ETH]: "EOSETH",
 
+    [PAIRS.LTC_USDT]: "LTCUSDT",
+    [PAIRS.LTC_BTC]: "LTCBTC",
+    [PAIRS.LTC_ETH]: "LTCETH",
+
+    [PAIRS.TRX_USDT]: "TRXUSDT",
+    [PAIRS.TRX_BTC]: "TRXBTC",
+    [PAIRS.TRX_ETH]: "TRXETH",
+
+    [PAIRS.ADA_ETH]: "ADAETH",
+    [PAIRS.ADA_USDT]: "ADAUSDT",
+    [PAIRS.ADA_BTC]: "ADABTC",
+
+    [PAIRS.XLM_USDT]: "XLMUSDT",
+    [PAIRS.XLM_BTC]: "XLMBTC",
+    [PAIRS.XLM_ETH]: "XLMETH",
+
+    [PAIRS.DASH_BTC]: "DASHBTC",
+    [PAIRS.DASH_ETH]: "DASHETH",
+
+    [PAIRS.NEO_ETH]: "NEOETH",
+    [PAIRS.NEO_USDT]: "NEOUSDT",
+    [PAIRS.NEO_BTC]: "NEOBTC",
+
+    [PAIRS.ONT_BTC]: "ONTBTC",
+    [PAIRS.ONT_ETH]: "ONTETH",
+    [PAIRS.ONT_USDT]: "ONTUSDT",
+
+    [PAIRS.BAT_ETH]: "BATETH",
+    [PAIRS.BAT_BTC]: "BATBTC",
+    [PAIRS.BAT_USDT]: "BATUSDT",
+
+    [PAIRS.VET_BTC]: "VETBTC",
+    [PAIRS.VET_ETH]: "VETETH",
+    [PAIRS.VET_USDT]: "VETUSDT",
+
+    [PAIRS.REP_BTC]: "REPBTC",
+    [PAIRS.REP_ETH]: "REPETH",
+
+    [PAIRS.QTUM_USDT]: "QTUMUSDT",
+    [PAIRS.QTUM_BTC]: "QTUMBTC",
+    [PAIRS.QTUM_ETH]: "QTUMETH",
+
+    [PAIRS.ICX_ETH]: "ICXETH",
+    [PAIRS.ICX_USDT]: "ICXUSDT",
+    [PAIRS.ICX_BTC]: "ICXBTC",
+
+    [PAIRS.ZIL_ETH]: "ZILETH",
+    [PAIRS.ZIL_BTC]: "ZILBTC",
+    [PAIRS.ZIL_ETH]: "ZILETH",
+
+    [PAIRS.WTC_BTC]: "WTCBTC",
+    [PAIRS.WTC_ETH]: "WTCETH",
+
+    [PAIRS.IOST_ETH]: "IOSTETH",
+    [PAIRS.IOST_BTC]: "IOSTBTC",
+    [PAIRS.IOST_USDT]: "IOSTUSDT",
+
+    [PAIRS.AE_BTC]: "AEBTC",
+    [PAIRS.AE_ETH]: "AEETH",
+
+    [PAIRS.AION_ETH]: "AIONETH",
+    [PAIRS.AION_BTC]: "AIONBTC",
+
+    [PAIRS.WAN_BTC]: "WANBTC",
+    [PAIRS.WAN_ETH]: "WANETH",
+
+    [PAIRS.QKC_BTC]: "QKCBTC",
+    [PAIRS.QKC_ETH]: "QKCETH",
+
+    [PAIRS.IOTX_BTC]: "IOTXBTC",
+    [PAIRS.IOTX_ETH]: "IOTXETH",
+
     [PAIRS.BNB_USDT]: "BNBUSDT",
     [PAIRS.BNB_BTC]: "BNBBTC",
     [PAIRS.BNB_ETH]: "BNBETH",
 
-    // [PAIRS.ONT_USDT]: "ONTUSDT",
+    [PAIRS.NANO_BTC]: "NANOBTC",
+    [PAIRS.NANO_ETH]: "NANOETH",
+
+    [PAIRS.MTL_BTC]: "MTLBTC",
+    [PAIRS.MTL_ETH]: "MTLETH",
+
+    //Private
+    [PAIRS.XMR_BTC]: "XMRBTC",
+    [PAIRS.XMR_ETH]: "XMRETH",
+    [PAIRS.XMR_USDT]: "XMRUSDT",
+    [PAIRS.ZEC_BTC]: "ZECBTC",
+    [PAIRS.ZEC_ETH]: "ZECETH",
+
     // [PAIRS.TUSD_USDT]: "TUSDUSDT",
-    // [PAIRS.ADA_ETH]: "ADAETH",
+
     // [PAIRS.AGI_BTC]: "AGIBTC",
-    // [PAIRS.AION_ETH]: "AIONETH",
+
     // [PAIRS.ARDR_ETH]: "ARDRETH",
     // [PAIRS.AST_ETH]: "ASTETH",
     // [PAIRS.BCC_ETH]: "BCCETH",
@@ -40,31 +124,29 @@ const binance = {
     // [PAIRS.ELF_ETH]: "ELFETH",
     // [PAIRS.MOD_BTC]: "MODBTC",
     // [PAIRS.NCASH_ETH]: "NCASHETH",
-    // [PAIRS.NEO_ETH]: "NEOETH",
+
     // [PAIRS.NPXS_BTC]: "NPXSBTC",
-    // [PAIRS.QTUM_USDT]: "QTUMUSDT",
+
     // [PAIRS.AMB_BTC]: "AMBBTC",
     // [PAIRS.BRD_BTC]: "BRDBTC",
     // [PAIRS.ENG_ETH]: "ENGETH",
     // [PAIRS.ICN_BTC]: "ICNBTC",
     // [PAIRS.KNC_BTC]: "KNCBTC",
     // [PAIRS.MDA_BTC]: "MDABTC",
-    // [PAIRS.NEO_BTC]: "NEOBTC",
+
     // [PAIRS.RCN_ETH]: "RCNETH",
     // [PAIRS.SKY_ETH]: "SKYETH",
-    // [PAIRS.ADA_USDT]: "ADAUSDT",
+
     // [PAIRS.IOTA_USDT]: "IOTAUSDT",
-    // [PAIRS.LTC_USDT]: "LTCUSDT",
-    // [PAIRS.NEO_USDT]: "NEOUSDT",
+
     // [PAIRS.ADX_ETH]: "ADXETH",
-    // [PAIRS.AE_BTC]: "AEBTC",
-    // [PAIRS.AE_ETH]: "AEETH",
+
     // [PAIRS.AGI_ETH]: "AGIETH",
     // [PAIRS.APPC_ETH]: "APPCETH",
     // [PAIRS.ARN_BTC]: "ARNBTC",
     // [PAIRS.ARN_ETH]: "ARNETH",
     // [PAIRS.AST_BTC]: "ASTBTC",
-    // [PAIRS.BAT_ETH]: "BATETH",
+
     // [PAIRS.BCD_BTC]: "BCDBTC",
     // [PAIRS.BLZ_BTC]: "BLZBTC",
 
@@ -77,8 +159,7 @@ const binance = {
     // [PAIRS.CMT_BTC]: "CMTBTC",
     // [PAIRS.CND_ETH]: "CNDETH",
     // [PAIRS.CVC_BTC]: "CVCBTC",
-    // [PAIRS.DASH_BTC]: "DASHBTC",
-    // [PAIRS.DASH_ETH]: "DASHETH",
+
     // [PAIRS.DATA_ETH]: "DATAETH",
     // [PAIRS.DGD_ETH]: "DGDETH",
     // [PAIRS.DNT_BTC]: "DNTBTC",
@@ -97,15 +178,14 @@ const binance = {
     // [PAIRS.GVT_ETH]: "GVTETH",
     // [PAIRS.HC_BTC]: "HCBTC",
     // [PAIRS.ICN_ETH]: "ICNETH",
-    // [PAIRS.ICX_ETH]: "ICXETH",
-    // [PAIRS.IOST_ETH]: "IOSTETH",
+
     // [PAIRS.IOTA_BTC]: "IOTABTC",
-    // [PAIRS.IOTX_BTC]: "IOTXBTC",
+
     // [PAIRS.KMD_ETH]: "KMDETH",
     // [PAIRS.LOOM_ETH]: "LOOMETH",
     // [PAIRS.LRC_BTC]: "LRCBTC",
     // [PAIRS.LSK_ETH]: "LSKETH",
-    // [PAIRS.LTC_BTC]: "LTCBTC",
+
     // [PAIRS.LUN_ETH]: "LUNETH",
     // [PAIRS.MCO_ETH]: "MCOETH",
     // [PAIRS.MFT_BTC]: "MFTBTC",
@@ -118,22 +198,20 @@ const binance = {
     // [PAIRS.REQ_ETH]: "REQETH",
     // [PAIRS.BCC_USDT]: "BCCUSDT",
     // [PAIRS.ETC_USDT]: "ETCUSDT",
-    // [PAIRS.ICX_USDT]: "ICXUSDT",
+
     // [PAIRS.NULS_USDT]: "NULSUSDT",
     // [PAIRS.PAX_USDT]: "PAXUSDT",
-    // [PAIRS.TRX_USDT]: "TRXUSDT",
-    // [PAIRS.VET_USDT]: "VETUSDT",
-    // [PAIRS.XLM_USDT]: "XLMUSDT",
+
     // [PAIRS.XRP_USDT]: "XRPUSDT",
-    // [PAIRS.ADA_BTC]: "ADABTC",
+
     // [PAIRS.ADX_BTC]: "ADXBTC",
-    // [PAIRS.AION_BTC]: "AIONBTC",
+
     // [PAIRS.AMB_ETH]: "AMBETH",
     // [PAIRS.APPC_BTC]: "APPCBTC",
     // [PAIRS.ARDR_BTC]: "ARDRBTC",
     // [PAIRS.ARK_BTC]: "ARKBTC",
     // [PAIRS.ARK_ETH]: "ARKETH",
-    // [PAIRS.BAT_BTC]: "BATBTC",
+
     // [PAIRS.BCC_BTC]: "BCCBTC",
     // [PAIRS.BCD_ETH]: "BCDETH",
     // [PAIRS.BNT_BTC]: "BNTBTC",
@@ -170,12 +248,12 @@ const binance = {
     // [PAIRS.HOLOCHAIN_ETH]: "HOTETH", // for Binance
     // //[PAIRS.HOT_BTC]: "HOTBTC",
     // //[PAIRS.HOT_ETH]: "HOTETH",
-    // [PAIRS.ICX_BTC]: "ICXBTC",
+
     // [PAIRS.INS_BTC]: "INSBTC",
     // [PAIRS.INS_ETH]: "INSETH",
-    // [PAIRS.IOST_BTC]: "IOSTBTC",
+
     // [PAIRS.IOTA_ETH]: "IOTAETH",
-    // [PAIRS.IOTX_ETH]: "IOTXETH",
+
     // [PAIRS.KEY_BTC]: "KEYBTC",
     // [PAIRS.KEY_ETH]: "KEYETH",
     // [PAIRS.KMD_BTC]: "KMDBTC",
@@ -187,7 +265,7 @@ const binance = {
     // [PAIRS.LOOM_BTC]: "LOOMBTC",
     // [PAIRS.LRC_ETH]: "LRCETH",
     // [PAIRS.LSK_BTC]: "LSKBTC",
-    // [PAIRS.LTC_ETH]: "LTCETH",
+
     // [PAIRS.LUN_BTC]: "LUNBTC",
     // [PAIRS.MANA_BTC]: "MANABTC",
     // [PAIRS.MANA_ETH]: "MANAETH",
@@ -197,10 +275,7 @@ const binance = {
     // [PAIRS.MOD_ETH]: "MODETH",
     // [PAIRS.MTH_BTC]: "MTHBTC",
     // [PAIRS.MTH_ETH]: "MTHETH",
-    // [PAIRS.MTL_BTC]: "MTLBTC",
-    // [PAIRS.MTL_ETH]: "MTLETH",
-    // [PAIRS.NANO_BTC]: "NANOBTC",
-    // [PAIRS.NANO_ETH]: "NANOETH",
+
     // [PAIRS.NAS_BTC]: "NASBTC",
     // [PAIRS.NAS_ETH]: "NASETH",
     // [PAIRS.NAV_BTC]: "NAVBTC",
@@ -216,8 +291,7 @@ const binance = {
     // [PAIRS.OAX_ETH]: "OAXETH",
     // [PAIRS.OMG_BTC]: "OMGBTC",
     // [PAIRS.OMG_ETH]: "OMGETH",
-    // [PAIRS.ONT_BTC]: "ONTBTC",
-    // [PAIRS.ONT_ETH]: "ONTETH",
+
     // [PAIRS.OST_BTC]: "OSTBTC",
     // [PAIRS.OST_ETH]: "OSTETH",
     // [PAIRS.PAX_BTC]: "PAXBTC",
@@ -230,19 +304,16 @@ const binance = {
     // [PAIRS.POE_BTC]: "POEBTC",
     // [PAIRS.POLY_BTC]: "POLYBTC",
     // [PAIRS.PPT_ETH]: "PPTETH",
-    // [PAIRS.QKC_BTC]: "QKCBTC",
-    // [PAIRS.QKC_ETH]: "QKCETH",
+
     // [PAIRS.QLC_BTC]: "QLCBTC",
     // [PAIRS.QLC_ETH]: "QLCETH",
     // [PAIRS.QSP_BTC]: "QSPBTC",
     // [PAIRS.QSP_ETH]: "QSPETH",
-    // [PAIRS.QTUM_BTC]: "QTUMBTC",
-    // [PAIRS.QTUM_ETH]: "QTUMETH",
+
     // [PAIRS.RCN_BTC]: "RCNBTC",
     // [PAIRS.RDN_BTC]: "RDNBTC",
     // [PAIRS.RDN_ETH]: "RDNETH",
-    // [PAIRS.REP_BTC]: "REPBTC",
-    // [PAIRS.REP_ETH]: "REPETH",
+
     // [PAIRS.REQ_BTC]: "REQBTC",
     // [PAIRS.RLC_BTC]: "RLCBTC",
     // [PAIRS.RLC_ETH]: "RLCETH",
@@ -266,8 +337,7 @@ const binance = {
     // [PAIRS.STORM_ETH]: "STORMETH",
     // [PAIRS.STRAT_BTC]: "STRATBTC",
     // [PAIRS.STRAT_ETH]: "STRATETH",
-    // [PAIRS.SUB_BTC]: "SUBBTC",
-    // [PAIRS.SUB_ETH]: "SUBETH",
+
     // [PAIRS.SYS_BTC]: "SYSBTC",
     // [PAIRS.SYS_ETH]: "SYSETH",
     // [PAIRS.THETA_BTC]: "THETABTC",
@@ -278,12 +348,9 @@ const binance = {
     // [PAIRS.TNT_ETH]: "TNTETH",
     // [PAIRS.TRIG_BTC]: "TRIGBTC",
     // [PAIRS.TRIG_ETH]: "TRIGETH",
-    // [PAIRS.TRX_BTC]: "TRXBTC",
-    // [PAIRS.TRX_ETH]: "TRXETH",
+
     // [PAIRS.TUSD_BTC]: "TUSDBTC",
     // [PAIRS.TUSD_ETH]: "TUSDETH",
-    // [PAIRS.VET_BTC]: "VETBTC",
-    // [PAIRS.VET_ETH]: "VETETH",
     // [PAIRS.VIA_BTC]: "VIABTC",
     // [PAIRS.VIA_ETH]: "VIAETH",
     // [PAIRS.VIB_BTC]: "VIBBTC",
@@ -292,22 +359,17 @@ const binance = {
     // [PAIRS.VIBE_ETH]: "VIBEETH",
     // [PAIRS.WABI_BTC]: "WABIBTC",
     // [PAIRS.WABI_ETH]: "WABIETH",
-    // [PAIRS.WAN_BTC]: "WANBTC",
-    // [PAIRS.WAN_ETH]: "WANETH",
+
     // [PAIRS.WAVES_BTC]: "WAVESBTC",
     // [PAIRS.WAVES_ETH]: "WAVESETH",
     // [PAIRS.WINGS_BTC]: "WINGSBTC",
     // [PAIRS.WINGS_ETH]: "WINGSETH",
     // [PAIRS.WPR_BTC]: "WPRBTC",
     // [PAIRS.WPR_ETH]: "WPRETH",
-    // [PAIRS.WTC_BTC]: "WTCBTC",
-    // [PAIRS.WTC_ETH]: "WTCETH",
+
     // [PAIRS.XEM_BTC]: "XEMBTC",
     // [PAIRS.XEM_ETH]: "XEMETH",
-    // [PAIRS.XLM_BTC]: "XLMBTC",
-    // [PAIRS.XLM_ETH]: "XLMETH",
-    // [PAIRS.XMR_BTC]: "XMRBTC",
-    // [PAIRS.XMR_ETH]: "XMRETH",
+
     // [PAIRS.XRP_BTC]: "XRPBTC",
     // [PAIRS.XRP_ETH]: "XRPETH",
     // [PAIRS.XVG_BTC]: "XVGBTC",
@@ -316,12 +378,10 @@ const binance = {
     // [PAIRS.XZC_ETH]: "XZCETH",
     // [PAIRS.YOYO_BTC]: "YOYOBTC",
     // [PAIRS.YOYO_ETH]: "YOYOETH",
-    // [PAIRS.ZEC_BTC]: "ZECBTC",
-    // [PAIRS.ZEC_ETH]: "ZECETH",
+
     // [PAIRS.ZEN_BTC]: "ZENBTC",
     // [PAIRS.ZEN_ETH]: "ZENETH",
-    // [PAIRS.ZIL_BTC]: "ZILBTC",
-    // [PAIRS.ZIL_ETH]: "ZILETH",
+
     // [PAIRS.ZRX_BTC]: "ZRXBTC",
     // [PAIRS.ZRX_ETH]: "ZRXETH",
   },

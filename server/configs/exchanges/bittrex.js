@@ -292,6 +292,9 @@ const bittrex = {
     [PAIRS.GNO_ETH]: "ETH-GNO",
     [PAIRS.SNT_ETH]: "ETH-SNT",
     [PAIRS.UKG_ETH]: "ETH-UKG",
+    [PAIRS.ATOM_BTC]: "BTC-ATOM",
+    [PAIRS.ATOM_ETH]: "ETH-ATOM",
+    [PAIRS.ATOM_USDT]: "USDT-ATOM",
   },
   fees: {
     taker: 0.25,

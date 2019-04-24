@@ -9,7 +9,7 @@ const huobi = {
   getOrderBook(pairIndex) {
     return `${this.url}/market/depth?type=step1&symbol=${
       this.pairs[pairIndex]
-      }`;
+    }`;
   },
   pairs: {
     [PAIRS.BTC_USDT]: "btcusdt",
@@ -19,9 +19,81 @@ const huobi = {
     [PAIRS.EOS_BTC]: "eosbtc",
     [PAIRS.EOS_ETH]: "eoseth",
 
+    [PAIRS.HT_BTC]: "htbtc",
+    [PAIRS.HT_ETH]: "hteth",
+    [PAIRS.HT_USDT]: "htusdt",
+
+    [PAIRS.LTC_BTC]: "ltcbtc",
+    [PAIRS.LTC_USDT]: "ltcusdt",
+
+    [PAIRS.DASH_BTC]: "dashbtc",
+    [PAIRS.DASH_USDT]: "dashusdt",
+
+    [PAIRS.XLM_USDT]: "xlmusdt",
+    [PAIRS.XLM_BTC]: "xlmbtc",
+    [PAIRS.XLM_ETH]: "xlmeth",
+
+    [PAIRS.ADA_ETH]: "adaeth",
+    [PAIRS.ADA_BTC]: "adabtc",
+    [PAIRS.ADA_USDT]: "adausdt",
+
+    [PAIRS.TRX_BTC]: "trxbtc",
+    [PAIRS.TRX_USDT]: "trxusdt",
+    [PAIRS.TRX_ETH]: "trxeth",
+
+    [PAIRS.IOST_USDT]: "iostusdt",
+    [PAIRS.IOST_ETH]: "iosteth",
+    [PAIRS.IOST_BTC]: "iostbtc",
+
+    [PAIRS.QTUM_ETH]: "qtumeth",
+    [PAIRS.QTUM_BTC]: "qtumbtc",
+    [PAIRS.QTUM_USDT]: "qtumusdt",
+
+    [PAIRS.ONT_USDT]: "ontusdt",
+    [PAIRS.ONT_BTC]: "ontbtc",
+    [PAIRS.ONT_ETH]: "onteth",
+
+    [PAIRS.NEO_BTC]: "neobtc",
+    [PAIRS.NEO_USDT]: "neousdt",
+
+    [PAIRS.BAT_ETH]: "bateth",
+    [PAIRS.BAT_BTC]: "batbtc",
+
+    [PAIRS.VET_USDT]: "vetusdt",
+    [PAIRS.VET_ETH]: "veteth",
+    [PAIRS.VET_BTC]: "vetbtc",
+
+    [PAIRS.ICX_ETH]: "icxeth",
+    [PAIRS.ICX_BTC]: "icxbtc",
+
+    [PAIRS.WTC_ETH]: "wtceth",
+    [PAIRS.WTC_BTC]: "wtcbtc",
+
+    [PAIRS.ZIL_USDT]: "zilusdt",
+    [PAIRS.ZIL_BTC]: "zilbtc",
+    [PAIRS.ZIL_ETH]: "zileth",
+
+    [PAIRS.AE_BTC]: "aebtc",
+    [PAIRS.AE_ETH]: "aeeth",
+
+    [PAIRS.WAN_BTC]: "wanbtc",
+    [PAIRS.WAN_ETH]: "waneth",
+
+    [PAIRS.MTL_BTC]: "mtlbtc",
+
+    //Private
+    [PAIRS.XMR_USDT]: "xmrusdt",
+    [PAIRS.XMR_BTC]: "xmrbtc",
+    [PAIRS.XMR_ETH]: "xmreth",
+    [PAIRS.ZEC_USDT]: "zecusdt",
+    [PAIRS.ZEC_BTC]: "zecbtc",
+
+    [PAIRS.ATOM_BTC]: "atombtc",
+    [PAIRS.ATOM_USDT]: "atomusdt",
+
     // [PAIRS.OMG_ETH]: "omgeth",
     // [PAIRS.MTN_ETH]: "mtneth",
-    // [PAIRS.TRX_ETH]: "trxeth",
+
     // [PAIRS.PAI_ETH]: "paieth",
     // [PAIRS.POWR_ETH]: "powreth",
     // [PAIRS.EDU_ETH]: "edueth",
@@ -33,8 +105,7 @@ const huobi = {
     // [PAIRS.CTXC_ETH]: "ctxceth",
     // [PAIRS.SWFTC_ETH]: "swftceth",
     // [PAIRS.GNX_ETH]: "gnxeth",
-    // [PAIRS.IOST_ETH]: "iosteth",
-    // [PAIRS.HT_ETH]: "hteth",
+
     // [PAIRS.ZLA_ETH]: "zlaeth",
     // [PAIRS.GXS_ETH]: "gxceth",
     // [PAIRS.HIT_ETH]: "hiteth",
@@ -42,29 +113,28 @@ const huobi = {
     // [PAIRS.KAN_ETH]: "kaneth",
     // [PAIRS.ITC_ETH]: "itceth",
     // [PAIRS.LBA_ETH]: "lbaeth",
-    // [PAIRS.QTUM_ETH]: "qtumeth",
+
     // [PAIRS.TOPC_ETH]: "topceth",
     // [PAIRS.ARDR_ETH]: "ardreth",
-    // [PAIRS.XMR_ETH]: "xmreth",
+
     // [PAIRS.POLY_ETH]: "polyeth",
     // [PAIRS.TNT_ETH]: "tnteth",
-    // [PAIRS.ONT_ETH]: "onteth",
+
     // [PAIRS.DBC_ETH]: "dbceth",
     // [PAIRS.CMT_ETH]: "cmteth",
     // [PAIRS.OCN_ETH]: "ocneth",
     // [PAIRS.DTA_ETH]: "dtaeth",
-    // [PAIRS.ZIL_ETH]: "zileth",
-    // [PAIRS.XLM_ETH]: "xlmeth",
+
     // [PAIRS.XVG_ETH]: "xvgeth",
     // [PAIRS.DAT_ETH]: "dateth",
-    // [PAIRS.ADA_ETH]: "adaeth",
+
     // [PAIRS.XZC_ETH]: "xzceth",
     // [PAIRS.AIDOC_ETH]: "aidoceth",
     // [PAIRS.GRS_ETH]: "grseth",
     // [PAIRS.SNC_ETH]: "snceth",
     // [PAIRS.NAS_ETH]: "naseth",
     // [PAIRS.YEE_ETH]: "yeeeth",
-    // [PAIRS.WTC_ETH]: "wtceth",
+
     // [PAIRS.DCR_ETH]: "dcreth",
     // [PAIRS.ELA_ETH]: "elaeth",
     // [PAIRS.RCN_ETH]: "rcneth",
@@ -75,7 +145,7 @@ const huobi = {
     // [PAIRS.IOTA_ETH]: "iotaeth",
     // [PAIRS.CHAT_ETH]: "chateth",
     // [PAIRS.LUN_ETH]: "luneth",
-    // [PAIRS.BAT_ETH]: "bateth",
+
     // [PAIRS.MANA_ETH]: "manaeth",
     // [PAIRS.TNB_ETH]: "tnbeth",
     // [PAIRS.UTK_ETH]: "utketh",
@@ -84,7 +154,7 @@ const huobi = {
     // [PAIRS.EKO_ETH]: "ekoeth",
     // [PAIRS.LET_ETH]: "leteth",
     // [PAIRS.WICC_ETH]: "wicceth",
-    // [PAIRS.VET_ETH]: "veteth",
+
     // [PAIRS.GNT_ETH]: "gnteth",
     // [PAIRS.RDN_ETH]: "rdneth",
     // [PAIRS.ZRX_ETH]: "zrxeth",
@@ -101,10 +171,10 @@ const huobi = {
     // [PAIRS.PAY_ETH]: "payeth",
     // [PAIRS.MCO_ETH]: "mcoeth",
     // [PAIRS.LINK_ETH]: "linketh",
-    // [PAIRS.ICX_ETH]: "icxeth",
+
     // [PAIRS.STK_ETH]: "stketh",
     // [PAIRS.APPC_ETH]: "appceth",
-    // [PAIRS.WAN_ETH]: "waneth",
+
     // [PAIRS.CVC_ETH]: "cvceth",
     // [PAIRS.KNC_ETH]: "knceth",
     // [PAIRS.SRN_ETH]: "srneth",
@@ -125,10 +195,7 @@ const huobi = {
     // [PAIRS.STEEM_ETH]: "steemeth",
     // [PAIRS.BCH_BTC]: "bchbtc",
     // [PAIRS.XRP_BTC]: "xrpbtc",
-    // [PAIRS.ZEC_BTC]: "zecbtc",
-    // [PAIRS.LTC_BTC]: "ltcbtc",
-    // [PAIRS.DASH_BTC]: "dashbtc",
-    // [PAIRS.TRX_BTC]: "trxbtc",
+
     // [PAIRS.MEET_BTC]: "meetbtc",
     // [PAIRS.BTM_BTC]: "btmbtc",
     // [PAIRS.MTN_BTC]: "mtnbtc",
@@ -137,9 +204,9 @@ const huobi = {
     // [PAIRS.PAI_BTC]: "paibtc",
     // [PAIRS.EDU_BTC]: "edubtc",
     // [PAIRS.POWR_BTC]: "powrbtc",
-    // [PAIRS.HT_BTC]: "htbtc",
+
     // [PAIRS.CTXC_BTC]: "ctxcbtc",
-    // [PAIRS.QTUM_BTC]: "qtumbtc",
+
     // [PAIRS.HIT_BTC]: "hitbtc",
     // [PAIRS.BOX_BTC]: "boxbtc",
     // [PAIRS.GXS_BTC]: "gxcbtc",
@@ -155,10 +222,10 @@ const huobi = {
     // [PAIRS.POLY_BTC]: "polybtc",
     // [PAIRS.DBC_BTC]: "dbcbtc",
     // [PAIRS.GNX_BTC]: "gnxbtc",
-    // [PAIRS.BAT_BTC]: "batbtc",
+
     // [PAIRS.DCR_BTC]: "dcrbtc",
     // [PAIRS.ELA_BTC]: "elabtc",
-    // [PAIRS.ADA_BTC]: "adabtc",
+
     // [PAIRS.SBTC_BTC]: "sbtcbtc",
     // [PAIRS.DTA_BTC]: "dtabtc",
     // [PAIRS.LBA_BTC]: "lbabtc",
@@ -172,20 +239,19 @@ const huobi = {
     // [PAIRS.ZRX_BTC]: "zrxbtc",
     // [PAIRS.YEE_BTC]: "yeebtc",
     // [PAIRS.SALT_BTC]: "saltbtc",
-    // [PAIRS.IOST_BTC]: "iostbtc",
+
     // [PAIRS.LUN_BTC]: "lunbtc",
     // [PAIRS.TNT_BTC]: "tntbtc",
-    // [PAIRS.ONT_BTC]: "ontbtc",
+
     // [PAIRS.RCN_BTC]: "rcnbtc",
     // [PAIRS.CHAT_BTC]: "chatbtc",
-    // [PAIRS.NEO_BTC]: "neobtc",
+
     // [PAIRS.BTS_BTC]: "btsbtc",
     // [PAIRS.SOC_BTC]: "socbtc",
     // [PAIRS.GNT_BTC]: "gntbtc",
-    // [PAIRS.XLM_BTC]: "xlmbtc",
-    // [PAIRS.XMR_BTC]: "xmrbtc",
+
     // [PAIRS.OMG_BTC]: "omgbtc",
-    // [PAIRS.ZIL_BTC]: "zilbtc",
+
     // [PAIRS.XZC_BTC]: "xzcbtc",
     // [PAIRS.STORJ_BTC]: "storjbtc",
     // [PAIRS.NAS_BTC]: "nasbtc",
@@ -201,20 +267,20 @@ const huobi = {
     // [PAIRS.STK_BTC]: "stkbtc",
     // [PAIRS.GRS_BTC]: "grsbtc",
     // [PAIRS.WICC_BTC]: "wiccbtc",
-    // [PAIRS.VET_BTC]: "vetbtc",
+
     // [PAIRS.SRN_BTC]: "srnbtc",
     // [PAIRS.TNB_BTC]: "tnbbtc",
     // [PAIRS.IOTA_BTC]: "iotabtc",
-    // [PAIRS.MTL_BTC]: "mtlbtc",
+
     // [PAIRS.KNC_BTC]: "kncbtc",
     // [PAIRS.ADX_BTC]: "adxbtc",
-    // [PAIRS.WTC_BTC]: "wtcbtc",
+
     // [PAIRS.LSK_BTC]: "lskbtc",
     // [PAIRS.HC_BTC]: "hcbtc",
     // [PAIRS.CVC_BTC]: "cvcbtc",
     // [PAIRS.MDS_BTC]: "mdsbtc",
     // [PAIRS.QASH_BTC]: "qashbtc",
-    // [PAIRS.ICX_BTC]: "icxbtc",
+
     // [PAIRS.DGD_BTC]: "dgdbtc",
     // [PAIRS.APPC_BTC]: "appcbtc",
     // [PAIRS.WAX_BTC]: "waxbtc",
@@ -222,7 +288,7 @@ const huobi = {
     // [PAIRS.SNT_BTC]: "sntbtc",
     // [PAIRS.QUN_BTC]: "qunbtc",
     // [PAIRS.THETA_BTC]: "thetabtc",
-    // [PAIRS.WAN_BTC]: "wanbtc",
+
     // [PAIRS.OST_BTC]: "ostbtc",
     // [PAIRS.UTK_BTC]: "utkbtc",
     // [PAIRS.BIX_BTC]: "bixbtc",
@@ -247,25 +313,20 @@ const huobi = {
     // [PAIRS.BCH_USDT]: "bchusdt",
     // [PAIRS.XRP_USDT]: "xrpusdt",
     // [PAIRS.BTM_USDT]: "btmusdt",
-    // [PAIRS.TRX_USDT]: "trxusdt",
-    // [PAIRS.ZEC_USDT]: "zecusdt",
+
     // [PAIRS.OMG_USDT]: "omgusdt",
     // [PAIRS.PAI_USDT]: "paiusdt",
     // [PAIRS.ETC_USDT]: "etcusdt",
-    // [PAIRS.QTUM_USDT]: "qtumusdt",
-    // [PAIRS.DASH_USDT]: "dashusdt",
-    // [PAIRS.LTC_USDT]: "ltcusdt",
-    // [PAIRS.HT_USDT]: "htusdt",
+
     // [PAIRS.CTXC_USDT]: "ctxcusdt",
-    // [PAIRS.ONT_USDT]: "ontusdt",
-    // [PAIRS.IOST_USDT]: "iostusdt",
+
     // [PAIRS.OCN_USDT]: "ocnusdt",
     // [PAIRS.WICC_USDT]: "wiccusdt",
-    // [PAIRS.ADA_USDT]: "adausdt",
+
     // [PAIRS.ELF_USDT]: "elfusdt",
-    // [PAIRS.ZIL_USDT]: "zilusdt",
+
     // [PAIRS.NAS_USDT]: "nasusdt",
-    // [PAIRS.NEO_USDT]: "neousdt",
+
     // [PAIRS.ITC_USDT]: "itcusdt",
     // [PAIRS.CMT_USDT]: "cmtusdt",
     // [PAIRS.DTA_USDT]: "dtausdt",
@@ -276,7 +337,7 @@ const huobi = {
     // [PAIRS.LET_USDT]: "letusdt",
     // [PAIRS.ELA_USDT]: "elausdt",
     // [PAIRS.THETA_USDT]: "thetausdt",
-    // [PAIRS.VET_USDT]: "vetusdt",
+
     // [PAIRS.XEM_USDT]: "xemusdt",
     // [PAIRS.IOTA_USDT]: "iotausdt",
     // [PAIRS.CVC_USDT]: "cvcusdt",
@@ -292,10 +353,10 @@ const huobi = {
     // [PAIRS.MAN_ETH]: "maneth",
     // [PAIRS.EKT_ETH]: "ekteth",
     // [PAIRS.UUU_ETH]: "uuueth",
-    // [PAIRS.AE_BTC]: "aebtc",
+
     // [PAIRS.GSC_ETH]: "gsceth",
     // [PAIRS.GSC_BTC]: "gscbtc",
-    // [PAIRS.AE_ETH]: "aeeth",
+
     // [PAIRS.CNN_BTC]: "cnnbtc",
     // [PAIRS.CVCOIN_BTC]: "cvcoinbtc",
     // [PAIRS.UUU_BTC]: "uuubtc",

@@ -17,10 +17,78 @@ const gate = {
     [PAIRS.EOS_BTC]: "EOS_BTC",
     [PAIRS.BNB_USDT]: "BNB_USDT",
 
+    [PAIRS.LTC_USDT]: "LTC_USDT",
+    [PAIRS.LTC_BTC]: "LTC_BTC",
+
+    [PAIRS.XLM_USDT]: "XLM_USDT",
+    [PAIRS.XLM_BTC]: "XLM_BTC",
+    [PAIRS.XLM_ETH]: "XLM_ETH",
+
+    [PAIRS.TRX_USDT]: "TRX_USDT",
+    [PAIRS.TRX_ETH]: "TRX_ETH",
+
+    [PAIRS.ADA_USDT]: "ADA_USDT",
+    [PAIRS.ADA_BTC]: "ADA_BTC",
+
+    [PAIRS.ONT_USDT]: "ONT_USDT",
+    [PAIRS.ONT_ETH]: "ONT_ETH",
+
+    [PAIRS.DASH_USDT]: "DASH_USDT",
+    [PAIRS.DASH_BTC]: "DASH_BTC",
+
+    [PAIRS.BAT_USDT]: "BAT_USDT",
+    [PAIRS.BAT_BTC]: "BAT_BTC",
+    [PAIRS.BAT_ETH]: "BAT_ETH",
+
+    [PAIRS.VET_USDT]: "VET_USDT",
+    [PAIRS.VET_ETH]: "VET_ETH",
+
+    [PAIRS.NEO_USDT]: "NEO_USDT",
+    [PAIRS.NEO_BTC]: "NEO_BTC",
+
+    [PAIRS.REP_ETH]: "REP_ETH",
+
+    [PAIRS.QTUM_USDT]: "QTUM_USDT",
+    [PAIRS.QTUM_BTC]: "QTUM_BTC",
+    [PAIRS.QTUM_ETH]: "QTUM_ETH",
+
+    [PAIRS.ICX_USDT]: "ICX_USDT",
+    [PAIRS.ICX_ETH]: "ICX_ETH",
+
+    [PAIRS.XTZ_USDT]: "XTZ_USDT",
+    [PAIRS.XTZ_BTC]: "XTZ_BTC",
+    [PAIRS.XTZ_ETH]: "XTZ_ETH",
+
+    //[PAIRS.AE_BTC]: "AE_BTC",
+    //[PAIRS.AE_USDT]: "AE_USDT",
+    //[PAIRS.AE_ETH]: "AE_ETH",
+
+    [PAIRS.NANO_BTC]: "NANO_BTC",
+    [PAIRS.NANO_USDT]: "NANO_USDT",
+
+    [PAIRS.QKC_USDT]: "QKC_USDT",
+    [PAIRS.QKC_ETH]: "QKC_ETH",
+
+    [PAIRS.ZIL_USDT]: "ZIL_USDT",
+    [PAIRS.ZIL_ETH]: "ZIL_ETH",
+
+    [PAIRS.IOTX_USDT]: "IOTX_USDT",
+    [PAIRS.IOTX_ETH]: "IOTX_ETH",
+
+    [PAIRS.HT_USDT]: "HT_USDT",
+
+    //Private
+    [PAIRS.ZEC_USDT]: "ZEC_USDT",
+    [PAIRS.ZEC_BTC]: "ZEC_BTC",
+    [PAIRS.XMR_USDT]: "XMR_USDT",
+    [PAIRS.XMR_BTC]: "XMR_BTC",
+
+    [PAIRS.ATOM_BTC]: "ATOM_BTC",
+    [PAIRS.ATOM_USDT]: "ATOM_USDT",
+
     // [PAIRS.BTM_USDT]: "BTM_USDT",
     // [PAIRS.DOGE_USDT]: "DOGE_USDT",
-    // [PAIRS.AE_USDT]: "AE_USDT",
-    // [PAIRS.QTUM_USDT]: "QTUM_USDT",
+
     // [PAIRS.MDA_USDT]: "MDA_USDT",
     // [PAIRS.BU_USDT]: "BU_USDT",
     // [PAIRS.BCD_USDT]: "BCD_USDT",
@@ -30,65 +98,60 @@ const gate = {
     // [PAIRS.BU_ETH]: "BU_ETH",
     // [PAIRS.TCT_USDT]: "TCT_USDT",
     // [PAIRS.XRP_USDT]: "XRP_USDT",
-    // [PAIRS.ONT_USDT]: "ONT_USDT",
+
     // [PAIRS.LYM_USDT]: "LYM_USDT",
     // [PAIRS.IHT_USDT]: "IHT_USDT",
     // [PAIRS.GSE_USDT]: "GSE_USDT",
     // [PAIRS.LRN_USDT]: "LRN_USDT",
-    // [PAIRS.XTZ_BTC]: "XTZ_BTC",
+
     // [PAIRS.NAS_USDT]: "NAS_USDT",
     // [PAIRS.BTO_USDT]: "BTO_USDT",
     // [PAIRS.DBC_USDT]: "DBC_USDT",
-    // [PAIRS.ADA_USDT]: "ADA_USDT",
+
     // [PAIRS.BU_BTC]: "BU_BTC",
     // [PAIRS.HIT_USDT]: "HIT_USDT",
     // [PAIRS.KICK_USDT]: "KICK_USDT",
     // [PAIRS.FTI_USDT]: "FTI_USDT",
-    // [PAIRS.XTZ_USDT]: "XTZ_USDT",
-    // [PAIRS.ZEC_USDT]: "ZEC_USDT",
-    // [PAIRS.AE_BTC]: "AE_BTC",
+
     // [PAIRS.SOP_USDT]: "SOP_USDT",
     // [PAIRS.TSL_USDT]: "TSL_USDT",
-    // [PAIRS.XTZ_ETH]: "XTZ_ETH",
-    // [PAIRS.LTC_USDT]: "LTC_USDT",
+
     // [PAIRS.SKM_USDT]: "SKM_USDT",
     // [PAIRS.BCH_USDT]: "BCH_USDT",
     // [PAIRS.BTS_USDT]: "BTS_USDT",
-    // [PAIRS.BAT_USDT]: "BAT_USDT",
+
     // [PAIRS.PAX_USDT]: "PAX_USDT",
     // [PAIRS.HAV_USDT]: "HAV_USDT",
     // [PAIRS.ELF_USDT]: "ELF_USDT",
-    // [PAIRS.ZIL_USDT]: "ZIL_USDT",
+
     // [PAIRS.CDT_USDT]: "CDT_USDT",
     // [PAIRS.LYM_ETH]: "LYM_ETH",
     // [PAIRS.PST_USDT]: "PST_USDT",
     // [PAIRS.TOMO_ETH]: "TOMO_ETH",
     // [PAIRS.LYM_BTC]: "LYM_BTC",
     // [PAIRS.TOMO_USDT]: "TOMO_USDT",
-    // [PAIRS.TRX_USDT]: "TRX_USDT",
+
     // [PAIRS.RED_USDT]: "RED_USDT",
     // [PAIRS.SOP_ETH]: "SOP_ETH",
     // [PAIRS.XMC_USDT]: "XMC_USDT",
     // [PAIRS.HC_USDT]: "HC_USDT",
-    // [PAIRS.VET_USDT]: "VET_USDT",
-    // [PAIRS.QTUM_BTC]: "QTUM_BTC",
+
     // [PAIRS.STX_USDT]: "STX_USDT",
     // [PAIRS.BTM_ETH]: "BTM_ETH",
     // [PAIRS.ZSC_ETH]: "ZSC_ETH",
     // [PAIRS.GXS_USDT]: "GXS_USDT",
     // [PAIRS.HAV_ETH]: "HAV_ETH",
-    // [PAIRS.AE_ETH]: "AE_ETH",
+
     // [PAIRS.BTM_BTC]: "BTM_BTC",
     // [PAIRS.LEMO_ETH]: "LEMO_ETH",
     // [PAIRS.DX_ETH]: "DX_ETH",
     // [PAIRS.QBT_USDT]: "QBT_USDT",
-    // [PAIRS.XLM_USDT]: "XLM_USDT",
+
     // [PAIRS.DPY_USDT]: "DPY_USDT",
     // [PAIRS.ETC_BTC]: "ETC_BTC",
-    // [PAIRS.XMR_USDT]: "XMR_USDT",
-    // [PAIRS.ICX_USDT]: "ICX_USDT",
+
     // [PAIRS.RDN_USDT]: "RDN_USDT",
-    // [PAIRS.NEO_USDT]: "NEO_USDT",
+
     // [PAIRS.RUFF_USDT]: "RUFF_USDT",
     // [PAIRS.REM_USDT]: "REM_USDT",
     // [PAIRS.MAN_USDT]: "MAN_USDT",
@@ -98,7 +161,7 @@ const gate = {
     // [PAIRS.DOGE_BTC]: "DOGE_BTC",
     // [PAIRS.ZRX_USDT]: "ZRX_USDT",
     // [PAIRS.NKN_USDT]: "NKN_USDT",
-    // [PAIRS.DASH_USDT]: "DASH_USDT",
+
     // [PAIRS.BLZ_USDT]: "BLZ_USDT",
     // [PAIRS.TNT_USDT]: "TNT_USDT",
     // [PAIRS.GARD_USDT]: "GARD_USDT",
@@ -125,7 +188,7 @@ const gate = {
     // [PAIRS.MTN_USDT]: "MTN_USDT",
     // [PAIRS.STX_ETH]: "STX_ETH",
     // [PAIRS.XRP_BTC]: "XRP_BTC",
-    // [PAIRS.QKC_USDT]: "QKC_USDT",
+
     // [PAIRS.OMG_USDT]: "OMG_USDT",
     // [PAIRS.MANA_USDT]: "MANA_USDT",
     // [PAIRS.QSP_USDT]: "QSP_USDT",
@@ -137,11 +200,11 @@ const gate = {
     // [PAIRS.ETC_ETH]: "ETC_ETH",
     // [PAIRS.INK_USDT]: "INK_USDT",
     // [PAIRS.BCN_BTC]: "BCN_BTC",
-    // [PAIRS.BAT_BTC]: "BAT_BTC",
+
     // [PAIRS.QASH_USDT]: "QASH_USDT",
     // [PAIRS.IHT_ETH]: "IHT_ETH",
     // [PAIRS.MDA_ETH]: "MDA_ETH",
-    // [PAIRS.ZIL_ETH]: "ZIL_ETH",
+
     // [PAIRS.DOCK_USDT]: "DOCK_USDT",
     // [PAIRS.SALT_USDT]: "SALT_USDT",
     // [PAIRS.MOBI_USDT]: "MOBI_USDT",
@@ -149,15 +212,15 @@ const gate = {
     // [PAIRS.BCH_BTC]: "BCH_BTC",
     // [PAIRS.TNC_USDT]: "TNC_USDT",
     // [PAIRS.BIFI_USDT]: "BIFI_USDT",
-    // [PAIRS.IOTX_USDT]: "IOTX_USDT",
+
     // [PAIRS.RCN_USDT]: "RCN_USDT",
     // [PAIRS.REM_ETH]: "REM_ETH",
     // [PAIRS.GTC_BTC]: "GTC_BTC",
     // [PAIRS.SNT_USDT]: "SNT_USDT",
     // [PAIRS.EOSDAC_ETH]: "EOSDAC_ETH",
-    // [PAIRS.QTUM_ETH]: "QTUM_ETH",
+
     // [PAIRS.HSC_USDT]: "HSC_USDT",
-    // [PAIRS.ONT_ETH]: "ONT_ETH",
+
     // [PAIRS.SMT_USDT]: "SMT_USDT",
     // [PAIRS.SOUL_USDT]: "SOUL_USDT",
     // [PAIRS.PAY_USDT]: "PAY_USDT",
@@ -168,7 +231,7 @@ const gate = {
     // [PAIRS.NKN_ETH]: "NKN_ETH",
     // [PAIRS.LSK_USDT]: "LSK_USDT",
     // [PAIRS.RATING_USDT]: "RATING_USDT",
-    // [PAIRS.ZEC_BTC]: "ZEC_BTC",
+
     // [PAIRS.JNT_ETH]: "JNT_ETH",
     // [PAIRS.FUEL_USDT]: "FUEL_USDT",
     // [PAIRS.DX_USDT]: "DX_USDT",
@@ -201,27 +264,25 @@ const gate = {
     // [PAIRS.XVG_USDT]: "XVG_USDT",
     // [PAIRS.MITH_USDT]: "MITH_USDT",
     // [PAIRS.CVC_USDT]: "CVC_USDT",
-    // [PAIRS.NEO_BTC]: "NEO_BTC",
+
     // [PAIRS.SNET_USDT]: "SNET_USDT",
     // [PAIRS.OCN_ETH]: "OCN_ETH",
     // [PAIRS.DDD_ETH]: "DDD_ETH",
     // [PAIRS.QBT_ETH]: "QBT_ETH",
-    // [PAIRS.TRX_ETH]: "TRX_ETH",
-    // [PAIRS.XLM_BTC]: "XLM_BTC",
+
     // [PAIRS.LSK_BTC]: "LSK_BTC",
     // [PAIRS.TNC_ETH]: "TNC_ETH",
     // [PAIRS.BNTY_USDT]: "BNTY_USDT",
     // [PAIRS.DBC_ETH]: "DBC_ETH",
     // [PAIRS.COFI_USDT]: "COFI_USDT",
     // [PAIRS.CDT_ETH]: "CDT_ETH",
-    // [PAIRS.QKC_ETH]: "QKC_ETH",
-    // [PAIRS.BAT_ETH]: "BAT_ETH",
+
     // [PAIRS.OPEN_USDT]: "OPEN_USDT",
     // [PAIRS.SALT_ETH]: "SALT_ETH",
     // [PAIRS.MCO_ETH]: "MCO_ETH",
-    // [PAIRS.LTC_BTC]: "LTC_BTC",
+
     // [PAIRS.OST_USDT]: "OST_USDT",
-    // [PAIRS.ADA_BTC]: "ADA_BTC",
+
     // [PAIRS.LINK_USDT]: "LINK_USDT",
     // [PAIRS.BFT_USDT]: "BFT_USDT",
     // [PAIRS.REQ_USDT]: "REQ_USDT",
@@ -233,9 +294,9 @@ const gate = {
     // [PAIRS.RDN_ETH]: "RDN_ETH",
     // [PAIRS.GXS_BTC]: "GXS_BTC",
     // [PAIRS.OMG_ETH]: "OMG_ETH",
-    // [PAIRS.ICX_ETH]: "ICX_ETH",
+
     // [PAIRS.DADI_USDT]: "DADI_USDT",
-    // [PAIRS.VET_ETH]: "VET_ETH",
+
     // [PAIRS.TIO_ETH]: "TIO_ETH",
     // [PAIRS.SENC_ETH]: "SENC_ETH",
     // [PAIRS.ZPT_USDT]: "ZPT_USDT",
@@ -244,17 +305,16 @@ const gate = {
     // [PAIRS.TNC_BTC]: "TNC_BTC",
     // [PAIRS.BTS_BTC]: "BTS_BTC",
     // [PAIRS.SWTH_USDT]: "SWTH_USDT",
-    // [PAIRS.HT_USDT]: "HT_USDT",
+
     // [PAIRS.RUFF_ETH]: "RUFF_ETH",
     // [PAIRS.MET_ETH]: "MET_ETH",
-    // [PAIRS.XMR_BTC]: "XMR_BTC",
+
     // [PAIRS.BOE_USDT]: "BOE_USDT",
     // [PAIRS.OCN_BTC]: "OCN_BTC",
     // [PAIRS.MED_ETH]: "MED_ETH",
     // [PAIRS.DATA_USDT]: "DATA_USDT",
     // [PAIRS.CS_ETH]: "CS_ETH",
-    // [PAIRS.NANO_BTC]: "NANO_BTC",
-    // [PAIRS.IOTX_ETH]: "IOTX_ETH",
+
     // [PAIRS.MKR_USDT]: "MKR_USDT",
     // [PAIRS.SNET_ETH]: "SNET_ETH",
     // [PAIRS.ELEC_USDT]: "ELEC_USDT",
@@ -278,7 +338,7 @@ const gate = {
     // [PAIRS.JNT_BTC]: "JNT_BTC",
     // [PAIRS.OMG_BTC]: "OMG_BTC",
     // [PAIRS.ABT_ETH]: "ABT_ETH",
-    // [PAIRS.NANO_USDT]: "NANO_USDT",
+
     // [PAIRS.INK_ETH]: "INK_ETH",
     // [PAIRS.BOT_QTUM]: "BOT_QTUM",
     // [PAIRS.BFT_ETH]: "BFT_ETH",
@@ -290,7 +350,7 @@ const gate = {
     // [PAIRS.DCR_BTC]: "DCR_BTC",
     // [PAIRS.ELF_ETH]: "ELF_ETH",
     // [PAIRS.QASH_ETH]: "QASH_ETH",
-    // [PAIRS.XLM_ETH]: "XLM_ETH",
+
     // [PAIRS.LUN_ETH]: "LUN_ETH",
     // [PAIRS.OPEN_ETH]: "OPEN_ETH",
     // [PAIRS.SOUL_ETH]: "SOUL_ETH",
@@ -340,8 +400,7 @@ const gate = {
     // [PAIRS.GEM_ETH]: "GEM_ETH",
     // [PAIRS.PAY_ETH]: "PAY_ETH",
     // [PAIRS.POWR_BTC]: "POWR_BTC",
-    // [PAIRS.DASH_BTC]: "DASH_BTC",
-    // [PAIRS.REP_ETH]: "REP_ETH",
+
     // [PAIRS.XMC_BTC]: "XMC_BTC",
     // [PAIRS.MITH_ETH]: "MITH_ETH",
     // [PAIRS.WINGS_ETH]: "WINGS_ETH",
@@ -364,7 +423,7 @@ const gate = {
     // [PAIRS.GOD_BTC]: "GOD_BTC",
   },
   fees: {
-    taker: 0.1, //0.05% if we'll use Bibox token
+    taker: 0.2, //0.05% if we'll use Bibox token
   },
   minOrder: {
     //based on real trade error msg
