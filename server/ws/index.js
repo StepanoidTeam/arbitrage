@@ -26,6 +26,7 @@ const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
 const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
+const { getSourceForPairs: wsBibox } = require("./wsBibox");
 //to prevent node eventEmitter warning about memory leak. 11 used, 10 is default
 //upd: 17 used
 require("events").EventEmitter.defaultMaxListeners = 20;
@@ -129,6 +130,7 @@ function logAnalytics({ pairs, wsExchanges }) {
     "Huobi",
     "Hitbtc",
     "Bittrex",
+    "Bibox",
   ].map(name => ({
     name,
     online: false,
@@ -230,7 +232,7 @@ logAnalytics({
   //wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc], //
 
   // pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsExchanges: [wsBinance, wsBittrex], //
+  wsExchanges: [wsBinance, wsBibox], //
 
   //wsExchanges: [wsBinance, wsHitbtc],
 });

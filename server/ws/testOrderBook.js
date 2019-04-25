@@ -8,11 +8,22 @@ const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
 const { getSourceForPairs: wsOkex } = require("./wsOkex");
 const { getSourceForPairs: wsGate } = require("./wsGate");
 const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
+const { getSourceForPairs: wsBibox } = require("./wsBibox");
 
 const { PAIRS } = require("../configs/globalPairs");
 
-wsBittrex([PAIRS.ZEC_BTC]).subscribe(data => {
+const wsToTest = wsBibox;
+
+wsToTest([PAIRS.BTC_USDT]).subscribe(data => {
   if (data.exName) {
+    if (data.bid && data.ask && data.bid.price > data.ask.price) {
+      console.error("❌bid FAIL");
+    }
+
+    if (!data.bid || !data.ask) {
+      debugger;
+    }
+
     logUpdate(
       data.exName,
       `[${data.pair}]\n`,
