@@ -7,6 +7,12 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "testOrderBook",
+      "program": "${workspaceFolder}/server/ws/testOrderBook.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "server",
       "program": "${workspaceFolder}/server/ws/index.js"
     }

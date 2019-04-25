@@ -11,7 +11,7 @@ const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
 const { getAllowedPairsAsync } = require("./assets");
 
-const depth = 5; // 5, 10
+const depth = 5;
 
 function getStreamName({ globalPair, localPair }) {
   let stream = `${localPair.toLowerCase()}@depth${depth}`;
@@ -36,9 +36,7 @@ function getSourceForPairs(globalPairs = []) {
 
     let pairStreams = pairsToSubscribe.map(getStreamName);
 
-    //todo: intersect with allowed pairs
-
-    let wsUrl = `wss://stream.binance.com:9443/stream?streams=${pairStreams
+    const wsUrl = `wss://stream.binance.com:9443/stream?streams=${pairStreams
       .map(ps => ps.stream)
       .join("/")}`;
 
