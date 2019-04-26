@@ -12,6 +12,8 @@ const {
 } = require("../../configs");
 const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   let pairs = getLocalPairs(globalPairs, exConfig);
 

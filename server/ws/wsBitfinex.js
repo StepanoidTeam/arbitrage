@@ -10,6 +10,8 @@ const {
 } = require("../configs");
 const { getLocalPairs } = require("../helpers/getLocalPairs");
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   const pairs = getLocalPairs(globalPairs, exConfig);
   //limitation just because bitfinex

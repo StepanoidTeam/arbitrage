@@ -22,6 +22,8 @@ const depth = 5; // 5, 10
 
 var orderbook = {};
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   const httpUrl = `https://kitchen.kucoin.com/v1/bullet/usercenter/loginUser?protocol=websocket&encrypt=true`;
 

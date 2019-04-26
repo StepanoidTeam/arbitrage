@@ -14,6 +14,8 @@ function getStreamName({ globalPair, localPair }) {
   return `bibox_sub_spot_${localPair}_depth`;
 }
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   const subject = new Subject();
 

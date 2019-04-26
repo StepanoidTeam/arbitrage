@@ -22,6 +22,8 @@ function getStreamName({ globalPair, localPair }) {
   };
 }
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   const subject = new Subject();
 

@@ -14,6 +14,8 @@ const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
 const { getAllowedPairsAsync } = require("./assets");
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   const subject = new Subject();
 

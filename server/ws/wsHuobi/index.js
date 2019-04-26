@@ -12,6 +12,8 @@ const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
 const { getAllowedPairsAsync } = require("./assets");
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   const wsUrl = "wss://api.huobi.pro/ws";
   const subject = new Subject();
