@@ -12,6 +12,8 @@ const {
 } = require("../configs");
 const { getLocalPairs } = require("../helpers/getLocalPairs");
 
+getSourceForPairs.exConfig = exConfig;
+
 function getSourceForPairs(globalPairs = []) {
   //todo: make some common apporoach for that cases
 
@@ -31,14 +33,32 @@ function getSourceForPairs(globalPairs = []) {
       return;
     }
 
-    const bid = sortBy([...orderBook.bids.values()], x => -x.price).shift();
-    const ask = sortBy([...orderBook.asks.values()], x => x.price).shift();
+    const bids = sortBy([...orderBook.bids.values()], x => -x.price).slice(
+      0,
+      10
+    );
+    const asks = sortBy([...orderBook.asks.values()], x => x.price).slice(
+      0,
+      10
+    );
+
+    const bid = bids[0];
+    const ask = asks[0];
 
     subject.next({
+      type: "top",
       exName: exConfig.name,
       pair,
       bid,
       ask,
+    });
+
+    subject.next({
+      type: "orderbook",
+      exName: exConfig.name,
+      pair,
+      bids,
+      asks,
     });
   }
 
