@@ -45,12 +45,15 @@ function getSourceForPairs(globalPairs = []) {
     const bid = bids[0];
     const ask = asks[0];
 
+    const timestamp = Date.now();
+
     subject.next({
       type: "top",
       exName: exConfig.name,
       pair,
       bid,
       ask,
+      timestamp,
     });
 
     subject.next({
@@ -59,6 +62,7 @@ function getSourceForPairs(globalPairs = []) {
       pair,
       bids,
       asks,
+      timestamp,
     });
   }
 
