@@ -16,6 +16,10 @@ function readFileLineStream(filepath) {
     subject.next(line);
   });
 
+  rl.on("close", () => {
+    subject.complete();
+  });
+
   return subject;
 }
 

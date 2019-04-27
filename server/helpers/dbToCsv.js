@@ -6,7 +6,7 @@ const { appendTextToFile } = require("./file");
 const { getCsvHeaders, getCsvValues } = require("./csv");
 
 const { consoleRewrite } = require("./cli-progress");
-const { readFileLineStream } = require("./readFileStream");
+const { readFileLineStream } = require("./readFileLineStream");
 
 function dbToCsv(logName) {
   const inputLogPath = `./logs/log.${logName}.nosql`;
