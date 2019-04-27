@@ -1,7 +1,5 @@
 const { navigateUpDown } = require("./navigateUpDown");
-
 const { checkBrokenBook } = require("./checkBrokenBook");
-
 const { readFileLineStream } = require("../helpers/readFileLineStream");
 
 const stats = {
@@ -13,9 +11,9 @@ const stats = {
 const books = [];
 
 readFileLineStream(
-  "/Users/myshko/Documents/GitHub/arbitrage/logs/log.orderbook-test.bittrex.1556292501580.nosql" //btc mine
-  //"/Users/myshko/Documents/GitHub/arbitrage/logs/log.orderbook-test.bittrex_BAT.1556313842451.nosql" //bat norb
-  //"/Users/myshko/Documents/GitHub/arbitrage/logs/log.orderbook-test.bittrex.1556315220867.nosql" //dash norb
+  "logs/log.orderbook-test.bittrex.1556292501580.nosql" //btc mine
+  //"logs/log.orderbook-test.bittrex_BAT.1556313842451.nosql" //bat norb
+  //"logs/log.orderbook-test.bittrex.1556315220867.nosql" //dash norb
 ).subscribe(
   data => {
     data = JSON.parse(data);
