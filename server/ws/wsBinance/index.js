@@ -72,6 +72,8 @@ function getSourceForPairs(globalPairs = []) {
           );
 
           let bookTop = {
+            type: "top",
+            timestamp: Date.now(),
             exName: exConfig.name,
             pair,
             bid: orderbook.bids

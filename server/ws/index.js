@@ -67,7 +67,10 @@ function logAnalytics({ pairs, wsExchanges }) {
         });
 
       globalWsexSource
-        .pipe(filter(exData => exData.pair === pair))
+        .pipe(
+          filter(exData => exData.type === "top"),
+          filter(exData => exData.pair === pair)
+        )
         .subscribe(exData => {
           pairTimeframe.set(exData.exName, exData);
 

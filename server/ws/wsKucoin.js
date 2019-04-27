@@ -68,6 +68,8 @@ function getSourceForPairs(globalPairs = []) {
       //     orderbook[symbol] = data.tick;
 
       //     const bookTop = {
+      //    type: "top",
+      //    timestamp: Date.now(),
       //       exName: exConfig.name,
       //       pair: globalPair,
       //       bid: orderbook[symbol].bids.shift(),

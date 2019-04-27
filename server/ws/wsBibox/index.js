@@ -62,6 +62,8 @@ function getSourceForPairs(globalPairs = []) {
         const ask = recvMsg.asks[0];
 
         const bookTop = {
+          type: "top",
+          timestamp: Date.now(),
           exName: exConfig.name,
           pair: globalPair,
           bid,

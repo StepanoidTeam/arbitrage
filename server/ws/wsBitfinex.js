@@ -196,6 +196,8 @@ function getSourceForPairs(globalPairs = []) {
       let { globalPair } = pairs.find(p => p.localPair === localPair);
 
       const bookTop = {
+        type: "top",
+        timestamp: Date.now(),
         exName: exConfig.name,
         pair: globalPair,
         bid: orderbook.bids.get(maxBidPrice),

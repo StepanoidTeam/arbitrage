@@ -62,6 +62,8 @@ function getSourceForPairs(globalPairs = []) {
       switch (channel) {
         case "depth":
           const bookTop = {
+            type: "top",
+            timestamp: Date.now(),
             exName: exConfig.name,
             pair: globalPair,
             bid,

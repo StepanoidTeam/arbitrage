@@ -110,6 +110,8 @@ function getSourceForPairs(globalPairs = []) {
       let minAskPrice = Math.min(...orderbook.asks.keys());
 
       const bookTop = {
+        type: "top",
+        timestamp: Date.now(),
         exName: exConfig.name,
         pair: globalPair,
         bid: orderbook.bids.get(maxBidPrice),

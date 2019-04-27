@@ -93,6 +93,8 @@ function getSourceForPairs(globalPairs = []) {
       let ask = arrToPriceVolume(last(data.asks).map(x => +x));
 
       const bookTop = {
+        type: "top",
+        timestamp: Date.now(),
         exName: exConfig.name,
         pair: pair.globalPair,
         bid,
