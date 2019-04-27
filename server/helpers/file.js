@@ -31,6 +31,14 @@ function makeDir(filepath) {
   fs.mkdirSync(filepath, { recursive: true });
 }
 
+function getDirFiles(filepath, regex = new RegExp()) {
+  return fs
+    .readdirSync(filepath, { withFileTypes: true })
+    .filter(file => file.isFile())
+    .map(file => file.name)
+    .filter(filename => regex.test(filename));
+}
+
 function readLines(filepath) {
   return fs
     .readFileSync(filepath)
@@ -41,6 +49,7 @@ function readLines(filepath) {
 module.exports = {
   makeDir,
   getDataFromFile,
+  getDirFiles,
   saveDataToFile,
   appendDataToFile,
   appendTextToFile,
