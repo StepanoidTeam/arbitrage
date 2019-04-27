@@ -7,10 +7,11 @@ function consoleReadKey() {
     process.stdin.setRawMode(true);
 
     process.stdin.once("keypress", (str, key) => {
+      process.stdin.pause();
+      process.stdin.setRawMode(false);
       // stop on ctrl+c
       if (key.ctrl && key.name === "c") process.exit();
 
-      process.stdin.pause();
       resolve(key);
     });
   });
