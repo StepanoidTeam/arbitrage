@@ -1,12 +1,10 @@
-const nosql = require("nosql");
+const { makeDir, appendJSONToFile } = require("./file");
 
-const { makeDir } = require("./file");
-// viewer - https://nosql.totaljs.com/
 function dbLogger(logName) {
   makeDir(`./logs`);
-  var DB = nosql.load(`./logs/log.${logName}.nosql`);
+  const filePath = `./logs/log.${logName}.nosql`;
 
-  return data => DB.insert(data);
+  return data => appendJSONToFile(filePath, data);
 }
 
 module.exports = { dbLogger };
