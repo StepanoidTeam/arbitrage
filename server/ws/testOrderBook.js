@@ -1,5 +1,6 @@
 const logUpdate = require("log-update");
 const { dbLogger } = require("../helpers/dbLogger");
+const { selectFromList } = require("./selectFromList");
 
 const { getSourceForPairs: wsBinance } = require("./wsBinance");
 const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
@@ -39,22 +40,30 @@ let bookCount = 0;
 /**
  * set PAIR to test here (only 1 for now ⚠️)
  */
-wsToTest([PAIRS.BTC_USDT]).subscribe(data => {
-  if (data.type === "orderbook") {
-    //todo: do all
-    //data.exName, data.pair, data.bids, data.asks.price, volume;
 
-    if (checkBrokenBook(data)) {
-      console.error("❌ orderbook FAIL");
+(async () => {
+  const pair = await selectFromList(
+    Object.entries(PAIRS)
+    .map(([key]) => key)
+  );
 
-      orderBookBuffer.buffer.forEach(log);
-      console.error("👉 orderbook LOG DONE");
+  wsToTest([PAIRS[pair]]).subscribe(data => {
+    if (data.type === "orderbook") {
+      //todo: do all
+      //data.exName, data.pair, data.bids, data.asks.price, volume;
 
-      process.exit();
+      if (checkBrokenBook(data)) {
+        console.error("❌ orderbook FAIL");
+
+        orderBookBuffer.buffer.forEach(log);
+        console.error("👉 orderbook LOG DONE");
+
+        process.exit();
+      }
+
+      orderBookBuffer.push(data);
+
+      logUpdate(`book updates: ${++bookCount}`);
     }
-
-    orderBookBuffer.push(data);
-
-    logUpdate(`book updates: ${++bookCount}`);
-  }
-});
+  });
+})();
