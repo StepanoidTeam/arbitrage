@@ -42,10 +42,12 @@ let bookCount = 0;
  */
 
 (async () => {
-  const pair = await selectFromList(
-    Object.entries(PAIRS)
-    .map(([key]) => key)
-  );
+  // const pair = await selectFromList(
+  //   Object.entries(PAIRS)
+  //   .map(([key]) => key)
+  // );
+
+  const pair = PAIRS.BAT_BTC;
 
   wsToTest([PAIRS[pair]]).subscribe(data => {
     if (data.type === "orderbook") {
