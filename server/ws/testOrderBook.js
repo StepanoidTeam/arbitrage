@@ -32,7 +32,7 @@ function createBuffer(limit) {
  */
 const wsToTest = wsBittrex;
 
-const orderBookBuffer = createBuffer(50);
+const orderBookBuffer = createBuffer(100);
 
 const log = dbLogger(`orderbook-test.${wsToTest.exConfig.name}.${Date.now()}`);
 
