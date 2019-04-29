@@ -87,8 +87,6 @@ function getSourceForPairs(globalPairs = []) {
   }
 
   function updateBook({ Z: bids, S: asks }, pair) {
-    //todo: how can i understand what pair came?
-
     //   Z:
     //   [ { TY: 0, R: 0.030909, Q: 1.60805 },
     //     { TY: 1, R: 0.030908, Q: 0 },
@@ -129,50 +127,70 @@ function getSourceForPairs(globalPairs = []) {
     subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
   };
 
+  function getBookForPair(pair) {
+    //get initial orderbook
+    client
+      .call("c2", "QueryExchangeState", pair.localPair)
+      .done((err, result) => {
+        if (err) {
+          return console.error(err);
+        }
+        if (result) {
+          let raw = new Buffer.from(result, "base64");
+          zlib.inflateRaw(raw, function(err, inflated) {
+            if (!err) {
+              // console.log(
+              //   `${exConfig.name} - got orderbook for: ${pair.localPair}`
+              // );
+              json = JSON.parse(inflated.toString("utf8"));
+
+              initBook(json, pair.globalPair);
+              produceBook(pair.globalPair, json);
+            }
+          });
+        }
+      });
+  }
+
+  function reInitAllPairs() {
+    pairs.forEach(pair => {
+      getBookForPair(pair);
+    });
+
+    setTimeout(() => {
+      reInitAllPairs(); //410174,
+    }, 50);
+  }
+
   client.serviceHandlers.connected = function(connection) {
     logger.connected(exConfig);
     subject.next({ exName: exConfig.name, isSystem: true, isOnline: true });
 
     pairs.forEach(pair => {
-      //get initial orderbook
-      client
-        .call("c2", "QueryExchangeState", pair.localPair)
-        .done((err, result) => {
-          if (err) {
-            return console.error(err);
-          }
-          if (result) {
-            let raw = new Buffer.from(result, "base64");
-            zlib.inflateRaw(raw, function(err, inflated) {
-              if (!err) {
-                // console.log(
-                //   `${exConfig.name} - got orderbook for: ${pair.localPair}`
-                // );
-                json = JSON.parse(inflated.toString("utf8"));
+      getBookForPair(pair);
 
-                initBook(json, pair.globalPair);
-                produceBook(pair.globalPair);
-              }
-            });
-          }
-        });
-
-      //subscribe to orderbook changes
-      client
-        .call("c2", "SubscribeToExchangeDeltas", pair.localPair)
-        .done((err, result) => {
-          if (err) {
-            return console.error(err);
-          }
-          if (result === true) {
-            //todo: rewrite as at bitfinex?
-            console.log(
-              `✅${exConfig.name} - subscribed (tried) to: ${pair.localPair}`
-            );
-          }
-        });
+      subscribeToBookUpdate(pair);
     });
+
+    //reInitAllPairs();
   };
+
+  function subscribeToBookUpdate(pair) {
+    //subscribe to orderbook changes
+    client
+      .call("c2", "SubscribeToExchangeDeltas", pair.localPair)
+      .done((err, result) => {
+        if (err) {
+          return console.error(err);
+        }
+        if (result === true) {
+          //todo: rewrite as at bitfinex?
+          console.log(
+            `✅${exConfig.name} - subscribed (tried) to: ${pair.localPair}`
+          );
+        }
+      });
+  }
 
   client.serviceHandlers.messageReceived = function(message) {
     let data = jsonic(message.utf8Data);
@@ -185,13 +203,21 @@ function getSourceForPairs(globalPairs = []) {
              *  handling the GZip and base64 compression
              *  https://github.com/Bittrex/beta#response-handling
              */
+
+            //❎ TODO: https://bittrex.github.io/api/v1-1#/definitions/Market%20Delta%20-%20uE
+            /**
+             * Websocket connections may occasionally need to be recycled.
+             * If, for example, you're maintinaing local order book state,
+             * and you stop receiving updates even though you know trade
+             * activity is occurring, it may be time to resynchronize.
+             */
+
             let b64 = data.M[0].A[0];
             let raw = new Buffer.from(b64, "base64");
 
             zlib.inflateRaw(raw, function(err, inflated) {
               if (!err) {
                 let json = JSON.parse(inflated.toString("utf8"));
-                //
 
                 if (!json.M) return; // no pair name
 
@@ -200,6 +226,12 @@ function getSourceForPairs(globalPairs = []) {
 
                 //bid or ask exists
                 if (json.S || json.Z) {
+                  //❎ TODO: IF nonce diff > 1 comparing to prev nonce (gap)
+                  // THEN re-init orderbook, continue
+
+                  // TODO: push all diff updates to separate diff SUBJECT
+                  // apply ALL diffs >= nonce+1 after re-init orderbook from diff SUBJECT
+
                   updateBook(json, globalPair);
                   produceBook(globalPair, json);
                 } else {
