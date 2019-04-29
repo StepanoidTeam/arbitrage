@@ -26,7 +26,7 @@ function getSourceForPairs(globalPairs = []) {
 
   const client = new signalR.client("wss://beta.bittrex.com/signalr", ["c2"]);
 
-  function produceBook(pair) {
+  function produceBook(pair, jsonDebugData) {
     let orderBook = orderBooks[pair];
     if (!orderBook) {
       console.warn(`⛔️  ${exConfig.name}: orderbook not exists for ${pair}`);
@@ -63,6 +63,7 @@ function getSourceForPairs(globalPairs = []) {
       bids,
       asks,
       timestamp,
+      jsonDebugData,
     });
   }
 
@@ -200,7 +201,7 @@ function getSourceForPairs(globalPairs = []) {
                 //bid or ask exists
                 if (json.S || json.Z) {
                   updateBook(json, globalPair);
-                  produceBook(globalPair);
+                  produceBook(globalPair, json);
                 } else {
                   console.log("@", exConfig.name, json);
                 }
