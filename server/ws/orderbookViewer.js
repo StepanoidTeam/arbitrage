@@ -11,6 +11,7 @@ const { consoleReducer } = require("./consoleReducer");
     current: 0,
     skipped: 0,
     lastNonce: null,
+    firstNonce: null,
   };
   const books = [];
 
@@ -25,7 +26,11 @@ const { consoleReducer } = require("./consoleReducer");
           // next - current
           const diff = stats.lastNonce - data.jsonDebugData.N;
 
-          stats.skipped += diff - 1;
+          if (diff > 1) {
+            stats.skipped += diff - 1;
+          }
+        } else {
+          stats.firstNonce = data.jsonDebugData.N;
         }
 
         stats.lastNonce = data.jsonDebugData.N;
@@ -36,7 +41,9 @@ const { consoleReducer } = require("./consoleReducer");
       } else {
         stats.ok++;
       }
+
       stats.total++;
+
       books.push(data);
     },
     () => {
@@ -55,10 +62,17 @@ const { consoleReducer } = require("./consoleReducer");
         const bookState = !checkBrokenBook(book);
         console.log("navigate using arrows (ctrl-c to exit)");
         console.log(state);
+        console.log(
+          "skip %",
+          stats.skipped / (stats.firstNonce - stats.lastNonce)
+        );
         console.log(bookState ? "✅   ok" : "❌   broken");
         console.log({ ...book, jsonDebugData: "" });
-        console.log(book.jsonDebugData);
-        console.log("skip%%", stats.skipped / stats.total);
+        console.log({
+          N: book.jsonDebugData.N,
+          Z: book.jsonDebugData.Z.slice(0, 10),
+          S: book.jsonDebugData.S.slice(0, 10),
+        });
       },
       keyBindings: [
         {
