@@ -49,20 +49,20 @@ function getSourceForPairs(globalPairs = []) {
 
     subject.next({
       type: "top",
+      timestamp,
       exName: exConfig.name,
       pair,
       bid,
       ask,
-      timestamp,
     });
 
     subject.next({
       type: "orderbook",
+      timestamp,
       exName: exConfig.name,
       pair,
       bids,
       asks,
-      timestamp,
       jsonDebugData,
     });
   }
