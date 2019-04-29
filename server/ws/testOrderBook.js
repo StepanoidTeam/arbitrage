@@ -32,10 +32,6 @@ function createBuffer(limit) {
  */
 const wsToTest = wsBittrex;
 
-const orderBookBuffer = createBuffer(1000);
-
-const log = dbLogger(`orderbook-test.${wsToTest.exConfig.name}.${Date.now()}`);
-
 let bookCount = 0;
 /**
  * set PAIR to test here (only 1 for now ⚠️)
@@ -47,13 +43,19 @@ let bookCount = 0;
   //   .map(([key]) => key)
   // );
 
-  const pair = PAIRS.NEO_BTC;
-
-  const limitAfterFirstFail = 50;
-  let brokenHappened = false;
+  const limitAfterFirstFail = 1000;
+  let brokenHappened = true;
   let afterFailOrders = 0;
 
-  wsToTest([PAIRS[pair]]).subscribe(data => {
+  const pair = PAIRS.NEO_BTC;
+  const pairs = [PAIRS[pair]];
+
+  const orderBookBuffer = createBuffer(1000);
+  const log = dbLogger(
+    `orderbook-test.${wsToTest.exConfig.name}.${pair}.${Date.now()}`
+  );
+
+  wsToTest(pairs).subscribe(data => {
     if (data.type === "orderbook") {
       //todo: do all
       //data.exName, data.pair, data.bids, data.asks.price, volume;
