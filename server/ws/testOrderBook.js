@@ -32,7 +32,7 @@ function createBuffer(limit) {
  */
 const wsToTest = wsBittrex;
 
-const orderBookBuffer = createBuffer(100);
+const orderBookBuffer = createBuffer(50);
 
 const log = dbLogger(`orderbook-test.${wsToTest.exConfig.name}.${Date.now()}`);
 
@@ -47,25 +47,40 @@ let bookCount = 0;
   //   .map(([key]) => key)
   // );
 
-  const pair = PAIRS.BAT_BTC;
+  const pair = PAIRS.NEO_BTC;
+
+  const limitAfterFirstFail = 50;
+  let brokenHappened = false;
+  let afterFailOrders = 0;
 
   wsToTest([PAIRS[pair]]).subscribe(data => {
     if (data.type === "orderbook") {
       //todo: do all
       //data.exName, data.pair, data.bids, data.asks.price, volume;
 
-      if (checkBrokenBook(data)) {
-        console.error("❌ orderbook FAIL");
+      orderBookBuffer.push(data);
 
+      console.clear();
+
+      if (checkBrokenBook(data)) {
+        brokenHappened = true;
+      }
+
+      if (brokenHappened) {
+        afterFailOrders++;
+      }
+
+      console.log(
+        `book updates: ${++bookCount}`,
+        `❌  FAILs: ${afterFailOrders}`
+      );
+
+      if (afterFailOrders >= limitAfterFirstFail) {
         orderBookBuffer.buffer.forEach(log);
         console.error("👉 orderbook LOG DONE");
 
         process.exit();
       }
-
-      orderBookBuffer.push(data);
-
-      logUpdate(`book updates: ${++bookCount}`);
     }
   });
 })();
