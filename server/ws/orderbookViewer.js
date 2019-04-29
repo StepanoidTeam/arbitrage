@@ -41,8 +41,9 @@ const { consoleReducer } = require("./consoleReducer");
         const bookState = !checkBrokenBook(book);
         console.log("navigate using arrows (ctrl-c to exit)");
         console.log(state);
-        console.log(bookState ? "✅   ok" : "🅱️   broken");
-        console.log(book);
+        console.log(bookState ? "✅   ok" : "❌   broken");
+        console.log({ ...book, jsonDebugData: "" });
+        console.log(book.jsonDebugData);
       },
       keyBindings: [
         {
