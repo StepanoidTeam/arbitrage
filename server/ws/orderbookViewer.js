@@ -9,6 +9,8 @@ const { consoleReducer } = require("./consoleReducer");
     broken: 0,
     total: 0,
     current: 0,
+    skipped: 0,
+    lastNonce: null,
   };
   const books = [];
 
@@ -17,6 +19,18 @@ const { consoleReducer } = require("./consoleReducer");
   readFileLineStream(filePath).subscribe(
     data => {
       data = JSON.parse(data);
+
+      if (data.jsonDebugData) {
+        if (stats.lastNonce !== null) {
+          // next - current
+          const diff = stats.lastNonce - data.jsonDebugData.N;
+
+          stats.skipped += diff - 1;
+        }
+
+        stats.lastNonce = data.jsonDebugData.N;
+      }
+
       if (checkBrokenBook(data)) {
         stats.broken++;
       } else {
@@ -44,6 +58,7 @@ const { consoleReducer } = require("./consoleReducer");
         console.log(bookState ? "✅   ok" : "❌   broken");
         console.log({ ...book, jsonDebugData: "" });
         console.log(book.jsonDebugData);
+        console.log("skip%%", stats.skipped / stats.total);
       },
       keyBindings: [
         {
