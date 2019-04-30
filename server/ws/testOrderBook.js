@@ -2,15 +2,15 @@ const logUpdate = require("log-update");
 const { dbLogger } = require("../helpers/dbLogger");
 const { selectFromList } = require("./selectFromList");
 
-const { getSourceForPairs: wsBinance } = require("./wsBinance");
-const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
+// const { getSourceForPairs: wsBinance } = require("./wsBinance");
+// const { getSourceForPairs: wsBitfinex } = require("./wsBitfinex");
 const { getSourceForPairs: wsBittrex } = require("./wsBittrex"); //buggy
-const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
-const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
-const { getSourceForPairs: wsOkex } = require("./wsOkex");
-const { getSourceForPairs: wsGate } = require("./wsGate");
-const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
-const { getSourceForPairs: wsBibox } = require("./wsBibox");
+// const { getSourceForPairs: wsHuobi } = require("./wsHuobi");
+// const { getSourceForPairs: wsKucoin } = require("./wsKucoin"); //in progress
+// const { getSourceForPairs: wsOkex } = require("./wsOkex");
+// const { getSourceForPairs: wsGate } = require("./wsGate");
+// const { getSourceForPairs: wsHitbtc } = require("./wsHitbtc");
+// const { getSourceForPairs: wsBibox } = require("./wsBibox");
 
 const { PAIRS } = require("../configs/globalPairs");
 
