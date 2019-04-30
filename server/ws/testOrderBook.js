@@ -14,8 +14,6 @@ const { getSourceForPairs: wsBibox } = require("./wsBibox");
 
 const { PAIRS } = require("../configs/globalPairs");
 
-const { checkBrokenBook } = require("./checkBrokenBook");
-
 function createBuffer(limit) {
   const buffer = [];
 
@@ -32,30 +30,21 @@ function createBuffer(limit) {
  */
 const wsToTest = wsBittrex;
 
-let bookCount = 0;
 /**
  * set PAIR to test here (only 1 for now ⚠️)
  */
 
 (async () => {
-  // const pair = await selectFromList(
-  //   Object.entries(PAIRS)
-  //   .map(([key]) => key)
-  // );
-
-  const logRecordLimit = 300;
-  const limitAfterFirstFail = 300;
-  let brokenHappened = true;
-  let afterFailOrders = 0;
   const stats = {
-    errors: 0,
+    errors: [],
     warns: 0,
+    otsylkas: [],
   };
 
   const pair = PAIRS.BTC_USDT;
   const pairs = [PAIRS[pair]];
 
-  const orderBookBuffer = createBuffer(logRecordLimit);
+  const orderBookBuffer = createBuffer(Infinity);
   const log = dbLogger(
     `orderbook-test.${wsToTest.exConfig.name}.${pair}.${Date.now()}`
   );
@@ -66,7 +55,10 @@ let bookCount = 0;
       stats.warns++;
     }
     if (data.type === "error") {
-      stats.errors++;
+      stats.errors.unshift(data);
+    }
+    if (data.type === "otsylka") {
+      stats.otsylkas.unshift(data);
     }
 
     if (data.type === "orderbook") {
@@ -77,15 +69,9 @@ let bookCount = 0;
 
       console.clear();
 
-      if (checkBrokenBook(data)) {
-        brokenHappened = true;
-      }
+      //TODO: save on exit?
 
-      if (brokenHappened) {
-        afterFailOrders++;
-      }
-
-      if (afterFailOrders >= limitAfterFirstFail) {
+      if (orderBookBuffer.buffer.length > 1000) {
         orderBookBuffer.buffer.forEach(log);
         console.error("👉 orderbook LOG DONE");
 
@@ -94,10 +80,12 @@ let bookCount = 0;
     }
 
     console.log(
-      `book updates: ${++bookCount}`,
-      //`❌  FAILs: ${afterFailOrders}`,
-      `⛔  errors: ${stats.errors}`,
-      `⚠  warns: ${stats.warns}`
+      `book updates: ${orderBookBuffer.buffer.length}`,
+      `⚠  warns: ${stats.warns}`,
+      `⛔  errors: ${stats.errors.length}`,
+      `➡  otsylkas: ${stats.otsylkas.length}`,
+      stats.otsylkas.slice(0, 5),
+      stats.errors.slice(0, 5)
     );
   });
 })();
