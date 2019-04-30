@@ -50,7 +50,7 @@ function logAnalytics({ pairs, wsExchanges }) {
 
       //sub for particular pair to make tf
       globalWsexSource
-        .pipe(filter(({ isSystem }) => isSystem))
+        .pipe(filter(({ type }) => type === "system"))
         .subscribe(exData => {
           progressStateSub.next({
             TYPE: "EXCHANGES",
@@ -235,7 +235,7 @@ logAnalytics({
   //wsExchanges: [wsBinance, wsBitfinex, wsGate, wsOkex, wsHuobi, wsHitbtc], //
 
   // pairs: [PAIRS.BTC_USDT, PAIRS.XRP_USDT],
-  wsExchanges: [wsBinance, wsBibox], //
+  wsExchanges: [wsBinance, wsBibox, wsBittrex, wsGate, wsHuobi], //
 
   //wsExchanges: [wsBinance, wsHitbtc],
 });
