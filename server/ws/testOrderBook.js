@@ -43,8 +43,8 @@ let bookCount = 0;
   //   .map(([key]) => key)
   // );
 
-  const logRecordLimit = 1000;
-  const limitAfterFirstFail = 1000;
+  const logRecordLimit = 300;
+  const limitAfterFirstFail = 300;
   let brokenHappened = true;
   let afterFailOrders = 0;
 
