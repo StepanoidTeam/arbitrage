@@ -124,7 +124,7 @@ function getSourceForPairs(globalPairs = []) {
   client.serviceHandlers.disconnected = function() {
     //todo: reconnect!
     logger.disconnected(exConfig);
-    subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
+    subject.next({ type: "system", exName: exConfig.name, isOnline: false });
   };
 
   function getBookForPair(pair) {
@@ -164,7 +164,7 @@ function getSourceForPairs(globalPairs = []) {
 
   client.serviceHandlers.connected = function(connection) {
     logger.connected(exConfig);
-    subject.next({ exName: exConfig.name, isSystem: true, isOnline: true });
+    subject.next({ type: "system", exName: exConfig.name, isOnline: true });
 
     pairs.forEach(pair => {
       getBookForPair(pair);
@@ -191,6 +191,8 @@ function getSourceForPairs(globalPairs = []) {
         }
       });
   }
+
+  client.serviceHandlers;
 
   client.serviceHandlers.messageReceived = function(message) {
     let data = jsonic(message.utf8Data);

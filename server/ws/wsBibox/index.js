@@ -121,7 +121,7 @@ function getSourceForPairs(globalPairs = []) {
 
     ws.on("close", (code, msg) => {
       logger.disconnected(exConfig);
-      subject.next({ exName: exConfig.name, isSystem: true, isOnline: false });
+      subject.next({ type: "system", exName: exConfig.name, isOnline: false });
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
     });
@@ -133,7 +133,7 @@ function getSourceForPairs(globalPairs = []) {
 
     ws.on("open", () => {
       logger.connected(exConfig);
-      subject.next({ exName: exConfig.name, isSystem: true, isOnline: true });
+      subject.next({ type: "system", exName: exConfig.name, isOnline: true });
       subscribe(ws);
       ping(ws);
     });
