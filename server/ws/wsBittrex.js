@@ -1,4 +1,5 @@
 const { Subject } = require("rxjs");
+const { throttle } = require("lodash");
 
 const signalR = require("signalr-client");
 const jsonic = require("jsonic");
@@ -122,7 +123,8 @@ function getSourceForPairs(globalPairs = []) {
     const nonceDiff = nonce - orderBooks[pair].nonce;
     if (nonceDiff > 1) {
       // lag -> update
-      getBookForPair(pair);
+      //getBookForPair(pair);
+      getBookForPairThrottled(pair);
     } else if (nonceDiff === 1) {
       orderBooks[pair].nonce = nonce;
       bids.forEach(applyUpdates(orderBooks[pair].bids));
@@ -135,6 +137,8 @@ function getSourceForPairs(globalPairs = []) {
     logger.disconnected(exConfig);
     subject.next({ type: "system", exName: exConfig.name, isOnline: false });
   };
+
+  const getBookForPairThrottled = throttle(getBookForPair, 1000);
 
   function getBookForPair(pair) {
     //get initial orderbook
