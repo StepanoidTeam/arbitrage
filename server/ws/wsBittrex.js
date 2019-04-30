@@ -15,6 +15,12 @@ const { getLocalPairs } = require("../helpers/getLocalPairs");
 
 getSourceForPairs.exConfig = exConfig;
 
+/**
+ * good working example
+ * https://github.com/aloysius-pgast/bittrex-signalr-client/blob/master/lib/client.js *
+ */
+
+//
 function getSourceForPairs(globalPairs = []) {
   //todo: make some common apporoach for that cases
 
@@ -28,10 +34,10 @@ function getSourceForPairs(globalPairs = []) {
   const client = new signalR.client("wss://beta.bittrex.com/signalr", ["c2"]);
 
   function produceBook(pair, jsonDebugData) {
-    let orderBook = orderBooks[pair];
+    let orderBook = orderBooks[pair.globalPair];
     if (!orderBook) {
       subject.next({
-        type: "warn",
+        type: "error",
         message: `⛔️  ${exConfig.name}: orderbook not exists for ${pair}`,
       });
       return;
@@ -55,7 +61,7 @@ function getSourceForPairs(globalPairs = []) {
       type: "top",
       timestamp,
       exName: exConfig.name,
-      pair,
+      pair: pair.globalPair,
       bid,
       ask,
     });
@@ -64,7 +70,7 @@ function getSourceForPairs(globalPairs = []) {
       type: "orderbook",
       timestamp,
       exName: exConfig.name,
-      pair,
+      pair: pair.globalPair,
       bids,
       asks,
       jsonDebugData,
@@ -85,6 +91,7 @@ function getSourceForPairs(globalPairs = []) {
     const mapOrder = data => [data.price, data];
 
     orderBooks[pair] = {
+      freezed: false,
       nonce,
       bids: new Map(bidArr.map(mapOrder)),
       asks: new Map(askArr.map(mapOrder)),
@@ -112,10 +119,11 @@ function getSourceForPairs(globalPairs = []) {
         bookpart.delete(price);
       }
     };
+    const orderBook = orderBooks[pair.globalPair];
 
-    if (!orderBooks[pair]) {
+    if (!orderBook) {
       subject.next({
-        type: "warn",
+        type: "error",
         message: `⛔️  ${
           exConfig.name
         }: shit! ${pair} not found for ${JSON.stringify(orderBooks)}`,
@@ -124,15 +132,24 @@ function getSourceForPairs(globalPairs = []) {
     }
 
     // upd.nonce - book nonce
-    const nonceDiff = nonce - orderBooks[pair].nonce;
+    const nonceDiff = nonce - orderBook.nonce;
     if (nonceDiff > 1) {
       // lag -> update
-      //getBookForPair(pair);
-      getBookForPairThrottled(pair);
+      // GAP
+
+      // CHECK if no request made before
+      if (orderBook.freezed !== true) {
+        orderBook.freezed = true;
+
+        //getBookForPairThrottled(pair);
+        getBookForPair(pair);
+      }
+
+      // MAKE request for new book
     } else if (nonceDiff === 1) {
-      orderBooks[pair].nonce = nonce;
-      bids.forEach(applyUpdates(orderBooks[pair].bids));
-      asks.forEach(applyUpdates(orderBooks[pair].asks));
+      orderBook.nonce = nonce;
+      bids.forEach(applyUpdates(orderBook.bids));
+      asks.forEach(applyUpdates(orderBook.asks));
     }
   }
 
@@ -142,10 +159,14 @@ function getSourceForPairs(globalPairs = []) {
     subject.next({ type: "system", exName: exConfig.name, isOnline: false });
   };
 
-  const getBookForPairThrottled = throttle(getBookForPair, 1000);
-
   function getBookForPair(pair) {
     //get initial orderbook
+    subject.next({
+      type: "otsylka",
+      localPair: pair.localPair,
+      timestamp: Date.now(),
+    });
+
     client
       .call("c2", "QueryExchangeState", pair.localPair)
       .done((err, result) => {
@@ -171,7 +192,7 @@ function getSourceForPairs(globalPairs = []) {
                 },
                 pair.globalPair
               );
-              produceBook(pair.globalPair, {
+              produceBook(pair, {
                 localPair: json.M,
                 bids: json.Z,
                 asks: json.S,
@@ -183,16 +204,6 @@ function getSourceForPairs(globalPairs = []) {
       });
   }
 
-  function reInitAllPairs() {
-    pairs.forEach(pair => {
-      getBookForPair(pair);
-    });
-
-    setTimeout(() => {
-      reInitAllPairs(); //410174,
-    }, 10);
-  }
-
   client.serviceHandlers.connected = function(connection) {
     logger.connected(exConfig);
     subject.next({ type: "system", exName: exConfig.name, isOnline: true });
@@ -202,8 +213,6 @@ function getSourceForPairs(globalPairs = []) {
 
       subscribeToBookUpdate(pair);
     });
-
-    //reInitAllPairs();
   };
 
   function subscribeToBookUpdate(pair) {
@@ -214,7 +223,9 @@ function getSourceForPairs(globalPairs = []) {
         if (err) {
           subject.next({
             type: "error",
+            message: "failed to subscribe",
             data: err,
+            timestamp: Date.now(),
           });
           return;
         }
@@ -250,7 +261,14 @@ function getSourceForPairs(globalPairs = []) {
               if (!err) {
                 let json = JSON.parse(inflated.toString("utf8"));
 
-                if (!json.M) return; // no pair name
+                if (!json.M) {
+                  subject.next({
+                    type: "error",
+                    message: "no pair name",
+                    json,
+                  });
+                  return;
+                }
 
                 wsOnMessage({
                   localPair: json.M,
@@ -267,7 +285,7 @@ function getSourceForPairs(globalPairs = []) {
   };
 
   function wsOnMessage(data) {
-    const { globalPair } = pairs.find(p => p.localPair === data.localPair);
+    const pair = pairs.find(p => p.localPair === data.localPair);
     //❎ TODO: https://bittrex.github.io/api/v1-1#/definitions/Market%20Delta%20-%20uE
     /**
      * Websocket connections may occasionally need to be recycled.
@@ -284,11 +302,11 @@ function getSourceForPairs(globalPairs = []) {
       // TODO: push all diff updates to separate diff SUBJECT
       // apply ALL diffs >= nonce+1 after re-init orderbook from diff SUBJECT
 
-      updateBook(data, globalPair);
-      produceBook(globalPair, data);
+      updateBook(data, pair);
+      produceBook(pair, data);
     } else {
       subject.next({
-        type: "warn",
+        type: "error",
         message: "empty bid/ask",
         exName: exConfig.name,
         data,
