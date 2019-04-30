@@ -30,7 +30,10 @@ function getSourceForPairs(globalPairs = []) {
   function produceBook(pair, jsonDebugData) {
     let orderBook = orderBooks[pair];
     if (!orderBook) {
-      console.warn(`⛔️  ${exConfig.name}: orderbook not exists for ${pair}`);
+      subject.next({
+        type: "warn",
+        message: `⛔️  ${exConfig.name}: orderbook not exists for ${pair}`,
+      });
       return;
     }
 
@@ -111,11 +114,12 @@ function getSourceForPairs(globalPairs = []) {
     };
 
     if (!orderBooks[pair]) {
-      console.warn(
-        `⛔️  ${exConfig.name}: shit! ${pair} not found for ${JSON.stringify(
-          orderBooks
-        )}`
-      );
+      subject.next({
+        type: "warn",
+        message: `⛔️  ${
+          exConfig.name
+        }: shit! ${pair} not found for ${JSON.stringify(orderBooks)}`,
+      });
       return;
     }
 
@@ -146,7 +150,11 @@ function getSourceForPairs(globalPairs = []) {
       .call("c2", "QueryExchangeState", pair.localPair)
       .done((err, result) => {
         if (err) {
-          return console.error(err);
+          subject.next({
+            type: "error",
+            data: err,
+          });
+          return;
         }
         if (result) {
           let raw = new Buffer.from(result, "base64");
@@ -175,6 +183,16 @@ function getSourceForPairs(globalPairs = []) {
       });
   }
 
+  function reInitAllPairs() {
+    pairs.forEach(pair => {
+      getBookForPair(pair);
+    });
+
+    setTimeout(() => {
+      reInitAllPairs(); //410174,
+    }, 10);
+  }
+
   client.serviceHandlers.connected = function(connection) {
     logger.connected(exConfig);
     subject.next({ type: "system", exName: exConfig.name, isOnline: true });
@@ -184,6 +202,8 @@ function getSourceForPairs(globalPairs = []) {
 
       subscribeToBookUpdate(pair);
     });
+
+    //reInitAllPairs();
   };
 
   function subscribeToBookUpdate(pair) {
@@ -192,13 +212,21 @@ function getSourceForPairs(globalPairs = []) {
       .call("c2", "SubscribeToExchangeDeltas", pair.localPair)
       .done((err, result) => {
         if (err) {
-          return console.error(err);
+          subject.next({
+            type: "error",
+            data: err,
+          });
+          return;
         }
         if (result === true) {
           //todo: rewrite as at bitfinex?
-          console.log(
-            `✅${exConfig.name} - subscribed (tried) to: ${pair.localPair}`
-          );
+          subject.next({
+            type: "info",
+
+            message: `✅${exConfig.name} - subscribed (tried) to: ${
+              pair.localPair
+            }`,
+          });
         }
       });
   }
@@ -239,8 +267,7 @@ function getSourceForPairs(globalPairs = []) {
   };
 
   function wsOnMessage(data) {
-    console.log(data);
-    let { globalPair } = pairs.find(p => p.localPair === data.localPair);
+    const { globalPair } = pairs.find(p => p.localPair === data.localPair);
     //❎ TODO: https://bittrex.github.io/api/v1-1#/definitions/Market%20Delta%20-%20uE
     /**
      * Websocket connections may occasionally need to be recycled.
@@ -260,7 +287,12 @@ function getSourceForPairs(globalPairs = []) {
       updateBook(data, globalPair);
       produceBook(globalPair, data);
     } else {
-      console.log("@", exConfig.name, data);
+      subject.next({
+        type: "warn",
+        message: "empty bid/ask",
+        exName: exConfig.name,
+        data,
+      });
     }
   }
 
