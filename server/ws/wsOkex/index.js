@@ -8,7 +8,6 @@ const { last, head, intersectionBy } = require("lodash");
 
 const {
   exchanges: { okex: exConfig },
-  logger,
 } = require("../../configs");
 const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
@@ -105,13 +104,11 @@ function getSourceForPairs(globalPairs = []) {
     }
 
     ws.on("open", () => {
-      logger.connected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: true });
       subscribe(ws);
     });
 
     ws.on("close", () => {
-      logger.disconnected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: false });
       stopPing();
       //todo: reconnect!

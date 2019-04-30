@@ -14,7 +14,6 @@ const { map } = require("rxjs/operators");
 
 const {
   exchanges: { kucoin: exConfig },
-  logger,
 } = require("../configs");
 const { getLocalPairs } = require("../helpers/getLocalPairs");
 
@@ -82,14 +81,12 @@ function getSourceForPairs(globalPairs = []) {
     }
 
     ws.on("open", () => {
-      logger.connected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: true });
       subscribe(ws);
     });
 
     //todo: reconnect!
     ws.onclose = () => {
-      logger.disconnected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: false });
     };
 

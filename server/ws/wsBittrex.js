@@ -9,7 +9,6 @@ const sortBy = require("lodash/sortBy");
 
 const {
   exchanges: { bittrex: exConfig },
-  logger,
 } = require("../configs");
 const { getLocalPairs } = require("../helpers/getLocalPairs");
 
@@ -155,7 +154,6 @@ function getSourceForPairs(globalPairs = []) {
 
   client.serviceHandlers.disconnected = function() {
     //todo: reconnect!
-    logger.disconnected(exConfig);
     subject.next({ type: "system", exName: exConfig.name, isOnline: false });
   };
 
@@ -205,7 +203,6 @@ function getSourceForPairs(globalPairs = []) {
   }
 
   client.serviceHandlers.connected = function(connection) {
-    logger.connected(exConfig);
     subject.next({ type: "system", exName: exConfig.name, isOnline: true });
 
     pairs.forEach(pair => {

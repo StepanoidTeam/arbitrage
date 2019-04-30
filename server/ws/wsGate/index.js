@@ -8,7 +8,6 @@ const { last } = require("lodash");
 
 const {
   exchanges: { gate: exConfig },
-  logger,
 } = require("../../configs");
 const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
@@ -74,13 +73,11 @@ function getSourceForPairs(globalPairs = []) {
     }
 
     ws.on("open", () => {
-      logger.connected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: true });
       subscribe(ws);
     });
 
     ws.onclose = () => {
-      logger.disconnected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: false });
       //todo: reconnect!
       setTimeout(() => connect(), 10 * 1000);

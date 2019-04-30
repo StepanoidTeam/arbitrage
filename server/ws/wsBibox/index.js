@@ -6,7 +6,6 @@ const { intersectionBy } = require("lodash");
 
 const {
   exchanges: { bibox: exConfig },
-  logger,
 } = require("../../configs");
 const { getLocalPairs } = require("../../helpers/getLocalPairs");
 
@@ -120,7 +119,6 @@ function getSourceForPairs(globalPairs = []) {
     });
 
     ws.on("close", (code, msg) => {
-      logger.disconnected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: false });
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
@@ -132,7 +130,6 @@ function getSourceForPairs(globalPairs = []) {
     });
 
     ws.on("open", () => {
-      logger.connected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: true });
       subscribe(ws);
       ping(ws);

@@ -6,7 +6,6 @@ const { map, filter, tap, bufferTime } = require("rxjs/operators");
 
 const {
   exchanges: { bitfinex: exConfig },
-  logger,
 } = require("../configs");
 const { getLocalPairs } = require("../helpers/getLocalPairs");
 
@@ -25,7 +24,6 @@ function getSourceForPairs(globalPairs = []) {
     const ws = new WebSocket("wss://api.bitfinex.com/ws/2");
 
     ws.on("close", () => {
-      logger.disconnected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: false });
       //todo: reconnect!
       setTimeout(() => connect(), 3000);
@@ -36,7 +34,6 @@ function getSourceForPairs(globalPairs = []) {
     };
 
     ws.on("open", () => {
-      logger.connected(exConfig);
       subject.next({ type: "system", exName: exConfig.name, isOnline: true });
 
       let pairsSubscribed = [];
