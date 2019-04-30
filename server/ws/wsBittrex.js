@@ -67,7 +67,7 @@ function getSourceForPairs(globalPairs = []) {
     });
   }
 
-  function initBook({ Z: bids, S: asks }, pair) {
+  function initBook({ bids, asks, nonce }, pair) {
     //todo: how can i understand what pair came?
     let bidArr = bids.map(({ R: price, Q: volume }) => ({
       price,
@@ -81,12 +81,13 @@ function getSourceForPairs(globalPairs = []) {
     const mapOrder = data => [data.price, data];
 
     orderBooks[pair] = {
+      nonce,
       bids: new Map(bidArr.map(mapOrder)),
       asks: new Map(askArr.map(mapOrder)),
     };
   }
 
-  function updateBook({ Z: bids, S: asks }, pair) {
+  function updateBook({ bids, asks, nonce }, pair) {
     //   Z:
     //   [ { TY: 0, R: 0.030909, Q: 1.60805 },
     //     { TY: 1, R: 0.030908, Q: 0 },
@@ -117,8 +118,16 @@ function getSourceForPairs(globalPairs = []) {
       return;
     }
 
-    bids.forEach(applyUpdates(orderBooks[pair].bids));
-    asks.forEach(applyUpdates(orderBooks[pair].asks));
+    // upd.nonce - book nonce
+    const nonceDiff = nonce - orderBooks[pair].nonce;
+    if (nonceDiff > 1) {
+      // lag -> update
+      getBookForPair(pair);
+    } else if (nonceDiff === 1) {
+      orderBooks[pair].nonce = nonce;
+      bids.forEach(applyUpdates(orderBooks[pair].bids));
+      asks.forEach(applyUpdates(orderBooks[pair].asks));
+    }
   }
 
   client.serviceHandlers.disconnected = function() {
@@ -139,27 +148,27 @@ function getSourceForPairs(globalPairs = []) {
           let raw = new Buffer.from(result, "base64");
           zlib.inflateRaw(raw, function(err, inflated) {
             if (!err) {
-              // console.log(
-              //   `${exConfig.name} - got orderbook for: ${pair.localPair}`
-              // );
               json = JSON.parse(inflated.toString("utf8"));
 
-              initBook(json, pair.globalPair);
-              produceBook(pair.globalPair, json);
+              initBook(
+                {
+                  localPair: json.M,
+                  bids: json.Z,
+                  asks: json.S,
+                  nonce: json.N,
+                },
+                pair.globalPair
+              );
+              produceBook(pair.globalPair, {
+                localPair: json.M,
+                bids: json.Z,
+                asks: json.S,
+                nonce: json.N,
+              });
             }
           });
         }
       });
-  }
-
-  function reInitAllPairs() {
-    pairs.forEach(pair => {
-      getBookForPair(pair);
-    });
-
-    setTimeout(() => {
-      reInitAllPairs(); //410174,
-    }, 50);
   }
 
   client.serviceHandlers.connected = function(connection) {
@@ -171,8 +180,6 @@ function getSourceForPairs(globalPairs = []) {
 
       subscribeToBookUpdate(pair);
     });
-
-    //reInitAllPairs();
   };
 
   function subscribeToBookUpdate(pair) {
@@ -192,8 +199,6 @@ function getSourceForPairs(globalPairs = []) {
       });
   }
 
-  client.serviceHandlers;
-
   client.serviceHandlers.messageReceived = function(message) {
     let data = jsonic(message.utf8Data);
     //todo: get rid of this bittrex shit
@@ -206,14 +211,6 @@ function getSourceForPairs(globalPairs = []) {
              *  https://github.com/Bittrex/beta#response-handling
              */
 
-            //❎ TODO: https://bittrex.github.io/api/v1-1#/definitions/Market%20Delta%20-%20uE
-            /**
-             * Websocket connections may occasionally need to be recycled.
-             * If, for example, you're maintinaing local order book state,
-             * and you stop receiving updates even though you know trade
-             * activity is occurring, it may be time to resynchronize.
-             */
-
             let b64 = data.M[0].A[0];
             let raw = new Buffer.from(b64, "base64");
 
@@ -223,22 +220,12 @@ function getSourceForPairs(globalPairs = []) {
 
                 if (!json.M) return; // no pair name
 
-                let localPair = json.M;
-                let { globalPair } = pairs.find(p => p.localPair === localPair);
-
-                //bid or ask exists
-                if (json.S || json.Z) {
-                  //❎ TODO: IF nonce diff > 1 comparing to prev nonce (gap)
-                  // THEN re-init orderbook, continue
-
-                  // TODO: push all diff updates to separate diff SUBJECT
-                  // apply ALL diffs >= nonce+1 after re-init orderbook from diff SUBJECT
-
-                  updateBook(json, globalPair);
-                  produceBook(globalPair, json);
-                } else {
-                  console.log("@", exConfig.name, json);
-                }
+                wsOnMessage({
+                  localPair: json.M,
+                  bids: json.Z,
+                  asks: json.S,
+                  nonce: json.N,
+                });
               }
             });
           }
@@ -246,6 +233,32 @@ function getSourceForPairs(globalPairs = []) {
       }
     }
   };
+
+  function wsOnMessage(data) {
+    console.log(data);
+    let { globalPair } = pairs.find(p => p.localPair === data.localPair);
+    //❎ TODO: https://bittrex.github.io/api/v1-1#/definitions/Market%20Delta%20-%20uE
+    /**
+     * Websocket connections may occasionally need to be recycled.
+     * If, for example, you're maintinaing local order book state,
+     * and you stop receiving updates even though you know trade
+     * activity is occurring, it may be time to resynchronize.
+     */
+
+    //bid or ask exists
+    if (data.asks || dat.bids) {
+      //❎ TODO: IF nonce diff > 1 comparing to prev nonce (gap)
+      // THEN re-init orderbook, continue
+
+      // TODO: push all diff updates to separate diff SUBJECT
+      // apply ALL diffs >= nonce+1 after re-init orderbook from diff SUBJECT
+
+      updateBook(data, globalPair);
+      produceBook(globalPair, data);
+    } else {
+      console.log("@", exConfig.name, data);
+    }
+  }
 
   return subject;
 }
