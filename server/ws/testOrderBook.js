@@ -43,6 +43,7 @@ let bookCount = 0;
   //   .map(([key]) => key)
   // );
 
+  const logRecordLimit = 1000;
   const limitAfterFirstFail = 1000;
   let brokenHappened = true;
   let afterFailOrders = 0;
@@ -50,7 +51,7 @@ let bookCount = 0;
   const pair = PAIRS.NEO_BTC;
   const pairs = [PAIRS[pair]];
 
-  const orderBookBuffer = createBuffer(1000);
+  const orderBookBuffer = createBuffer(logRecordLimit);
   const log = dbLogger(
     `orderbook-test.${wsToTest.exConfig.name}.${pair}.${Date.now()}`
   );
