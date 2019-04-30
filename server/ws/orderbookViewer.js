@@ -24,16 +24,16 @@ const { consoleReducer } = require("./consoleReducer");
       if (data.jsonDebugData) {
         if (stats.lastNonce !== null) {
           // next - current
-          const diff = stats.lastNonce - data.jsonDebugData.N;
+          const diff = stats.lastNonce - data.jsonDebugData.nonce;
 
           if (diff > 1) {
             stats.skipped += diff - 1;
           }
         } else {
-          stats.firstNonce = data.jsonDebugData.N;
+          stats.firstNonce = data.jsonDebugData.nonce;
         }
 
-        stats.lastNonce = data.jsonDebugData.N;
+        stats.lastNonce = data.jsonDebugData.nonce;
       }
 
       if (checkBrokenBook(data)) {
@@ -68,10 +68,11 @@ const { consoleReducer } = require("./consoleReducer");
         );
         console.log(bookState ? "✅   ok" : "❌   broken");
         console.log({ ...book, jsonDebugData: "" });
+
         console.log({
-          N: book.jsonDebugData.N,
-          Z: book.jsonDebugData.Z.slice(0, 10),
-          S: book.jsonDebugData.S.slice(0, 10),
+          nonce: book.jsonDebugData.nonce,
+          bids: book.jsonDebugData.bids.slice(0, 10),
+          asks: book.jsonDebugData.asks.slice(0, 10),
         });
       },
       keyBindings: [
