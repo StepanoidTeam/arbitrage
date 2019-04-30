@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "server/index.js",
+  "engines": {
+    "node": ">=10"
+  },
   "dependencies": {
     "crypto-js": "^3.1.9-1",
     "express": "^4.16.4",
@@ -25,7 +28,8 @@
     "bot": "node server/ws",
     "client": "node server",
     "tocsv": "node server/helpers/dbToCsv",
-    "gsetup": "export PORT=8080 && npm install"
+    "gsetup": "export PORT=8080 && npm install",
+    "deploy": "gcloud app deploy"
   },
   "repository": {
     "type": "git",
